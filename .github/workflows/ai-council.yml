@@ -21,9 +21,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-      OPENAI_MODEL: gpt-5.6-sol
+      GEMINI2_API_KEY: ${{ secrets.GEMINI2_API_KEY }}
       GEMINI_MODEL: gemini-3.8-flash
       COUNCIL_GOAL: ${{ inputs.goal }}
     steps:
@@ -40,7 +39,6 @@ jobs:
       - name: Verify API secrets
         shell: bash
         run: |
-          test -n "$OPENAI_API_KEY" || { echo 'Missing OPENAI_API_KEY repository secret'; exit 1; }
           test -n "$GEMINI_API_KEY" || { echo 'Missing GEMINI_API_KEY repository secret'; exit 1; }
 
       - name: Install browser test dependency
@@ -57,7 +55,7 @@ jobs:
       - name: Baseline balance simulation
         run: node scripts/balance-sim.mjs --out artifacts/baseline-balance.json
 
-      - name: GPT and Gemini council
+      - name: Gemini multi-agent council
         run: node scripts/ai-council.mjs
 
       - name: Detect council approval
