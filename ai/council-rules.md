@@ -3,6 +3,19 @@
 ## Objective
 Improve game balance, visual quality, readability, retention, and moment-to-moment fun without breaking working systems or player saves.
 
+## Canonical design invariants
+These rules override stale UI labels, dead legacy code, duplicate older functions, or suggestions inferred from them.
+
+- The **Finance** system is canonical and must remain. Do not remove or replace it with dice, odd/even, roulette, betting, or any gambling-style minigame.
+- Legacy references to **dice / odd-even / 홀짝 주사위** are stale artifacts, not desired features. They may be cleaned up, but must never be restored as gameplay.
+- Finance settles every 30 seconds with four independent virtual-gold rolls: 99%→+1%, 80%→+30%, 50%→+100%, 30%→+250%. Multiple tiers may trigger together.
+- Finance uses only in-game virtual gold. No real-money gambling or cash wagering.
+- Main-stat potential follows the fixed conversion **1% main stat potential = +10% attack**; therefore 400% main stat potential = +4000% attack.
+- Normal combat remains automated; the manual party quest is the intentional exception.
+- Normal monsters retain the intended ticket-drop structure and bosses retain guaranteed large ticket rewards unless the user explicitly requests a redesign.
+- Existing save compatibility and migrations are part of the product, not optional cleanup.
+- When runtime code and old duplicated source fragments disagree, treat these canonical rules plus the latest effective runtime behavior as authoritative.
+
 ## Hard safety gates
 - Never edit GitHub Actions, AI council scripts, secrets, repository permissions, or CI from an AI-generated gameplay patch.
 - AI-generated patches may modify `index.html` only in phase 1.
@@ -33,10 +46,10 @@ Improve game balance, visual quality, readability, retention, and moment-to-mome
 - No page-level horizontal overflow on mobile.
 
 ## Council protocol
-1. GPT produces a concise audit with evidence and at most five proposed changes.
-2. Gemini challenges the audit, identifying overcorrections, missing risks and visual/gameplay tradeoffs.
-3. GPT synthesizes both reviews and may produce one conservative unified diff.
-4. Gemini acts as a final design gate on that diff.
+1. Gemini Director produces a concise audit with evidence and at most five proposed changes.
+2. Gemini Critic challenges the audit, identifying overcorrections, stale-code traps, missing risks and visual/gameplay tradeoffs.
+3. Gemini Implementer synthesizes both reviews and may produce one conservative unified diff.
+4. Gemini Gate acts as the final independent design gate on that diff.
 5. CI applies the diff only if the gate approves it.
 6. CI reruns static and browser tests after patching.
 7. Only a passing candidate is pushed to a branch and offered as a pull request.
