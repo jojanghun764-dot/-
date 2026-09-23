@@ -66,7 +66,7 @@ try {
       };
     });
     results.views[name] = audit;
-    await page.screenshot({ path: 'artifacts/' + name + '.png', fullPage: true });
+    await page.screenshot({ path: 'artifacts/' + name + '.png', fullPage: false });
     await context.close();
   }
   if (results.pageErrors.length) throw new Error('Page errors: ' + results.pageErrors.join(' | '));
