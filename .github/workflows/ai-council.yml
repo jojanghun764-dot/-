@@ -1,0 +1,143 @@
+name: AI Game Council
+
+on:
+  workflow_dispatch:
+    inputs:
+      goal:
+        description: 'What should the AI council focus on?'
+        required: false
+        default: 'Improve balance, graphics quality, stability, and game feel conservatively.'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: sprout-ai-council
+  cancel-in-progress: false
+
+jobs:
+  council:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      OPENAI_MODEL: gpt-5.6-sol
+      GEMINI_MODEL: gemini-3.8-flash
+      COUNCIL_GOAL: ${{ inputs.goal }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Verify API secrets
+        shell: bash
+        run: |
+          test -n "$OPENAI_API_KEY" || { echo 'Missing OPENAI_API_KEY repository secret'; exit 1; }
+          test -n "$GEMINI_API_KEY" || { echo 'Missing GEMINI_API_KEY repository secret'; exit 1; }
+
+      - name: Install browser test dependency
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+
+      - name: Baseline static check
+        run: node scripts/static-check.mjs --out artifacts/baseline-static.json
+
+      - name: Baseline browser audit
+        run: node scripts/runtime-audit.mjs --out artifacts/baseline-runtime.json
+
+      - name: Baseline balance simulation
+        run: node scripts/balance-sim.mjs --out artifacts/baseline-balance.json
+
+      - name: GPT and Gemini council
+        run: node scripts/ai-council.mjs
+
+      - name: Detect council approval
+        id: decision
+        shell: bash
+        run: |
+          if [ -f artifacts/approved.patch ]; then
+            echo 'approved=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'approved=false' >> "$GITHUB_OUTPUT"
+            echo 'Council did not approve a candidate patch. Report will still be uploaded.'
+          fi
+
+      - name: Validate and apply candidate patch
+        if: steps.decision.outputs.approved == 'true'
+        shell: bash
+        run: |
+          git apply --check artifacts/approved.patch
+          git apply artifacts/approved.patch
+
+      - name: Candidate static check
+        if: steps.decision.outputs.approved == 'true'
+        run: node scripts/static-check.mjs --out artifacts/candidate-static.json --baseline artifacts/baseline-static.json
+
+      - name: Candidate browser audit
+        if: steps.decision.outputs.approved == 'true'
+        run: node scripts/runtime-audit.mjs --out artifacts/candidate-runtime.json
+
+      - name: Candidate balance simulation
+        if: steps.decision.outputs.approved == 'true'
+        run: node scripts/balance-sim.mjs --out artifacts/candidate-balance.json
+
+      - name: Final quality gate
+        if: steps.decision.outputs.approved == 'true'
+        run: node scripts/quality-gate.mjs
+
+      - name: Prepare council report for repository
+        if: steps.decision.outputs.approved == 'true'
+        shell: bash
+        run: |
+          mkdir -p ai/reports
+          cp artifacts/council.md "ai/reports/council-${GITHUB_RUN_ID}.md"
+
+      - name: Push candidate branch
+        if: steps.decision.outputs.approved == 'true'
+        shell: bash
+        run: |
+          if git diff --quiet -- index.html; then
+            echo 'Approved patch produced no index.html changes.'
+            exit 1
+          fi
+          branch="ai-council/run-${GITHUB_RUN_ID}"
+          git switch -c "$branch"
+          git config user.name 'sprout-ai-council[bot]'
+          git config user.email 'sprout-ai-council[bot]@users.noreply.github.com'
+          git add index.html ai/reports/
+          git commit -m "AI Council candidate run ${GITHUB_RUN_ID}"
+          git push --set-upstream origin "$branch"
+          echo "COUNCIL_BRANCH=$branch" >> "$GITHUB_ENV"
+
+      - name: Open pull request
+        if: steps.decision.outputs.approved == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          gh pr create \
+            --base main \
+            --head "$COUNCIL_BRANCH" \
+            --title "AI Council candidate - run ${GITHUB_RUN_ID}" \
+            --body-file artifacts/pr-body.md || {
+              echo 'PR creation failed. The tested branch was still pushed and can be opened manually.'
+              exit 0
+            }
+
+      - name: Upload council evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-council-${{ github.run_id }}
+          path: artifacts/
+          if-no-files-found: warn
+          retention-days: 30
