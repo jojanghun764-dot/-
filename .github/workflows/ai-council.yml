@@ -22,7 +22,6 @@ jobs:
     timeout-minutes: 45
     env:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-      GEMINI2_API_KEY: ${{ secrets.GEMINI2_API_KEY }}
       GEMINI3_API_KEY: ${{ secrets.GEMINI3_API_KEY }}
       GEMINI_MODEL: gemini-3.8-flash
       COUNCIL_GOAL: ${{ inputs.goal }}
@@ -40,9 +39,8 @@ jobs:
       - name: Verify API secrets
         shell: bash
         run: |
-          test -n "$GEMINI_API_KEY" || { echo 'Missing GEMINI_API_KEY repository secret'; exit 1; }
-          [ -n "$GEMINI2_API_KEY" ] && echo 'GEMINI2_API_KEY configured' || echo 'GEMINI2_API_KEY not configured'
-          [ -n "$GEMINI3_API_KEY" ] && echo 'GEMINI3_API_KEY configured' || echo 'GEMINI3_API_KEY not configured'
+          test -n "$GEMINI_API_KEY" || { echo 'Missing GEMINI_API_KEY repository secret'; exit 1; }          test -n "$GEMINI3_API_KEY" || { echo 'Missing GEMINI3_API_KEY repository secret'; exit 1; }
+          echo 'GEMINI3_API_KEY configured'
 
       - name: Install browser test dependency
         run: |
