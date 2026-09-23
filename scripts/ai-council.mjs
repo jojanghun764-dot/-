@@ -2,12 +2,11 @@ import fs from 'node:fs';
 
 fs.mkdirSync('artifacts',{recursive:true});
 const G1=process.env.GEMINI_API_KEY;
-const G2=process.env.GEMINI2_API_KEY||G1;
-const G3=process.env.GEMINI3_API_KEY||null;
+const G3=process.env.GEMINI3_API_KEY;
 const GM=process.env.GEMINI_MODEL||'gemini-3.8-flash';
 const FALLBACK_MODELS=(process.env.GEMINI_FALLBACK_MODELS||'gemini-3.7-flash,gemini-3.6-flash,gemini-3.5-flash').split(',').map(x=>x.trim()).filter(Boolean);
 const GOAL=process.env.COUNCIL_GOAL||'Improve balance, graphics quality, stability, and game feel conservatively.';
-if(!G1)throw new Error('GEMINI_API_KEY is required.');
+if(!G1||!G3)throw new Error('GEMINI_API_KEY and GEMINI3_API_KEY are required.');
 
 const source=fs.readFileSync('index.html','utf8');
 const rules=fs.readFileSync('ai/council-rules.md','utf8');
@@ -30,7 +29,6 @@ const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 const RETRYABLE_STATUS=new Set([429,500,502,503,504]);
 const KEY_POOL=[
   {name:'Key1',value:G1},
-  {name:'Key2',value:G2},
   {name:'Key3',value:G3}
 ].filter((x,i,a)=>x.value&&a.findIndex(y=>y.value===x.value)===i);
 
@@ -178,7 +176,7 @@ const critic=await gemini([
   'Keep strong ideas, reject weak ones, and give safer alternatives. No code patch and no private chain-of-thought.',
   'DIRECTOR REVIEW:\n'+director,
   common
-].join('\n\n'),{images:true,key:G2,maxOutputTokens:8000});
+].join('\n\n'),{images:true,key:G3,maxOutputTokens:8000});
 
 console.log('3/4 Gemini Implementer patch');
 const implementer=await gemini([
@@ -210,7 +208,7 @@ if(v.ok){
     'PATCH:\n'+patch,
     'BASELINE RUNTIME:\n'+runtime,
     'BASELINE BALANCE:\n'+balance
-  ].join('\n\n'),{images:true,key:G2,maxOutputTokens:6000});
+  ].join('\n\n'),{images:true,key:G3,maxOutputTokens:6000});
   approved=/^VERDICT:\s*APPROVE\b/i.test(gate.trim());
 }
 
@@ -219,8 +217,8 @@ const report=[
   '- Goal: '+GOAL,
   '- Primary model: '+GM,
   '- Fallback models: '+FALLBACK_MODELS.join(', '),
-  '- Secondary API key: '+(process.env.GEMINI2_API_KEY?'configured':'not configured; primary key reused'),
-  '- Third API key: '+(process.env.GEMINI3_API_KEY?'configured':'not configured'),
+  '- Key1: configured',
+  '- Key3: configured',
   '- Patch validation: '+(v.ok?'valid ('+v.changed+' changed lines)':v.reason),
   '- Final gate: '+(approved?'APPROVE':'REJECT'),'',
   '## Director audit',director,'',
