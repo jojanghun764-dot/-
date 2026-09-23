@@ -37,7 +37,7 @@ function keyName(value){
 }
 const MODEL_POOL=[GM,...FALLBACK_MODELS.filter(m=>m!==GM)];
 
-async function gemini(prompt,{images=true,key=null,maxOutputTokens=12000}={}){
+async function gemini(prompt,{images=true,key=null,maxOutputTokens=12000,temperature=0.35}={}){
   const parts=[{text:prompt}];
   if(images&&mobile)parts.push({inline_data:{mime_type:'image/png',data:mobile}});
   if(images&&desktop)parts.push({inline_data:{mime_type:'image/png',data:desktop}});
@@ -58,7 +58,7 @@ async function gemini(prompt,{images=true,key=null,maxOutputTokens=12000}={}){
             headers:{'x-goog-api-key':credential.value,'Content-Type':'application/json'},
             body:JSON.stringify({
               contents:[{role:'user',parts}],
-              generationConfig:{maxOutputTokens,temperature:0.35}
+              generationConfig:{maxOutputTokens,temperature}
             })
           });
         }catch(error){
@@ -191,7 +191,41 @@ const implementer=await gemini([
   common
 ].join('\n\n'),{images:false,key:G1,maxOutputTokens:20000});
 
-const patch=patchFrom(implementer),v=validate(patch);
+let patch=patchFrom(implementer);
+let v=validate(patch);
+let repair=null;
+
+if(!v.ok&&!/\bNO_PATCH\b/i.test(implementer)){
+  console.log('3R/4 Gemini diff repair');
+  repair=await gemini([
+    'ROLE: Unified-diff repair tool.',
+    'The previous Implementer response failed CI patch parsing/validation.',
+    'Your only job is to preserve the Implementer\'s intended code changes and express them as ONE valid git unified diff for index.html.',
+    'Do NOT invent new gameplay changes, rebalance anything, change design intent, or add commentary.',
+    'Respect every canonical rule below. Finance must remain; dice/odd-even gameplay must not return; save compatibility and potential conversion must remain intact.',
+    'The diff must start with: diff --git a/index.html b/index.html',
+    'Then include --- a/index.html and +++ b/index.html and valid @@ hunks with exact context copied from CURRENT index.html.',
+    'Keep the total changed lines under 600.',
+    'Output exactly BEGIN_PATCH, then the diff, then END_PATCH. Nothing else.',
+    'VALIDATION FAILURE: '+v.reason,
+    'COUNCIL RULES:\n'+rules,
+    'DIRECTOR REVIEW:\n'+director,
+    'CRITIC REVIEW:\n'+critic,
+    'IMPLEMENTER RESPONSE TO REPAIR:\n'+implementer,
+    'CURRENT index.html:\n'+source
+  ].join('\n\n'),{images:false,key:G3,maxOutputTokens:20000,temperature:0.1});
+
+  const repairedPatch=patchFrom(repair);
+  const repairedValidation=validate(repairedPatch);
+  console.log('Repair validation: '+(repairedValidation.ok?'valid ('+repairedValidation.changed+' changed lines)':repairedValidation.reason));
+  if(repairedValidation.ok){
+    patch=repairedPatch;
+    v=repairedValidation;
+  }else{
+    v=repairedValidation;
+  }
+}
+
 let gate='VERDICT: REJECT\nNo valid patch.',approved=false;
 
 if(v.ok){
@@ -220,14 +254,17 @@ const report=[
   '- Key1: configured',
   '- Key3: configured',
   '- Patch validation: '+(v.ok?'valid ('+v.changed+' changed lines)':v.reason),
+  '- Diff repair attempted: '+(repair?'yes':'no'),
   '- Final gate: '+(approved?'APPROVE':'REJECT'),'',
   '## Director audit',director,'',
   '## Critic challenge',critic,'',
   '## Implementer candidate response',implementer,'',
+  ...(repair?['## Diff repair response',repair,'']:[]),
   '## Final gate',gate,''
 ].join('\n');
 
 fs.writeFileSync('artifacts/council.md',report);
+if(repair)fs.writeFileSync('artifacts/repair-response.txt',repair);
 if(patch)fs.writeFileSync('artifacts/proposal.patch',patch);
 if(approved&&v.ok)fs.writeFileSync('artifacts/approved.patch',patch);
 fs.writeFileSync('artifacts/pr-body.md',[
