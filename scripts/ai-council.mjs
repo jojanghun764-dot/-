@@ -24,23 +24,55 @@ function geminiText(j){
     .trim();
 }
 
+const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+const RETRYABLE_STATUS=new Set([429,500,502,503,504]);
+const RETRY_DELAYS_MS=[10000,20000,40000,80000];
+
 async function gemini(prompt,{images=true,key=G1,maxOutputTokens=12000}={}){
   const parts=[{text:prompt}];
   if(images&&mobile)parts.push({inline_data:{mime_type:'image/png',data:mobile}});
   if(images&&desktop)parts.push({inline_data:{mime_type:'image/png',data:desktop}});
-  const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(GM)+':generateContent',{
-    method:'POST',
-    headers:{'x-goog-api-key':key,'Content-Type':'application/json'},
-    body:JSON.stringify({
-      contents:[{role:'user',parts}],
-      generationConfig:{maxOutputTokens,temperature:0.35}
-    })
-  });
-  const raw=await r.text();
-  if(!r.ok)throw new Error('Gemini '+r.status+': '+raw.slice(0,1600));
-  const t=geminiText(JSON.parse(raw));
-  if(!t)throw new Error('Gemini returned no text.');
-  return t;
+
+  const url='https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(GM)+':generateContent';
+  for(let attempt=0;attempt<=RETRY_DELAYS_MS.length;attempt++){
+    let r;
+    try{
+      r=await fetch(url,{
+        method:'POST',
+        headers:{'x-goog-api-key':key,'Content-Type':'application/json'},
+        body:JSON.stringify({
+          contents:[{role:'user',parts}],
+          generationConfig:{maxOutputTokens,temperature:0.35}
+        })
+      });
+    }catch(error){
+      if(attempt>=RETRY_DELAYS_MS.length)throw error;
+      const delay=RETRY_DELAYS_MS[attempt];
+      console.warn('Gemini network error; retry '+(attempt+1)+'/'+RETRY_DELAYS_MS.length+' in '+Math.round(delay/1000)+'s: '+error.message);
+      await sleep(delay);
+      continue;
+    }
+
+    const raw=await r.text();
+    if(r.ok){
+      const t=geminiText(JSON.parse(raw));
+      if(!t)throw new Error('Gemini returned no text.');
+      return t;
+    }
+
+    if(!RETRYABLE_STATUS.has(r.status)||attempt>=RETRY_DELAYS_MS.length){
+      throw new Error('Gemini '+r.status+': '+raw.slice(0,1600));
+    }
+
+    const headerSeconds=Number(r.headers.get('retry-after'));
+    const fallback=RETRY_DELAYS_MS[attempt];
+    const delay=Number.isFinite(headerSeconds)&&headerSeconds>0
+      ? Math.max(fallback,Math.min(headerSeconds*1000,120000))
+      : fallback;
+    console.warn('Gemini '+r.status+' temporary failure; retry '+(attempt+1)+'/'+RETRY_DELAYS_MS.length+' in '+Math.round(delay/1000)+'s.');
+    await sleep(delay);
+  }
+  throw new Error('Gemini retry loop exhausted unexpectedly.');
 }
 
 function patchFrom(t){
