@@ -3,6 +3,7 @@ import fs from 'node:fs';
 fs.mkdirSync('artifacts',{recursive:true});
 const G1=process.env.GEMINI_API_KEY;
 const G2=process.env.GEMINI2_API_KEY||G1;
+const G3=process.env.GEMINI3_API_KEY||null;
 const GM=process.env.GEMINI_MODEL||'gemini-3.8-flash';
 const FALLBACK_MODELS=(process.env.GEMINI_FALLBACK_MODELS||'gemini-3.7-flash,gemini-3.6-flash,gemini-3.5-flash').split(',').map(x=>x.trim()).filter(Boolean);
 const GOAL=process.env.COUNCIL_GOAL||'Improve balance, graphics quality, stability, and game feel conservatively.';
@@ -29,8 +30,13 @@ const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 const RETRYABLE_STATUS=new Set([429,500,502,503,504]);
 const KEY_POOL=[
   {name:'Key1',value:G1},
-  {name:'Key2',value:G2}
+  {name:'Key2',value:G2},
+  {name:'Key3',value:G3}
 ].filter((x,i,a)=>x.value&&a.findIndex(y=>y.value===x.value)===i);
+
+function keyName(value){
+  return KEY_POOL.find(x=>x.value===value)?.name||'PreferredKey';
+}
 const MODEL_POOL=[GM,...FALLBACK_MODELS.filter(m=>m!==GM)];
 
 async function gemini(prompt,{images=true,key=null,maxOutputTokens=12000}={}){
@@ -39,7 +45,7 @@ async function gemini(prompt,{images=true,key=null,maxOutputTokens=12000}={}){
   if(images&&desktop)parts.push({inline_data:{mime_type:'image/png',data:desktop}});
 
   const preferred=key
-    ? [{name:key===G1?'Key1':'Key2',value:key},...KEY_POOL.filter(x=>x.value!==key)]
+    ? [{name:keyName(key),value:key},...KEY_POOL.filter(x=>x.value!==key)]
     : KEY_POOL;
   const errors=[];
 
@@ -214,6 +220,7 @@ const report=[
   '- Primary model: '+GM,
   '- Fallback models: '+FALLBACK_MODELS.join(', '),
   '- Secondary API key: '+(process.env.GEMINI2_API_KEY?'configured':'not configured; primary key reused'),
+  '- Third API key: '+(process.env.GEMINI3_API_KEY?'configured':'not configured'),
   '- Patch validation: '+(v.ok?'valid ('+v.changed+' changed lines)':v.reason),
   '- Final gate: '+(approved?'APPROVE':'REJECT'),'',
   '## Director audit',director,'',
