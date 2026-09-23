@@ -98,12 +98,41 @@ async function gemini(prompt,{images=true,key=null,maxOutputTokens=12000}={}){
 }
 function patchFrom(t){
   if(/\bNO_PATCH\b/i.test(t))return null;
-  const m=t.match(/BEGIN_PATCH\s*([\s\S]*?)\s*END_PATCH/i);
-  let b=m?m[1]:t;
-  const f=b.match(/```(?:diff|patch)?\s*([\s\S]*?)```/i);
-  if(f&&f[1].includes('diff --git '))b=f[1];
-  const i=b.indexOf('diff --git ');
-  return i<0?null:b.slice(i).trim()+'\n';
+  const marked=t.match(/BEGIN_PATCH\s*([\s\S]*?)\s*END_PATCH/i);
+  let b=(marked?marked[1]:t).trim();
+
+  const fenced=b.match(/```(?:diff|patch)?\s*([\s\S]*?)```/i);
+  if(fenced)b=fenced[1].trim();
+
+  const gitHeader=b.indexOf('diff --git ');
+  if(gitHeader>=0)return b.slice(gitHeader).trim()+'\n';
+
+  const lines=b.split(/\r?\n/);
+  const oldHeader=lines.findIndex((line,i)=>{
+    if(!/^---\s+/.test(line)||i+1>=lines.length||!/^\+\+\+\s+/.test(lines[i+1]))return false;
+    const oldName=line.replace(/^---\s+/,'').split(/[\t ]/)[0].replace(/^a\//,'');
+    const newName=lines[i+1].replace(/^\+\+\+\s+/,'').split(/[\t ]/)[0].replace(/^b\//,'');
+    return oldName==='index.html'&&newName==='index.html';
+  });
+
+  if(oldHeader>=0){
+    const body=lines.slice(oldHeader);
+    body[0]='--- a/index.html';
+    body[1]='+++ b/index.html';
+    return ['diff --git a/index.html b/index.html',...body].join('\n').trim()+'\n';
+  }
+
+  const hunk=lines.findIndex(line=>/^@@\s+-\d/.test(line));
+  if(hunk>=0){
+    return [
+      'diff --git a/index.html b/index.html',
+      '--- a/index.html',
+      '+++ b/index.html',
+      ...lines.slice(hunk)
+    ].join('\n').trim()+'\n';
+  }
+
+  return null;
 }
 function validate(p){
   if(!p)return{ok:false,reason:'No patch.'};
@@ -149,9 +178,9 @@ console.log('3/4 Gemini Implementer patch');
 const implementer=await gemini([
   'ROLE: Conservative implementation lead. Synthesize the Director and Critic reviews.',
   'If no change is sufficiently justified, output exactly NO_PATCH.',
-  'Otherwise output one valid git unified diff for index.html only between BEGIN_PATCH and END_PATCH.',
+  'Otherwise output one valid git unified diff for index.html only between BEGIN_PATCH and END_PATCH. Prefer full diff --git / --- / +++ headers; the CI can normalize missing file headers but not malformed hunks.',
   'Do not modify CI, workflows, council rules or secrets. Do not rewrite the whole file. Keep under 600 changed lines.',
-  'Preserve save compatibility and the invariant: main-stat potential 1% = attack +10%.',
+  'Preserve save compatibility and every canonical design invariant in council-rules.md. In particular: Finance stays, dice/odd-even gameplay must not return, and main-stat potential 1% = attack +10%.',
   'Prefer at most three coherent changes. No prose inside patch markers.',
   'DIRECTOR REVIEW:\n'+director,
   'CRITIC REVIEW:\n'+critic,
