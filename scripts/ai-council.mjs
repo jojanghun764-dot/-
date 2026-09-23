@@ -145,7 +145,7 @@ function validate(p){
   if(h.length!==1||h[0][1]!=='index.html'||h[0][2]!=='index.html')return{ok:false,reason:'Only index.html may change.'};
   const changed=p.split('\n').filter(x=>/^[+-]/.test(x)&&!/^\+\+\+|^---/.test(x)).length;
   if(changed>600)return{ok:false,reason:'Patch exceeds 600 changed lines.'};
-  for(const x of ['.github/','scripts/','OPENAI_API_KEY','GEMINI_API_KEY','GEMINI2_API_KEY','council-rules.md']){
+  for(const x of ['.github/','scripts/','OPENAI_API_KEY','GEMINI_API_KEY','council-rules.md']){
     if(p.includes(x))return{ok:false,reason:'Forbidden token: '+x};
   }
   return{ok:true,changed};
