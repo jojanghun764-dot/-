@@ -4,6 +4,7 @@ fs.mkdirSync('artifacts',{recursive:true});
 const G1=process.env.GEMINI_API_KEY;
 const G2=process.env.GEMINI2_API_KEY||G1;
 const GM=process.env.GEMINI_MODEL||'gemini-3.8-flash';
+const FALLBACK_MODELS=(process.env.GEMINI_FALLBACK_MODELS||'gemini-3.7-flash,gemini-3.6-flash,gemini-3.5-flash').split(',').map(x=>x.trim()).filter(Boolean);
 const GOAL=process.env.COUNCIL_GOAL||'Improve balance, graphics quality, stability, and game feel conservatively.';
 if(!G1)throw new Error('GEMINI_API_KEY is required.');
 
@@ -26,55 +27,75 @@ function geminiText(j){
 
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 const RETRYABLE_STATUS=new Set([429,500,502,503,504]);
-const RETRY_DELAYS_MS=[10000,20000,40000,80000];
+const KEY_POOL=[
+  {name:'Key1',value:G1},
+  {name:'Key2',value:G2}
+].filter((x,i,a)=>x.value&&a.findIndex(y=>y.value===x.value)===i);
+const MODEL_POOL=[GM,...FALLBACK_MODELS.filter(m=>m!==GM)];
 
-async function gemini(prompt,{images=true,key=G1,maxOutputTokens=12000}={}){
+async function gemini(prompt,{images=true,key=null,maxOutputTokens=12000}={}){
   const parts=[{text:prompt}];
   if(images&&mobile)parts.push({inline_data:{mime_type:'image/png',data:mobile}});
   if(images&&desktop)parts.push({inline_data:{mime_type:'image/png',data:desktop}});
 
-  const url='https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(GM)+':generateContent';
-  for(let attempt=0;attempt<=RETRY_DELAYS_MS.length;attempt++){
-    let r;
-    try{
-      r=await fetch(url,{
-        method:'POST',
-        headers:{'x-goog-api-key':key,'Content-Type':'application/json'},
-        body:JSON.stringify({
-          contents:[{role:'user',parts}],
-          generationConfig:{maxOutputTokens,temperature:0.35}
-        })
-      });
-    }catch(error){
-      if(attempt>=RETRY_DELAYS_MS.length)throw error;
-      const delay=RETRY_DELAYS_MS[attempt];
-      console.warn('Gemini network error; retry '+(attempt+1)+'/'+RETRY_DELAYS_MS.length+' in '+Math.round(delay/1000)+'s: '+error.message);
-      await sleep(delay);
-      continue;
-    }
+  const preferred=key
+    ? [{name:key===G1?'Key1':'Key2',value:key},...KEY_POOL.filter(x=>x.value!==key)]
+    : KEY_POOL;
+  const errors=[];
 
-    const raw=await r.text();
-    if(r.ok){
-      const t=geminiText(JSON.parse(raw));
-      if(!t)throw new Error('Gemini returned no text.');
-      return t;
-    }
+  for(const model of MODEL_POOL){
+    for(const credential of preferred){
+      const url='https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(model)+':generateContent';
+      for(let attempt=1;attempt<=2;attempt++){
+        let r;
+        try{
+          r=await fetch(url,{
+            method:'POST',
+            headers:{'x-goog-api-key':credential.value,'Content-Type':'application/json'},
+            body:JSON.stringify({
+              contents:[{role:'user',parts}],
+              generationConfig:{maxOutputTokens,temperature:0.35}
+            })
+          });
+        }catch(error){
+          errors.push(model+'/'+credential.name+' network: '+error.message);
+          if(attempt===1){
+            console.warn(model+' '+credential.name+' network error; retrying once in 5s.');
+            await sleep(5000);
+            continue;
+          }
+          break;
+        }
 
-    if(!RETRYABLE_STATUS.has(r.status)||attempt>=RETRY_DELAYS_MS.length){
-      throw new Error('Gemini '+r.status+': '+raw.slice(0,1600));
-    }
+        const raw=await r.text();
+        if(r.ok){
+          const t=geminiText(JSON.parse(raw));
+          if(!t)throw new Error(model+' '+credential.name+' returned no text.');
+          console.log('Gemini route success: '+model+' / '+credential.name+(attempt>1?' (retry)':''));
+          return t;
+        }
 
-    const headerSeconds=Number(r.headers.get('retry-after'));
-    const fallback=RETRY_DELAYS_MS[attempt];
-    const delay=Number.isFinite(headerSeconds)&&headerSeconds>0
-      ? Math.max(fallback,Math.min(headerSeconds*1000,120000))
-      : fallback;
-    console.warn('Gemini '+r.status+' temporary failure; retry '+(attempt+1)+'/'+RETRY_DELAYS_MS.length+' in '+Math.round(delay/1000)+'s.');
-    await sleep(delay);
+        const brief=raw.replace(/\s+/g,' ').slice(0,280);
+        errors.push(model+'/'+credential.name+' HTTP '+r.status+': '+brief);
+
+        if(RETRYABLE_STATUS.has(r.status)&&attempt===1){
+          const headerSeconds=Number(r.headers.get('retry-after'));
+          const delay=Number.isFinite(headerSeconds)&&headerSeconds>0
+            ? Math.max(5000,Math.min(headerSeconds*1000,30000))
+            : 5000;
+          console.warn(model+' '+credential.name+' got '+r.status+'; retrying once in '+Math.round(delay/1000)+'s.');
+          await sleep(delay);
+          continue;
+        }
+
+        console.warn(model+' '+credential.name+' unavailable ('+r.status+'); switching route.');
+        break;
+      }
+    }
   }
-  throw new Error('Gemini retry loop exhausted unexpectedly.');
-}
 
+  throw new Error('All Gemini routes failed. Last errors:\n'+errors.slice(-12).join('\n'));
+}
 function patchFrom(t){
   if(/\bNO_PATCH\b/i.test(t))return null;
   const m=t.match(/BEGIN_PATCH\s*([\s\S]*?)\s*END_PATCH/i);
@@ -161,7 +182,8 @@ if(v.ok){
 const report=[
   '# Sprout Expedition Gemini Council Report','',
   '- Goal: '+GOAL,
-  '- Model: '+GM,
+  '- Primary model: '+GM,
+  '- Fallback models: '+FALLBACK_MODELS.join(', '),
   '- Secondary API key: '+(process.env.GEMINI2_API_KEY?'configured':'not configured; primary key reused'),
   '- Patch validation: '+(v.ok?'valid ('+v.changed+' changed lines)':v.reason),
   '- Final gate: '+(approved?'APPROVE':'REJECT'),'',
