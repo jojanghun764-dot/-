@@ -63,3 +63,9 @@ body{background:
 .equipIcon{width:72px;height:72px;filter:drop-shadow(0 3px 2px #0008)}.compAvatar,.compAvatar img{width:64px;height:64px}.compAvatar{background:#253b30}
 .rarity-transcendent{color:#ffed9d;text-shadow:0 0 12px #ffad4a}.transcendCard{border-color:#dfab61!important;background:linear-gradient(145deg,#3b2d26,#17251f)!important;box-shadow:inset 0 0 0 1px #ffdb9855,0 0 16px #dba65422!important}.transcendSummon{grid-column:1/-1;border-color:#ceac67;background:linear-gradient(110deg,#352c1e,#192d25)}
 @media(max-width:800px){.hpWrap{left:8%;right:8%;bottom:13px;height:25px}.enemyHpValue{font-size:11px;line-height:19px}.enemyName{bottom:48px;font-size:12px}.stagePowerPill,.stageCapPill{font-size:10px}}
+
+/* EX25: high-resolution scene and clearer combat text */
+.enemyHpValue{font-size:14px!important;font-weight:1000!important;line-height:25px!important;letter-spacing:.055em;-webkit-text-stroke:.35px #fff;text-shadow:-2px -2px 0 #100707,2px -2px 0 #100707,-2px 2px 0 #100707,2px 2px 0 #100707,0 3px 4px #000}
+.hpWrap{height:31px!important}.enemyName{bottom:61px!important;font-size:15px!important}
+.bossTierPicker{margin:0 0 12px;padding:10px;background:#17271d;border:1px solid #537356;border-radius:7px}.bossTierPicker>b{display:block;margin-bottom:8px;color:#ffe3a8}.bossTierGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(125px,1fr));gap:6px;max-height:142px;overflow-y:auto}.bossTierGrid .btn{font-size:11px;padding:7px 5px}.bossTierGrid small{display:block;margin-top:3px;font-size:10px;color:#fff3d0}.armoryResearch{grid-column:1/-1;border-color:#b19a65;background:linear-gradient(115deg,#283e31,#30291c)}
+@media(max-width:800px){.hpWrap{height:27px!important}.enemyHpValue{font-size:12px!important;line-height:21px!important}.enemyName{bottom:52px!important;font-size:12px!important}.bossTierGrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
