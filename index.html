@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>새싹 원정대 - EX16 Polish</title>
+<title>새싹 원정대 - EX17 New Dawn</title>
 <style>
 :root{
   --bg:#0f1714;--panel:#17231e;--panel2:#1f3028;--line:#355243;--text:#effff5;
@@ -99,10 +99,37 @@ button,input,select{font:inherit} button{cursor:pointer;border:0}.wrap{max-width
 .equipTrait{margin-top:6px;padding:6px 7px;border-radius:8px;background:#17241d;border:1px solid #54705e;color:#c7f7d5;font-size:11px;font-weight:800}
 .battlefield.elite{border-color:#b78cff;box-shadow:inset 0 0 0 2px #251839,0 0 28px rgba(183,140,255,.22)}
 .eliteBadge{color:#dfc7ff}.costHint{margin-top:5px;color:#ffe39a;font-weight:800}.battlefield.elite .enemyName{color:#eadcff}.battlefield.bossing .enemyName{color:#ffd1b0}
+
+.startScreen{position:fixed;inset:0;z-index:200;display:none;place-items:center;overflow:auto;background:#07110d;color:#effff5;padding:18px}
+.startScreen.show{display:grid}.introActive{overflow:hidden}.startBackdrop{position:absolute;inset:0;overflow:hidden;background:radial-gradient(circle at 50% 18%,#244f38 0,#10281c 34%,#07110d 72%)}.startBackdrop:after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.025),transparent 35%,rgba(0,0,0,.45));pointer-events:none}.titleCanvas{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;opacity:.9}.startPanel{position:relative;width:min(760px,100%);text-align:center;padding:28px 24px;border:2px solid #5f9d70;background:rgba(11,28,19,.88);box-shadow:0 0 0 4px #0a1710,0 24px 60px rgba(0,0,0,.48);border-radius:10px;backdrop-filter:blur(2px)}.startEyebrow{font:900 11px ui-monospace,monospace;letter-spacing:.22em;color:#9bd6ac}.startLogo{margin:6px 0 2px;font:1000 clamp(34px,8vw,68px)/.98 ui-monospace,monospace;letter-spacing:-.07em;text-shadow:4px 4px 0 #07110d,0 0 20px rgba(184,255,120,.25)}.startLogo span{color:#b8ff78}.startSub{color:#b9d8c4;font-size:13px;line-height:1.6}.startFeatures{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:18px 0}.startFeature{border:1px solid #385f46;background:#0d1c14;padding:9px;border-radius:8px;font:800 11px ui-monospace,monospace;color:#d7f6df}.startPrimary{width:min(340px,100%);min-height:54px;font-size:16px;box-shadow:0 5px 0 #1a6a3a}.startPrimary:active{transform:translateY(3px);box-shadow:0 2px 0 #1a6a3a}.startSecondary{margin-top:10px;background:transparent;border:1px solid #4a6956;color:#b9d8c4}.startFoot{margin-top:16px;font-size:10px;color:#759483;letter-spacing:.08em}.starterPanel{width:min(1040px,100%);position:relative}.starterHead{text-align:center;margin-bottom:14px}.starterHead h2{margin:0;font-size:28px}.starterHead p{margin:5px 0;color:#a9c8b5}.starterGrid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}.starterCard{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;min-width:0;padding:13px 9px 11px;border:1px solid #3f6650;background:linear-gradient(180deg,#183427,#0e2118);border-radius:10px;transition:transform .12s,border-color .12s,filter .12s}.starterCard:hover{transform:translateY(-3px);border-color:#b8ff78;filter:brightness(1.08)}.starterPortrait{width:96px;height:96px;image-rendering:pixelated;background:radial-gradient(circle,#294b37 0,#102219 70%);border:1px solid #466c55;border-radius:8px}.starterCard h3{margin:7px 0 2px;font-size:14px}.starterJob{color:#b8ff78;font-size:11px;font-weight:900}.starterDesc{min-height:48px;margin:7px 0;color:#a9c8b5;font-size:10px;line-height:1.45}.starterStat{width:100%;display:flex;justify-content:space-between;gap:4px;border-top:1px dashed #345542;padding-top:6px;margin-top:auto;font-size:9px;color:#cce7d4}.starterChoose{width:100%;margin-top:8px}.starterNote{margin:12px 0 0;text-align:center;color:#9ab9a4;font-size:11px}.introBack{margin:12px auto 0;display:block}.gameShell{transition:filter .2s}.introActive .gameShell{filter:blur(2px) brightness(.45);pointer-events:none;user-select:none}
+@media(max-width:800px){.startScreen{padding:10px}.startPanel{padding:20px 14px}.startFeatures{grid-template-columns:1fr 1fr 1fr}.starterGrid{grid-template-columns:1fr 1fr}.starterCard:last-child{grid-column:1/-1}.starterPortrait{width:84px;height:84px}.starterDesc{min-height:0}.starterPanel{padding-bottom:20px}}
+@media(max-width:420px){.startFeatures{grid-template-columns:1fr}.starterGrid{grid-template-columns:1fr}.starterCard:last-child{grid-column:auto}.starterCard{display:grid;grid-template-columns:76px 1fr;grid-template-areas:'pic title' 'pic desc' 'pic stat' 'button button';text-align:left;gap:2px 9px}.starterPortrait{grid-area:pic;width:76px;height:76px}.starterCard h3{grid-area:title;margin:0}.starterJob{position:absolute;right:10px;top:12px}.starterDesc{grid-area:desc;margin:2px 0}.starterStat{grid-area:stat}.starterChoose{grid-area:button}.startLogo{font-size:36px}}
+
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="startScreen show" id="startScreen" aria-label="새싹 원정대 시작 화면">
+  <div class="startBackdrop"><canvas class="titleCanvas" id="titleCanvas" width="480" height="270" aria-hidden="true"></canvas></div>
+  <div class="startPanel">
+    <div class="startEyebrow">ALPI GAMES · PIXEL RPG</div>
+    <div class="startLogo"><span>새싹</span> 원정대</div>
+    <div class="startSub">작은 새싹에서 시작해 세계수의 끝까지.<br>자동 전투 · 장비 빌드 · 동료 · 환생으로 완성하는 도트 성장 RPG</div>
+    <div class="startFeatures"><div class="startFeature">⚔ AUTO COMBAT</div><div class="startFeature">✦ BUILD & LOOT</div><div class="startFeature">🌳 REBIRTH</div></div>
+    <button class="btn primary startPrimary" id="startGameBtn">원정 시작</button>
+    <button class="btn startSecondary" id="newGameBtn" hidden>새 원정 시작</button>
+    <div class="startFoot">EX17 · 모든 신규 원정은 재화 0 / Lv.1 / STAGE 1에서 시작</div>
+  </div>
+</div>
+<div class="startScreen" id="starterScreen" aria-label="첫 캐릭터 선택">
+  <div class="startBackdrop"><canvas class="titleCanvas" id="starterBackdropCanvas" width="480" height="270" aria-hidden="true"></canvas></div>
+  <div class="starterPanel">
+    <div class="starterHead"><div class="startEyebrow">CHOOSE YOUR FIRST SPROUT</div><h2>첫 원정대를 선택하세요</h2><p>첫 캐릭터는 출발점일 뿐입니다. 이후 다른 캐릭터도 자유롭게 육성할 수 있습니다.</p></div>
+    <div class="starterGrid" id="starterGrid"></div>
+    <div class="starterNote">모든 직업은 동일하게 재화 0에서 출발합니다. 직업마다 전투 방식과 성장 보정이 다릅니다.</div>
+    <button class="btn introBack" id="starterBackBtn">← 타이틀로</button>
+  </div>
+</div>
+<div class="wrap gameShell">
   <div class="topbar">
     <div class="brand"><h1>✦ 새싹 원정대 <small>SPROUT EXPEDITION</small></h1><small>도트 횡스크롤 자동사냥 RPG · Pixel Remaster</small></div>
     <div class="stat"><small>골드</small><b id="gold">0</b></div>
@@ -205,6 +232,7 @@ function defaultState(){return {
  missions:{killsClaimed:0,bossClaimed:0,levelClaimed:0},lastSave:now(),lastLogout:now(),offlineClaimed:false
 };}
 let S=defaultState();
+let runtimeSessionActive=false;
 let enemy=null,attackTimer=0,buffTimer=0,party={bossHp:100,playerHp:100,guard:false,ended:false};
 const VFX={attack:0,hit:0,spawn:0,skill:0,skillFx:null,shake:0,damages:[],particles:[],last:0};
 const bossManual={active:false,playerHp:100,maxHp:100,guard:false,endAt:0,lastAction:0};
@@ -506,13 +534,13 @@ function partyLog(s){const e=$('#partyLog');e.innerHTML+=`<div>${s}</div>`;e.scr
 function partyAction(type){if(party.ended)return;const st=calcStats(),scale=Math.log10(Math.max(10,st.power||10));let dmg=0,crit=false;if(type==='attack'){crit=Math.random()<st.crit/100;dmg=clamp((4.5+scale*1.65)*(crit?1.35:1)*rand(.90,1.10),6,22);partyLog('⚔ 기본 공격 '+dmg.toFixed(1)+'%'+(crit?' · CRIT':''))}if(type==='skill'){const c=getC(),idx=Math.min(c.unlockedSkills-1,Math.floor(Math.random()*Math.max(1,c.unlockedSkills)));dmg=clamp((10+scale*2.05+skillMultiplier(idx,c.skillLv[idx]||1)*1.4)*rand(.94,1.08),13,34);partyLog('✦ '+getDef().skills[idx]+' '+dmg.toFixed(1)+'%')}if(type==='guard'){party.guard=true;partyLog('🛡 다음 공격 피해 70% 감소')}party.bossHp-=dmg;if(party.bossHp<=0){party.bossHp=0;party.ended=true;S.gold+=50000;S.gems+=1000;S.equipTickets+=500;S.compTickets+=500;S.starScrolls+=3;const ancient=grantAncientEquip();partyLog(`🏆 클리어! 고대 장비 [${ancient.name}] / 50,000G / 보석 1,000 / 티켓 각 500 / 스타포스권 3장`);renderParty();render();return}let mitigation=Math.max(.55,1-Math.min(.45,(st.shieldPower||0)*.03)),hit=rand(8,18)*mitigation*(party.guard?.3:1);party.guard=false;party.playerHp-=hit;partyLog(`🌳 보스 반격 ${hit.toFixed(0)} 피해`);if(party.playerHp<=0){party.playerHp=0;party.ended=true;partyLog('💀 실패. 다시 도전하세요.')}renderParty()}
 function renderParty(){$('#partyHpText').textContent=Math.ceil(party.bossHp)+'%';$('#playerPartyHpText').textContent=Math.ceil(party.playerHp)+'%';$('#partyHpBar').style.width=clamp(party.bossHp,0,100)+'%';$('#playerPartyHpBar').style.width=clamp(party.playerHp,0,100)+'%'}
 
-$('#autoBtn').onclick=()=>{S.auto=!S.auto;renderBattle()};$('#bossBtn').onclick=()=>toast('보스는 10마리 처치 시 자동진입합니다.');$('#partyBtn').onclick=openParty;$('#saveBtn').onclick=save;$('#resetBtn').onclick=()=>{if(confirm('모든 저장 데이터를 초기화할까요?')){localStorage.removeItem('sproutFinalV5');localStorage.removeItem('sproutFinalV7');localStorage.removeItem('sproutFinalV11');localStorage.removeItem('sproutFinalV12');localStorage.removeItem('sproutFinalV13');localStorage.removeItem('sproutFinalV14');localStorage.removeItem('sproutFinalV15');localStorage.removeItem('sproutFinalV16');localStorage.removeItem('sproutFinalV17');localStorage.removeItem('sproutFinalV18');localStorage.removeItem('sproutFinalV10');S=defaultState();spawn(false);render()}};$('#switchCharBtn').onclick=()=>{renderChars();openModal('charModal')};
+$('#autoBtn').onclick=()=>{S.auto=!S.auto;renderBattle()};$('#bossBtn').onclick=()=>toast('보스는 10마리 처치 시 자동진입합니다.');$('#partyBtn').onclick=openParty;$('#saveBtn').onclick=save;$('#resetBtn').onclick=()=>{if(confirm('모든 진행도와 재화를 삭제하고 새 원정을 시작할까요?'))hardResetGame()};$('#switchCharBtn').onclick=()=>{renderChars();openModal('charModal')};
 $$('.tab').forEach(b=>b.onclick=()=>{$$('.tab').forEach(x=>x.classList.remove('active'));$$('.tabPage').forEach(x=>x.classList.remove('active'));b.classList.add('active');$('#'+b.dataset.tab).classList.add('active')});
-window.addEventListener('beforeunload',()=>{S.version=18;S.lastLogout=now();localStorage.setItem('sproutFinalV18',JSON.stringify(S))});
-setInterval(()=>{S.version=18;S.lastLogout=now();localStorage.setItem('sproutFinalV18',JSON.stringify(S))},15000);
+window.addEventListener('beforeunload',()=>persistState());
+setInterval(()=>persistState(),15000);
 
 
-function defaultState(){return {version:18,gold:220,gems:180,worldLeaves:0,rebirthUpgrades:{atk:0,exp:0,gold:0,boss:0,speed:0,offline:0},equipTickets:0,compTickets:0,starScrolls:0,randomGoldBoxes:0,autoEquip:true,autoTrash:true,autoTrashThreshold:'희귀',salvageCount:0,inventorySort:'rarity',autoCompEquip:true,autoCompTrash:true,autoCompTrashThreshold:'희귀',compSalvageCount:0,chars:Object.fromEntries(CHARACTERS.map(function(c){return [c.id,defaultChar(c)]})),active:'warrior',auto:true,totalKills:0,bossKills:0,equipmentInventory:[],companionInventory:[],gacha:{equipPity:0,compPity:0},buff:{type:null,until:0},lastBuffCheck:0,missions:{killsClaimed:0,bossClaimed:0,levelClaimed:0},lastSave:now(),lastLogout:now(),offlineClaimed:false}}
+function defaultState(){return {version:19,profileStarted:false,firstCharacter:null,gold:0,gems:0,worldLeaves:0,rebirthUpgrades:{atk:0,exp:0,gold:0,boss:0,speed:0,offline:0},equipTickets:0,compTickets:0,starScrolls:0,randomGoldBoxes:0,autoEquip:true,autoTrash:true,autoTrashThreshold:'희귀',salvageCount:0,inventorySort:'rarity',autoCompEquip:true,autoCompTrash:true,autoCompTrashThreshold:'희귀',compSalvageCount:0,chars:Object.fromEntries(CHARACTERS.map(function(c){return [c.id,defaultChar(c)]})),active:'warrior',auto:true,totalKills:0,bossKills:0,equipmentInventory:[],companionInventory:[],gacha:{equipPity:0,compPity:0},buff:{type:null,until:0},lastBuffCheck:0,missions:{killsClaimed:0,bossClaimed:0,levelClaimed:0},lastSave:now(),lastLogout:now(),offlineClaimed:false}}
 
 const COMP_BUFFS_EX9={
  fury:{name:'폭주 증폭',icon:'🔥'},
@@ -578,48 +606,46 @@ function loop(t){drawBattleScene(t);if(S.auto){var st=calcStats();if(t-attackTim
 function expNeed(lv){return Math.floor(14*Math.pow(1.105,Math.max(0,lv-1)))}
 
 function cleanupRemovedEconomy(){
- var legacyDice=S.diceGame;
- if(legacyDice&&Number(legacyDice.bet)>0)S.gold+=Math.max(0,Math.floor(Number(legacyDice.bet)||0));
  delete S.diceGame;
  delete S.finance;
 }
-function applyV18RebalanceReset(previousVersion){
- if(Number(previousVersion)>=18)return false;
- S.rebirthUpgrades={atk:0,exp:0,gold:0,boss:0,speed:0,offline:0};
- Object.values(S.chars||{}).forEach(function(c){
-  c.growth={atk:0,aspd:0,crit:0,speed:0};
-  c.mainStat=0;
-  c.statPoints=0;
-  c.jobBoost=0;
-  c.potentialMain=0;
-  var unlocked=(c.level||1)>=10?3:(c.level||1)>=5?2:1;
-  c.unlockedSkills=unlocked;
-  c.skillLv=[1,unlocked>=2?1:0,unlocked>=3?1:0];
- });
- delete S.finance;
+function clearLegacySaveKeys(){
+ ['sproutFinalV5','sproutFinalV7','sproutFinalV9','sproutFinalV10','sproutFinalV11','sproutFinalV12','sproutFinalV13','sproutFinalV14','sproutFinalV15','sproutFinalV16','sproutFinalV17','sproutFinalV18'].forEach(function(k){localStorage.removeItem(k)});
+}
+function applyV19FullReset(previousVersion){
+ if(Number(previousVersion)>=19)return false;
+ S=defaultState();
+ cleanupRemovedEconomy();
+ clearLegacySaveKeys();
  return true;
 }
-
-function save(){S.version=18;S.lastSave=now();S.lastLogout=now();localStorage.setItem('sproutFinalV18',JSON.stringify(S));toast('저장 완료')}
+function persistState(){
+ S.version=19;S.lastSave=now();S.lastLogout=now();cleanupRemovedEconomy();localStorage.setItem('sproutFinalV19',JSON.stringify(S));
+}
+function save(){persistState();toast('저장 완료')}
 function load(){try{
- var raw=localStorage.getItem('sproutFinalV18')||localStorage.getItem('sproutFinalV17')||localStorage.getItem('sproutFinalV16')||localStorage.getItem('sproutFinalV15')||localStorage.getItem('sproutFinalV14')||localStorage.getItem('sproutFinalV13')||localStorage.getItem('sproutFinalV12')||localStorage.getItem('sproutFinalV11')||localStorage.getItem('sproutFinalV10')||localStorage.getItem('sproutFinalV9')||localStorage.getItem('sproutFinalV7')||localStorage.getItem('sproutFinalV5');
- var loaded=raw?JSON.parse(raw):null,previousVersion=loaded?Number(loaded.version||0):18;
- if(loaded)S=Object.assign(defaultState(),loaded);
- S.version=18;if(S.worldLeaves===undefined)S.worldLeaves=0;if(!S.rebirthUpgrades)S.rebirthUpgrades={atk:0,exp:0,gold:0,boss:0,speed:0,offline:0};
- cleanupRemovedEconomy();var didRebalanceReset=applyV18RebalanceReset(previousVersion);cleanupRemovedEconomy();
+ var raw19=localStorage.getItem('sproutFinalV19');
+ var legacyRaw=!raw19&&(localStorage.getItem('sproutFinalV18')||localStorage.getItem('sproutFinalV17')||localStorage.getItem('sproutFinalV16')||localStorage.getItem('sproutFinalV15')||localStorage.getItem('sproutFinalV14')||localStorage.getItem('sproutFinalV13')||localStorage.getItem('sproutFinalV12')||localStorage.getItem('sproutFinalV11')||localStorage.getItem('sproutFinalV10')||localStorage.getItem('sproutFinalV9')||localStorage.getItem('sproutFinalV7')||localStorage.getItem('sproutFinalV5'));
+ var loadedRaw=raw19||legacyRaw,loaded=loadedRaw?JSON.parse(loadedRaw):null,previousVersion=loaded?Number(loaded.version||0):19;
+ if(raw19&&loaded)S=Object.assign(defaultState(),loaded);
+ else S=defaultState();
+ var didFullReset=!!legacyRaw&&applyV19FullReset(previousVersion);
+ S.version=19;cleanupRemovedEconomy();
+ if(S.profileStarted===undefined)S.profileStarted=false;if(S.firstCharacter===undefined)S.firstCharacter=null;
+ if(S.worldLeaves===undefined)S.worldLeaves=0;if(!S.rebirthUpgrades)S.rebirthUpgrades={atk:0,exp:0,gold:0,boss:0,speed:0,offline:0};
  if(S.autoEquip===undefined)S.autoEquip=true;if(S.autoTrash===undefined)S.autoTrash=true;if(!S.autoTrashThreshold)S.autoTrashThreshold='희귀';if(S.salvageCount===undefined)S.salvageCount=0;if(!S.inventorySort)S.inventorySort='rarity';
  if(S.autoCompEquip===undefined)S.autoCompEquip=true;if(S.autoCompTrash===undefined)S.autoCompTrash=true;if(!S.autoCompTrashThreshold)S.autoCompTrashThreshold='희귀';if(S.compSalvageCount===undefined)S.compSalvageCount=0;
-  (S.companionInventory||[]).forEach(ensureCompBuff);
+ (S.companionInventory||[]).forEach(ensureCompBuff);(S.equipmentInventory||[]).forEach(ensureEquipTrait);
  Object.values(S.chars||{}).forEach(function(c){
-  if(c.bossReady===undefined)c.bossReady=false;if(c.mainStat===undefined)c.mainStat=0;if(c.statPoints===undefined)c.statPoints=Math.max(0,(c.level||1)-1-c.mainStat);if(c.jobBoost===undefined)c.jobBoost=0;
-  if(!c.growth)c.growth={atk:0,aspd:0,crit:0,speed:0};if(c.growth.atk===undefined)c.growth.atk=0;if(c.growth.aspd===undefined)c.growth.aspd=0;if(c.growth.crit===undefined)c.growth.crit=0;if(c.growth.speed===undefined)c.growth.speed=0;
-  c.companions=(c.companions||[]).map(function(ac){var found=(S.companionInventory||[]).find(function(x){return x.id===ac.id});return ensureCompBuff(found||ac)})
+  if(c.bossReady===undefined)c.bossReady=false;if(c.mainStat===undefined)c.mainStat=0;if(c.statPoints===undefined)c.statPoints=0;if(c.jobBoost===undefined)c.jobBoost=0;
+  if(!c.growth)c.growth={atk:0,aspd:0,crit:0,speed:0};if(c.growth.speed===undefined)c.growth.speed=0;
+  if(c.rebirths===undefined)c.rebirths=0;if(c.rebirthRushUntil===undefined)c.rebirthRushUntil=0;if(c.rebirthBest===undefined)c.rebirthBest=c.highest||1;
+  c.companions=(c.companions||[]).map(function(ac){var found=(S.companionInventory||[]).find(function(x){return x.id===ac.id});return ensureCompBuff(found||ac)});
  });
-}catch(e){console.warn(e)}
- var elapsed=Math.max(0,(now()-(S.lastLogout||now()))/1000);
- if(elapsed>20){var c=getC(),cap=Math.min(elapsed,8*3600),off=1+rebirthBonuses().offlinePct/100,g=Math.floor(cap*(2+c.stage*.45)*off),x=Math.floor(cap*(1.35+c.stage*.26)*off);addGold(g);addExp(x,true);setTimeout(function(){toast('방치 보상 100%: +'+fmt(g)+'G / +'+fmt(x)+'EXP')},300)}
- S.lastLogout=now();if(didRebalanceReset)setTimeout(function(){toast('EX15 밸런스 리셋: 성장 능력치가 기본값으로 초기화되었습니다.')},350)
-}
+ if(S.profileStarted&&!didFullReset){var elapsed=Math.max(0,(now()-(S.lastLogout||now()))/1000);if(elapsed>20){var c=getC(),cap=Math.min(elapsed,8*3600),off=1+rebirthBonuses().offlinePct/100,g=Math.floor(cap*(2+c.stage*.45)*off),x=Math.floor(cap*(1.35+c.stage*.26)*off);addGold(g);addExp(x,true);setTimeout(function(){toast('방치 보상 100%: +'+fmt(g)+'G / +'+fmt(x)+'EXP')},300)}}
+ S.lastLogout=now();persistState();
+ if(didFullReset)setTimeout(function(){toast('EX17 새 원정: 모든 능력치와 재화를 초기화했습니다.')},350);
+}catch(e){console.warn(e);S=defaultState();persistState()}}
 
 function calcStats(){
  var d=getDef(),c=getC(),cb=companionBuffs(),potentialPct=currentPotentialPercent(),rb=rebirthBonuses(),et=equipmentTraitBonuses();
@@ -683,9 +709,53 @@ function puff(x,y,c){if(c===undefined)c='#eaffd8';for(var i=0;i<4;i++)VFX.partic
 function hitBurst(x,y,crit){if(crit===undefined)crit=false;for(var i=0;i<(crit?8:5);i++)VFX.particles.push({x:x,y:y,vx:rand(-36,36),vy:rand(-48,10),life:rand(.16,.42),c:crit?'#ffe36f':choice(['#d8ff8e','#ffffff','#9af49a']),s:choice([2,3])});if(VFX.particles.length>75)VFX.particles=VFX.particles.slice(-75)}
 function drawEffects(ctx,dt){VFX.particles.forEach(function(p){p.life-=dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=86*dt;ctx.globalAlpha=Math.max(0,Math.min(1,p.life*2));px(ctx,p.x,p.y,p.s,p.s,p.c)});ctx.globalAlpha=1;VFX.particles=VFX.particles.filter(function(p){return p.life>0}).slice(-75);VFX.damages.forEach(function(d){d.life-=dt;d.y-=23*dt;ctx.globalAlpha=Math.max(0,Math.min(1,d.life*1.3));ctx.textAlign='center';ctx.textBaseline='middle';ctx.lineJoin='round';ctx.lineWidth=d.crit?7:6;ctx.strokeStyle='#090805';ctx.fillStyle=d.crit?'#ffe76a':'#f8fff9';ctx.font=(d.crit?'900 19px':'900 16px')+' ui-monospace,monospace';var txt=(d.crit?'CRIT ':'')+fmt(d.n);ctx.strokeText(txt,d.x,d.y);ctx.fillText(txt,d.x,d.y);if(d.tag){ctx.font='900 9px ui-monospace,monospace';ctx.lineWidth=4;ctx.strokeText(d.tag,d.x,d.y+13);ctx.fillText(d.tag,d.x,d.y+13)}});ctx.globalAlpha=1;VFX.damages=VFX.damages.filter(function(d){return d.life>0}).slice(-30)}
 function drawBattleScene(t){var c=canvas();if(!c)return;var ctx=c.getContext('2d');ctx.setTransform(1,0,0,1,0,0);ctx.imageSmoothingEnabled=false;var dt=Math.min(.028,Math.max(0,(t-(VFX.last||t))/1000));VFX.last=t;VFX.attack=Math.max(0,VFX.attack-dt);VFX.hit=Math.max(0,VFX.hit-dt);VFX.spawn=Math.max(0,VFX.spawn-dt);VFX.shake=0;ctx.save();drawBackground(ctx,t);drawHero(ctx,t);drawEnemy(ctx,t);drawSkillEffects(ctx,dt,t);drawEffects(ctx,dt);ctx.restore()}
-function loop(t){if(document.visibilityState!=='hidden')drawBattleScene(t);if(S.auto){var st=calcStats(),gap=1000/Math.max(.25,st.aspd);if(t-attackTimer>gap){attackTimer=t;attack()}}if(t-buffTimer>1000){buffTimer=t;buffCheck();renderTop()}requestAnimationFrame(loop)}
-
-buildSprites();load();spawn(false);render();log('🌱 새싹 원정대 EX16 Polish 시작');requestAnimationFrame(loop);
+const STARTER_INFO={
+ warrior:{tag:'균형형',desc:'높은 최종 피해와 보스 화력. 처음 시작하기 가장 직관적인 근접 전투형.'},
+ mage:{tag:'스킬형',desc:'자동 스킬의 성장폭이 크고 공격력 보정을 받는 폭발형 마법 딜러.'},
+ archer:{tag:'연타형',desc:'빠른 2타와 높은 치명타 피해를 쌓아가는 안정적인 원거리 딜러.'},
+ rogue:{tag:'속공형',desc:'높은 기본 치명타와 추가타를 겹쳐 순간 화력을 만드는 고속 전투형.'},
+ paladin:{tag:'수호형',desc:'보스 피해와 수호력을 함께 성장시키는 단단한 장기전 특화 직업.'}
+};
+function drawIntroScene(t,canvasId){
+ var c=document.getElementById(canvasId);if(!c)return;var ctx=c.getContext('2d');ctx.setTransform(1,0,0,1,0,0);ctx.imageSmoothingEnabled=false;ctx.clearRect(0,0,480,270);
+ ctx.fillStyle='#0b2218';ctx.fillRect(0,0,480,270);ctx.fillStyle='#123927';ctx.fillRect(0,155,480,115);ctx.fillStyle='#1d5637';ctx.fillRect(0,190,480,80);
+ for(var i=0;i<18;i++){var x=(i*73+Math.floor(t*.015))%520-20,y=28+(i*37)%100;px(ctx,x,y,2,2,i%3===0?'#b8ff78':'#6eb88a')}
+ for(var j=0;j<12;j++){var tx=j*46-12,th=28+(j%4)*8;px(ctx,tx,155-th,18,th,'#173d2a');px(ctx,tx+5,149-th,8,8,'#245c39')}
+ ctx.fillStyle='#0b1710';ctx.fillRect(0,218,480,52);ctx.fillStyle='#294f34';for(var k=0;k<480;k+=24)px(ctx,k,215+(k/24%2)*3,18,4,'#294f34');
+ var ids=['warrior','mage','archer','rogue','paladin'],frame=Math.floor(t/380)%2;
+ ids.forEach(function(id,n){var sheet=SPRITES.heroes[id];if(sheet)drawFrame(ctx,sheet,48,48,frame,54+n*78,150+(n%2)*3,58,58)});
+ ctx.globalAlpha=.2;ctx.fillStyle='#b8ff78';ctx.fillRect(0,0,480,3);ctx.globalAlpha=1;
+}
+function renderStarterGrid(){
+ var root=$('#starterGrid');if(!root)return;
+ root.innerHTML=CHARACTERS.map(function(d){var info=STARTER_INFO[d.id];return '<div class="starterCard"><canvas class="starterPortrait" width="96" height="96" data-starter-canvas="'+d.id+'"></canvas><h3>'+d.name+'</h3><div class="starterJob">'+d.job+' · '+info.tag+'</div><div class="starterDesc">'+info.desc+'</div><div class="starterStat"><span>ATK '+d.baseAtk+'</span><span>CRIT '+d.crit+'%</span><span>SPD '+d.aspd.toFixed(2)+'</span></div><button class="btn primary starterChoose" onclick="chooseStarter(\''+d.id+'\')">이 캐릭터로 시작</button></div>'}).join('');
+}
+function drawStarterPreviews(t){
+ document.querySelectorAll('[data-starter-canvas]').forEach(function(c){var id=c.dataset.starterCanvas,ctx=c.getContext('2d'),sheet=SPRITES.heroes[id];ctx.imageSmoothingEnabled=false;ctx.clearRect(0,0,96,96);ctx.fillStyle='#102219';ctx.fillRect(0,0,96,96);ctx.fillStyle='#1b3b29';ctx.fillRect(0,70,96,26);for(var x=0;x<96;x+=12)px(ctx,x,69,8,3,'#315d3c');if(sheet)drawFrame(ctx,sheet,48,48,Math.floor(t/420)%2,12,8,72,72)});
+}
+function showTitleScreen(){
+ runtimeSessionActive=false;document.body.classList.add('introActive');$('#starterScreen').classList.remove('show');$('#startScreen').classList.add('show');
+ var started=!!S.profileStarted;$('#startGameBtn').textContent=started?'이어하기':'원정 시작';$('#newGameBtn').hidden=!started;
+}
+function showStarterScreen(){
+ $('#startScreen').classList.remove('show');$('#starterScreen').classList.add('show');renderStarterGrid();
+}
+function enterGame(){
+ $('#startScreen').classList.remove('show');$('#starterScreen').classList.remove('show');document.body.classList.remove('introActive');runtimeSessionActive=true;if(!enemy)spawn(false);render();
+}
+function chooseStarter(id){
+ if(!CHARACTERS.some(function(c){return c.id===id}))return;S.active=id;S.firstCharacter=id;S.profileStarted=true;S.auto=true;enemy=null;persistState();enterGame();log('🌱 '+getDef().name+'와 함께 첫 원정을 시작합니다.');toast(getDef().name+' 원정 시작!');
+}
+function hardResetGame(){
+ clearLegacySaveKeys();localStorage.removeItem('sproutFinalV19');S=defaultState();enemy=null;attackTimer=0;buffTimer=0;runtimeSessionActive=false;persistState();render();showTitleScreen();
+}
+function initIntroFlow(){
+ $('#startGameBtn').onclick=function(){if(S.profileStarted)enterGame();else showStarterScreen()};
+ $('#newGameBtn').onclick=function(){if(confirm('현재 진행도를 전부 삭제하고 새 원정을 시작할까요?'))hardResetGame()};
+ $('#starterBackBtn').onclick=showTitleScreen;showTitleScreen();
+}
+function loop(t){drawIntroScene(t,'titleCanvas');drawIntroScene(t,'starterBackdropCanvas');drawStarterPreviews(t);if(!runtimeSessionActive){requestAnimationFrame(loop);return}if(document.visibilityState!=='hidden')drawBattleScene(t);if(S.auto){var st=calcStats(),gap=1000/Math.max(.25,st.aspd);if(t-attackTimer>gap){attackTimer=t;attack()}}if(t-buffTimer>1000){buffTimer=t;buffCheck();renderTop()}requestAnimationFrame(loop)}
+buildSprites();load();render();initIntroFlow();log('🌱 새싹 원정대 EX17 New Dawn 시작');requestAnimationFrame(loop);
 </script>
 </body>
 </html>
