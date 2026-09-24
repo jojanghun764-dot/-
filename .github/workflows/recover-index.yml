@@ -1,0 +1,34 @@
+name: Recover index and apply safe copy fix
+on:
+  push:
+    paths:
+      - '.github/workflows/recover-index.yml'
+permissions:
+  contents: write
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Restore verified game and remove stale finance copy
+        run: |
+          git show e468b56947537cc27d185b412ce8e85965cebc3a:index.html > index.html
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text()
+          old='장비 · 잠재 · 스타포스 · 동료 · 각성 · 골드 · 보석 · 금융 · 티켓 · 가챠 천장 · 직업 전용 강화'
+          new='장비 · 잠재 · 스타포스 · 동료 · 각성 · 골드 · 보석 · 티켓 · 가챠 천장 · 직업 전용 강화'
+          if old not in s:
+              raise SystemExit('stale finance copy target not found')
+          p.write_text(s.replace(old,new,1))
+          PY
+      - name: Commit recovered index
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add index.html
+          git commit -m "Restore game and fix stale rebirth economy copy"
+          git push
