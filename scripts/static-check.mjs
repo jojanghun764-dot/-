@@ -47,6 +47,7 @@ const forbidden = [
   'diceGameLive',
   '.diceHero{',
   '.financeHero{',
+  '· 금융 ·',
   "localStorage.setItem('sproutFinalV17'"
 ];
 const forbiddenPresent = forbidden.filter(token => html.includes(token));
