@@ -32,8 +32,11 @@ const required = [
   'function expNeed',
   'function equipmentHTML',
   'function companionsHTML',
-  'function applyV18RebalanceReset',
-  'sproutFinalV18',
+  'function applyV19FullReset',
+  'function initIntroFlow',
+  'id="startScreen"',
+  'id="starterScreen"',
+  'sproutFinalV19',
   'potentialAttackPct=potentialPct*10'
 ];
 const missing = required.filter(token => !html.includes(token));
@@ -48,7 +51,8 @@ const forbidden = [
   '.diceHero{',
   '.financeHero{',
   '· 금융 ·',
-  "localStorage.setItem('sproutFinalV17'"
+  "localStorage.setItem('sproutFinalV17'",
+  "localStorage.setItem('sproutFinalV18'"
 ];
 const forbiddenPresent = forbidden.filter(token => html.includes(token));
 const result = {
