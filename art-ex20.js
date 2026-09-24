@@ -1,6 +1,8 @@
 (function(){
 'use strict';
-const ART_VERSION='EX20 Art Direction';
+const ART_VERSION='EX21 Art Direction';
+const REGION_IMAGES={};
+for(const name of ['forest','swamp','roots']){const img=new Image();img.src='assets/'+name+'-ex21.webp';REGION_IMAGES[name]=img}
 const REGION_POOLS={
  forest:['새싹 슬라임','햇살 버섯','도토리 다람쥐','어린 나무정령','민들레 꽃요정'],
  swamp:['독안개 개구리','진흙 늪슬라임','갈대 거머리','청록 도깨비불','부패꽃 포식자'],
@@ -106,7 +108,9 @@ function drawRootsEX20(ctx,t){
 drawRegionBackground=function(ctx,t){ctx.clearRect(0,0,480,270);const theme=stageTheme();if(theme==='forest')drawForestEX20(ctx,t);else if(theme==='swamp')drawSwampEX20(ctx,t);else drawRootsEX20(ctx,t);ctx.globalAlpha=.62;for(let i=0;i<14;i++){const x=(i*47+Math.floor(t*.006)*(i%2?1:-1)+520)%520-20,y=38+(i*29)%136;ipx(ctx,x,y,2,2,theme==='roots'?'#7ff0c5':theme==='swamp'?'#b2d8ca':'#eeff9b')}ctx.globalAlpha=1};
 const baseDrawRegionBackground=drawRegionBackground;
 drawRegionBackground=function(ctx,t){
- baseDrawRegionBackground(ctx,t);const theme=stageTheme();
+ const theme=stageTheme(),scene=REGION_IMAGES[theme];
+ if(scene&&scene.complete&&scene.naturalWidth){ctx.imageSmoothingEnabled=true;ctx.drawImage(scene,0,0,480,270);ctx.imageSmoothingEnabled=false;return}
+ baseDrawRegionBackground(ctx,t);
  // Layered pixel clusters give each region its own architecture and material texture.
  if(theme==='forest'){
   for(let i=0;i<23;i++){const x=(i*71+17)%480,y=37+(i*43)%106;ipx(ctx,x,y,9+(i%3)*4,4,i%2?'#6eb75a':'#357e4c');ipx(ctx,x+3,y-3,5,3,'#94d762');if(i%4===0){ipx(ctx,x+5,y+4,3,3,'#fbe481');ipx(ctx,x+9,y+7,2,2,'#fff5c5')}}
@@ -137,8 +141,8 @@ drawEffects=function(ctx,dt){oldDrawEffects(ctx,dt);if(enemy&&enemy.hp<=0){const
 const oldRenderTop=renderTop;
 renderTop=function(){oldRenderTop();installPortrait();const portrait=document.getElementById('charPortraitCanvas');if(portrait){const ctx=portrait.getContext('2d'),sheet=SPRITES.heroes[getDef().id];ctx.imageSmoothingEnabled=false;ctx.clearRect(0,0,72,72);ipx(ctx,0,0,72,72,'#10251a');ipx(ctx,0,55,72,17,'#264b32');if(sheet)drawFrame(ctx,sheet,48,48,Math.floor(performance.now()/420)%2,0,0,72,72)}};
 const oldDrawIntroScene=drawIntroScene;
-drawIntroScene=function(t,canvasId){const c=document.getElementById(canvasId);if(!c)return;const ctx=c.getContext('2d');ctx.imageSmoothingEnabled=false;drawForestEX20(ctx,t*.32);ctx.globalAlpha=.45;ipx(ctx,0,0,480,270,'#06110c');ctx.globalAlpha=1;for(let i=0;i<18;i++){const x=(i*73+Math.floor(t*.012))%520-20,y=24+(i*37)%105;ipx(ctx,x,y,2,2,i%3===0?'#d5ff79':'#75c99a')}const ids=['warrior','mage','archer','rogue','paladin'],frame=Math.floor(t/380)%2;ids.forEach(function(id,n){const sheet=SPRITES.heroes[id];if(sheet)drawFrame(ctx,sheet,48,48,frame,48+n*82,160+(n%2)*3,64,64)});ctx.globalAlpha=.18;ipx(ctx,0,0,480,3,'#d8ff87');ctx.globalAlpha=1};
+drawIntroScene=function(t,canvasId){const c=document.getElementById(canvasId);if(!c)return;const ctx=c.getContext('2d'),scene=REGION_IMAGES.forest;ctx.imageSmoothingEnabled=false;if(scene.complete&&scene.naturalWidth){ctx.imageSmoothingEnabled=true;ctx.drawImage(scene,0,0,480,270);ctx.imageSmoothingEnabled=false}else drawForestEX20(ctx,t*.32);ctx.globalAlpha=.56;ipx(ctx,0,0,480,270,'#06110c');ctx.globalAlpha=1;for(let i=0;i<18;i++){const x=(i*73+Math.floor(t*.012))%520-20,y=24+(i*37)%105;ipx(ctx,x,y,2,2,i%3===0?'#d5ff79':'#75c99a')}const ids=['warrior','mage','archer','rogue','paladin'],frame=Math.floor(t/380)%2;ids.forEach(function(id,n){const sheet=SPRITES.heroes[id];if(sheet)drawFrame(ctx,sheet,48,48,frame,48+n*82,160+(n%2)*3,64,64)});ctx.globalAlpha=.18;ipx(ctx,0,0,480,3,'#d8ff87');ctx.globalAlpha=1};
 function installPortrait(){const host=document.getElementById('charIcon');if(!host)return;host.textContent='';let c=document.getElementById('charPortraitCanvas');if(!c){c=document.createElement('canvas');c.id='charPortraitCanvas';c.width=72;c.height=72;c.setAttribute('aria-label','현재 캐릭터 도트 초상화');host.appendChild(c)}}
-function stampVersion(){document.title='새싹 원정대 - '+ART_VERSION;const foot=document.querySelector('.startFoot');if(foot)foot.textContent='EX20 ART DIRECTION · 지역·캐릭터·몬스터·이펙트·UI 통합 리워크';const hint=document.querySelector('.pixelHint');if(hint)hint.textContent='AUTO BATTLE · INTEGER PIXEL SCALE';}
+function stampVersion(){document.title='새싹 원정대 - '+ART_VERSION;const foot=document.querySelector('.startFoot');if(foot)foot.textContent='EX21 ART DIRECTION · 신규 지역 배경 아트';const hint=document.querySelector('.pixelHint');if(hint)hint.textContent='AUTO BATTLE · INTEGER PIXEL SCALE';}
 rebuildArt();installPortrait();stampVersion();renderTop();log('🎨 EX20 아트 디렉션 적용 · 5직업 / 15몬스터 / 3보스 / 3지역');
 })();

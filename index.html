@@ -131,7 +131,7 @@ button,input,select{font:inherit} button{cursor:pointer;border:0}.wrap{max-width
 @media(max-width:800px){.rosterGrid{grid-template-columns:1fr 1fr}.rosterCard:last-child{grid-column:1/-1}}@media(max-width:420px){.rosterGrid{grid-template-columns:1fr}.rosterCard:last-child{grid-column:auto}}
 .summonReveal{position:fixed;z-index:1000;top:28%;left:50%;transform:translateX(-50%);padding:20px 32px;border:3px solid #ffe48a;background:#241c43;color:#fff1a8;box-shadow:0 0 40px #f6c85b;font-weight:900;font-size:clamp(16px,4vw,26px);text-align:center;pointer-events:none}.summonReveal.standard{border-color:#8edcb2;background:#132d27;color:#dcffed;box-shadow:0 0 28px #56cb92}.summonReveal.mythic{border-color:#f9b9ff;background:#3b174c;box-shadow:0 0 50px #ec8dff}@keyframes summonReveal{0%{opacity:0;transform:translateX(-50%) scale(.65)}15%{opacity:1;transform:translateX(-50%) scale(1.08)}25%{transform:translateX(-50%) scale(1)}80%{opacity:1}100%{opacity:0}}
 </style>
-<link rel="stylesheet" href="art-ex20.css?v=ex20.3" />
+<link rel="stylesheet" href="art-ex20.css?v=ex21.1" />
 </head>
 <body>
 <div class="startScreen show" id="startScreen" aria-label="새싹 원정대 시작 화면">
@@ -957,6 +957,6 @@ function openParty(){if(getC().stage<20)return toast('월드 보스는 스테이
 function partyAction(type){if(party.ended)return;var st=calcStats(),ratio=Math.max(.01,Math.min(10,st.power/party.recommended)),dmg=0,crit=false;party.turn++;if(type==='attack'){crit=Math.random()<st.crit/100;dmg=Math.min(14,Math.max(.15,4*Math.pow(ratio,.65)*(crit?1.35:1)*rand(.9,1.1)));partyLog('⚔ 기본 공격 '+dmg.toFixed(1)+'%'+(crit?' · CRIT':''))}if(type==='skill'){var c=getC(),idx=Math.min(c.unlockedSkills-1,Math.floor(Math.random()*Math.max(1,c.unlockedSkills)));dmg=Math.min(22,Math.max(.3,8*Math.pow(ratio,.65)*rand(.9,1.1)));partyLog('✦ '+getDef().skills[idx]+' '+dmg.toFixed(1)+'%')}if(type==='guard'){party.guard=true;partyLog('🛡 반격 피해 75% 감소')}party.bossHp=Math.max(0,party.bossHp-dmg);if(party.bossHp<=0){party.ended=true;S.gold+=150000;S.gems+=2000;S.equipTickets+=1000;S.compTickets+=1000;S.starScrolls+=5;var rewards=[grantAncientEquip(),grantAncientEquip()];partyLog('🏆 승리! '+rewards.map(function(x){return x.name}).join(', ')+' · 150,000G · 보석 2,000 · 티켓 각 1,000 · 강화권 5');renderParty();render();persistState();return}var hit=rand(15,27)*(1+Math.min(1.2,(party.turn-1)*.06))*(party.turn%4===0?1.65:1)*(party.guard?.25:1)*Math.max(.65,1-(st.shieldPower||0)*.03);party.guard=false;party.playerHp=Math.max(0,party.playerHp-hit);partyLog('🌳 '+(party.turn%4===0?'대지 붕괴':'보스 반격')+' '+hit.toFixed(0)+' 피해');if(party.playerHp<=0){party.ended=true;partyLog('💀 패배. 전투력을 높여 다시 도전하세요.')}renderParty()}
 buildSprites();load();render();initIntroFlow();log('🌱 새싹 원정대 EX19 Pixel Art 시작');requestAnimationFrame(loop);
 </script>
-<script src="art-ex20.js?v=ex20.3"></script>
+<script src="art-ex20.js?v=ex21.1"></script>
 </body>
 </html>
