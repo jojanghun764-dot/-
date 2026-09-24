@@ -58,6 +58,10 @@ function monsterSheet(key){
   if(key==='ancientGolem'){ipx(ctx,x+6,11+b,23,17,'#796b59');ipx(ctx,x+4,15+b,6,12,'#594f44');ipx(ctx,x+27,14+b,5,13,'#594f44');ipx(ctx,x+9,7+b,8,7,'#95856b');ipx(ctx,x+21,5+b,7,9,'#95856b');eyes(ctx,x+11,15+b,'#8dffbd');ipx(ctx,x+15,22+b,9,3,'#493f36')}
   if(key==='abyssMoth'){ipx(ctx,x+13,11+b,7,15,'#625a51');ipx(ctx,x+2,8+b,12,16,'#6a5a70');ipx(ctx,x+20,8-b,12,16,'#6a5a70');ipx(ctx,x+5,11+b,6,6,'#b68bc7');ipx(ctx,x+24,11-b,6,6,'#b68bc7');ipx(ctx,x+15,6+b,2,6,'#ddd0a4');ipx(ctx,x+18,6+b,2,6,'#ddd0a4');eyes(ctx,x+14,14+b,'#8dffcf')}
   if(key==='rootWarrior'){ipx(ctx,x+9,11+b,18,17,'#493b34');ipx(ctx,x+11,5+b,14,10,'#766146');ipx(ctx,x+13,8+b,10,4,'#191c18');eyes(ctx,x+14,9+b,'#8dffbd');ipx(ctx,x+3,12+b,8,15,'#3d6042');ipx(ctx,x+1,15+b,6,10,'#718766');ipx(ctx,x+25,9+b,4,18,'#9a835d');ipx(ctx,x+28,5+b,3,12,'#e2d29a')}
+  if(key==='rootImp'||key==='rootWarrior'){for(let q=0;q<4;q++)ipx(ctx,x+12+q*3,17+b+(q%2)*3,2,1,q%2?'#9e7550':'#544039');ipx(ctx,x+17,23+b,3,2,'#b99062')}
+  if(key==='runeConstruct'){for(let q=0;q<3;q++)ipx(ctx,x+11+q*5,11+b+(q%2)*11,3,2,'#a18d69');ipx(ctx,x+18,16+b,2,7,'#d0fff0')}
+  if(key==='ancientGolem'){for(let q=0;q<5;q++){ipx(ctx,x+8+q*4,12+b+(q%2)*8,3,1,'#bba483');ipx(ctx,x+11+q*3,23+b-(q%2)*2,2,2,'#504940')}}
+  if(key==='abyssMoth'){for(let q=0;q<4;q++){ipx(ctx,x+3+q*2,12+b+q*2,2,2,'#c8a5df');ipx(ctx,x+25+q,12+b+q*2,2,2,'#c8a5df')}}
  }
  return outlineSheet(c,32,32,4,'#121711');
 }
@@ -68,6 +72,9 @@ function bossSheet(key){
   if(key==='forestGuardian'){ipx(ctx,x+14+sw,14+b,30,34,'#684530');ipx(ctx,x+8+sw,22+b,9,26,'#81563a');ipx(ctx,x+42+sw,20+b,8,28,'#81563a');ipx(ctx,x+12,8+b,11,11,'#3f8849');ipx(ctx,x+27,3+b,14,15,'#5dad59');ipx(ctx,x+6,9+b,9,10,'#6cc566');ipx(ctx,x+17,26+b,6,6,'#ffd96e');ipx(ctx,x+34,26+b,6,6,'#ffd96e');ipx(ctx,x+22,39+b,14,4,'#302019');ipx(ctx,x+24,17+b,9,4,'#a5e273')}
   if(key==='sporeLord'){ipx(ctx,x+15,22+b,28,26,'#55585b');ipx(ctx,x+7,11+b,43,17,'#603968');ipx(ctx,x+13,5+b,31,13,'#a35dad');ipx(ctx,x+14,12+b,7,5,'#efbbef');ipx(ctx,x+37,10+b,6,6,'#dca8f1');ipx(ctx,x+18,29+b,6,6,'#9dffcf');ipx(ctx,x+35,29+b,6,6,'#9dffcf');ipx(ctx,x+22,40+b,15,4,'#29222b');ipx(ctx,x+7+sw,33+b,9,15,'#456852');ipx(ctx,x+42+sw,32+b,8,16,'#456852')}
   if(key==='rootTitan'){ipx(ctx,x+12+sw,8+b,35,40,'#4f3f36');ipx(ctx,x+5+sw,19+b,11,29,'#6b523f');ipx(ctx,x+44+sw,17+b,9,31,'#6b523f');ipx(ctx,x+15,3+b,9,11,'#8a704f');ipx(ctx,x+35,1+b,9,13,'#8a704f');ipx(ctx,x+20,21+b,6,7,'#78ffd0');ipx(ctx,x+38,21+b,6,7,'#78ffd0');ipx(ctx,x+22,38+b,18,6,'#201a17');ipx(ctx,x+28,10+b,7,9,'#b99b61');ipx(ctx,x+25,13+b,13,3,'#72c7a2')}
+  if(key==='rootTitan'){for(let q=0;q<7;q++){ipx(ctx,x+13+q*4,12+b+(q%3)*8,2,5,q%2?'#83694c':'#372f2d');ipx(ctx,x+16+q*4,34+b-(q%2)*4,3,2,'#a4865b')}ipx(ctx,x+27,17+b,9,3,'#f5b660');ipx(ctx,x+29,19+b,5,3,'#ffe8a0')}
+  if(key==='forestGuardian'){for(let q=0;q<6;q++){ipx(ctx,x+16+q*4,16+b+(q%3)*7,2,5,'#a87b4a');ipx(ctx,x+13+q*5,7+b+(q%2)*4,4,2,'#9bd36d')}}
+  if(key==='sporeLord'){for(let q=0;q<7;q++)ipx(ctx,x+12+q*5,12+b+(q%3)*3,3,2,q%2?'#e5b7e6':'#7ad1aa')}
  }
  return outlineSheet(c,56,56,4,'#100f0d');
 }
