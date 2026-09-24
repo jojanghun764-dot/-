@@ -178,26 +178,63 @@ try {
     goldUpgradeCostTest.pass = goldUpgradeCostTest.monotonic && goldUpgradeCostTest.boundedGrowth;
 
     const resetSnapshot = JSON.stringify(S);
-    const resetC = getC();
-    resetC.growth = { atk: 9, aspd: 8, crit: 7, speed: 6 };
-    resetC.mainStat = 99;
-    resetC.statPoints = 12;
-    resetC.jobBoost = 5;
-    resetC.skillLv = [8, 7, 6];
+    S.profileStarted = true;
+    S.firstCharacter = 'rogue';
+    S.gold = 987654;
+    S.gems = 4321;
+    S.worldLeaves = 77;
+    S.equipTickets = 55;
+    S.compTickets = 44;
+    S.starScrolls = 9;
+    S.randomGoldBoxes = 8;
+    S.totalKills = 1234;
+    S.bossKills = 56;
+    S.equipmentInventory = [{ id: '__old_gear__' }];
+    S.companionInventory = [{ id: '__old_comp__' }];
     S.rebirthUpgrades = { atk: 3, exp: 3, gold: 3, boss: 3, speed: 3, offline: 3 };
-    S.finance = { balance: 12345 };
-    const resetApplied = applyV18RebalanceReset(17);
-    const v18ResetTest = {
+    const dirtyChar = getC();
+    dirtyChar.level = 100;
+    dirtyChar.exp = 9999;
+    dirtyChar.stage = 88;
+    dirtyChar.highest = 88;
+    dirtyChar.kills = 9;
+    dirtyChar.growth = { atk: 9, aspd: 8, crit: 7, speed: 6 };
+    dirtyChar.mainStat = 99;
+    dirtyChar.statPoints = 12;
+    dirtyChar.jobBoost = 5;
+    dirtyChar.skillLv = [8, 7, 6];
+    dirtyChar.rebirths = 4;
+    dirtyChar.equipment = { 무기: { id: '__old_gear__' } };
+    dirtyChar.companions = [{ id: '__old_comp__' }];
+
+    const resetApplied = applyV19FullReset(18);
+    const resetC = getC();
+    const resourcesZero = ['gold','gems','worldLeaves','equipTickets','compTickets','starScrolls','randomGoldBoxes','totalKills','bossKills'].every(k => Number(S[k] || 0) === 0);
+    const allCharsFresh = Object.values(S.chars).every(c =>
+      c.level === 1 &&
+      c.exp === 0 &&
+      c.stage === 1 &&
+      c.highest === 1 &&
+      c.kills === 0 &&
+      (c.mainStat || 0) === 0 &&
+      (c.statPoints || 0) === 0 &&
+      (c.jobBoost || 0) === 0 &&
+      (c.rebirths || 0) === 0 &&
+      Object.values(c.growth || {}).every(v => v === 0) &&
+      Object.keys(c.equipment || {}).length === 0 &&
+      (c.companions || []).length === 0
+    );
+    const v19FullResetTest = {
       resetApplied,
-      growthZero: Object.values(resetC.growth).every(v => v === 0),
-      mainStatZero: resetC.mainStat === 0,
-      statPointsZero: resetC.statPoints === 0,
-      jobBoostZero: resetC.jobBoost === 0,
-      skillUpgradeReset: resetC.skillLv.every((v, i) => i < resetC.unlockedSkills ? v === 1 : v === 0),
+      version19: S.version === 19,
+      resourcesZero,
+      inventoriesEmpty: S.equipmentInventory.length === 0 && S.companionInventory.length === 0,
       rebirthUpgradesZero: Object.values(S.rebirthUpgrades).every(v => v === 0),
-      financeDeleted: !('finance' in S)
+      profileNotStarted: S.profileStarted === false && S.firstCharacter === null,
+      allCharsFresh,
+      firstSkillFresh: resetC.skillLv[0] === 1 && resetC.skillLv[1] === 0 && resetC.skillLv[2] === 0
     };
-    v18ResetTest.pass = Object.values(v18ResetTest).every(Boolean);
+    v19FullResetTest.pass = Object.values(v19FullResetTest).every(Boolean);
     S = JSON.parse(resetSnapshot);
 
     const financeRemoved = typeof financeTick === 'undefined' &&
@@ -213,7 +250,7 @@ try {
       jobs,
       potentialMonteCarlo,
       goldUpgradeCostTest,
-      v18ResetTest,
+      v19FullResetTest,
       financeRemoved,
       potentialAutoTest,
       invariants: {
@@ -229,8 +266,8 @@ try {
   if (!report.goldUpgradeCostTest?.pass) {
     throw new Error('Gold upgrade cost curve test failed: ' + JSON.stringify(report.goldUpgradeCostTest));
   }
-  if (!report.v18ResetTest?.pass) {
-    throw new Error('V18 stat reset test failed: ' + JSON.stringify(report.v18ResetTest));
+  if (!report.v19FullResetTest?.pass) {
+    throw new Error('V19 full new-game reset test failed: ' + JSON.stringify(report.v19FullResetTest));
   }
   if (!report.financeRemoved) {
     throw new Error('Finance system is still present in the effective runtime.');
