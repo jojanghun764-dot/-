@@ -255,7 +255,52 @@ const SPRITES={heroes:{},slime:null,boss:null,companions:[]};
 function sprCanvas(w,h){const c=document.createElement('canvas');c.width=w;c.height=h;return c}
 function buildSprites(){CHARACTERS.forEach(c=>SPRITES.heroes[c.id]=makeHeroSheet(c.id));SPRITES.slime=makeSlimeSheet();SPRITES.boss=makeBossSheet();SPRITES.companions=[0,1,2,3].map(i=>makeCompanionSheet(i));}
 function drawFrame(ctx,sheet,fw,fh,frame,dx,dy,dw=fw,dh=fh){ctx.drawImage(sheet,frame*fw,0,fw,fh,Math.round(dx),Math.round(dy),dw,dh)}
-function makeHeroSheet(id){ const size=48,frames=8,c=sprCanvas(size*frames,size),ctx=c.getContext('2d'); ctx.imageSmoothingEnabled=false; const palettes={ warrior:{hair:'#47312b',skin:'#f2c69b',body:'#3a8a59',trim:'#e8f2f5',weapon:'#dbe8ea',accent:'#79d67e'}, mage:{hair:'#354786',skin:'#f2c69b',body:'#4d8fc8',trim:'#c2ebff',weapon:'#78e8ff',accent:'#d7b6ff'}, archer:{hair:'#684733',skin:'#f2c69b',body:'#5b9651',trim:'#eed48a',weapon:'#b08344',accent:'#bced85'}, rogue:{hair:'#25312e',skin:'#e9bf97',body:'#42684d',trim:'#b7ebcb',weapon:'#d9fff4',accent:'#9fd77f'}, paladin:{hair:'#7b603e',skin:'#f2c69b',body:'#d4b24b',trim:'#fff1bd',weapon:'#f0f7ff',accent:'#ffe97c'}}[id]; for(let f=0;f<frames;f++){ const ox=f*size, walk=(f>=2&&f<=5), attack=(f>=6), step=walk?([0,1,0,-1][f-2]):0, slash=attack?(f===7?1:0):0; px(ctx,ox+13,39,20,4,'rgba(0,0,0,.25)'); px(ctx,ox+16+step,28,5,10,'#263029'); px(ctx,ox+26-step,28,5,10,'#263029'); px(ctx,ox+15+step,37,7,3,'#151d17'); px(ctx,ox+25-step,37,7,3,'#151d17'); px(ctx,ox+13,17,5,15,id==='mage'?'#3d4278':'#224f3b'); px(ctx,ox+14,14,18,15,'#1b221e'); px(ctx,ox+15,15,16,13,palettes.body); px(ctx,ox+17,15,3,12,'rgba(255,255,255,.12)'); px(ctx,ox+12,17,4,11,palettes.trim); px(ctx,ox+30,17,4,11,palettes.trim); px(ctx,ox+15,25,16,3,palettes.hair); px(ctx,ox+14,2,18,13,'#221d1a'); px(ctx,ox+15,3,16,11,palettes.skin); px(ctx,ox+13,0,19,6,palettes.hair); px(ctx,ox+12,4,4,7,palettes.hair); px(ctx,ox+29,4,3,5,palettes.hair); px(ctx,ox+19,8,2,2,'#212726'); px(ctx,ox+25,8,2,2,'#212726'); px(ctx,ox+22,11,3,1,'#a86460'); px(ctx,ox+23,0,2,6,'#3d8840'); px(ctx,ox+19,2,5,3,palettes.accent); px(ctx,ox+24,0,6,3,palettes.accent); if(id==='warrior'||id==='paladin'){px(ctx,ox+32,13,2,18,'#7a5a38'); px(ctx,ox+34,9,4,11,palettes.weapon); px(ctx,ox+34,9,4,2,'#fff'); if(id==='paladin'){px(ctx,ox+8,16,5,12,'#cdb052'); px(ctx,ox+6,18,9,7,'#ecd87c')}} if(id==='mage'){px(ctx,ox+32,13,2,20,'#7a5a38'); px(ctx,ox+29,8,8,8,palettes.weapon); px(ctx,ox+31,10,4,4,'#f8ffff')} if(id==='archer'){line(ctx,ox+34,10,ox+34,31,'#f0ead6',1); ctx.strokeStyle=palettes.weapon; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(ox+31,20,9,-1.2,1.2); ctx.stroke(); px(ctx,ox+27,19,10,2,'#d7f1c1')} if(id==='rogue'){px(ctx,ox+32,16,8,2,palettes.weapon); px(ctx,ox+35,14,5,2,'#f7fffd'); px(ctx,ox+8,19,8,2,palettes.weapon)} if(attack){ctx.globalAlpha=slash?1:.65; ctx.strokeStyle=id==='mage'?'#9aeaff':'#e9ffb6'; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(ox+29,18,13,-1.1,.8); ctx.stroke(); ctx.globalAlpha=1;}} return c;}
+function makeHeroSheet(id){
+ const size=48,frames=8,c=sprCanvas(size*frames,size),ctx=c.getContext('2d');ctx.imageSmoothingEnabled=false;
+ const pal={
+  warrior:{skin:'#f3c79c',hair:'#3b2b25',dark:'#173625',body:'#39845a',body2:'#245d3e',metal:'#d8e7e4',accent:'#9dff8b',leather:'#79553b'},
+  mage:{skin:'#f0c69d',hair:'#2f356c',dark:'#242749',body:'#4b72bd',body2:'#344d8f',metal:'#d3f5ff',accent:'#8cecff',leather:'#6b4c43'},
+  archer:{skin:'#efc39a',hair:'#654431',dark:'#243d29',body:'#608d47',body2:'#405f32',metal:'#f0e2b0',accent:'#caff88',leather:'#8b6137'},
+  rogue:{skin:'#dfb78f',hair:'#202925',dark:'#18241e',body:'#354f43',body2:'#283b34',metal:'#e2fff4',accent:'#b69aff',leather:'#563f39'},
+  paladin:{skin:'#f1c89f',hair:'#654c31',dark:'#6b5729',body:'#c6a744',body2:'#8f762d',metal:'#f1f5ef',accent:'#ffe783',leather:'#795c39'}
+ }[id]||{};
+ for(let f=0;f<frames;f++){
+  const ox=f*size,walk=f>=2&&f<=5,attack=f>=6,bob=walk?[0,-1,0,1][f-2]:(f%2?0:-1),step=walk?[-1,1,1,-1][f-2]:0,reach=attack?(f===7?5:2):0;
+  px(ctx,ox+10,42,28,3,'rgba(0,0,0,.26)');
+  if(id==='warrior'){
+   px(ctx,ox+16+step,31+bob,6,10,pal.dark);px(ctx,ox+27-step,31+bob,6,10,pal.dark);px(ctx,ox+14+step,39+bob,9,3,'#14231b');px(ctx,ox+26-step,39+bob,9,3,'#14231b');
+   px(ctx,ox+13,18+bob,22,16,pal.body2);px(ctx,ox+15,16+bob,18,16,pal.body);px(ctx,ox+9,18+bob,7,8,pal.metal);px(ctx,ox+32,18+bob,7,8,pal.metal);px(ctx,ox+17,18+bob,3,13,'rgba(255,255,255,.14)');
+   px(ctx,ox+16,5+bob,17,12,pal.skin);px(ctx,ox+14,2+bob,20,6,pal.hair);px(ctx,ox+13,5+bob,4,8,pal.hair);px(ctx,ox+29,5+bob,4,5,pal.hair);px(ctx,ox+20,9+bob,2,2,'#1d2621');px(ctx,ox+27,9+bob,2,2,'#1d2621');
+   px(ctx,ox+20,0+bob,4,5,pal.accent);px(ctx,ox+17,2+bob,9,3,pal.body2);
+   px(ctx,ox+36+reach,15+bob,3,22,pal.leather);px(ctx,ox+39+reach,8+bob,6,25,pal.metal);px(ctx,ox+40+reach,8+bob,2,19,'#ffffff');px(ctx,ox+34+reach,17+bob,9,3,pal.accent);
+   if(attack){ctx.strokeStyle=pal.accent;ctx.globalAlpha=.65;ctx.lineWidth=2;ctx.beginPath();ctx.arc(ox+31,20+bob,15,-1.2,.75);ctx.stroke();ctx.globalAlpha=1}
+  }else if(id==='mage'){
+   px(ctx,ox+17+step,34+bob,5,7,pal.dark);px(ctx,ox+27-step,34+bob,5,7,pal.dark);px(ctx,ox+12,22+bob,24,18,pal.body2);px(ctx,ox+15,17+bob,18,19,pal.body);px(ctx,ox+9,20+bob,7,12,pal.body2);px(ctx,ox+32,20+bob,7,12,pal.body2);
+   px(ctx,ox+16,8+bob,17,11,pal.skin);px(ctx,ox+17,7+bob,15,3,pal.hair);px(ctx,ox+13,5+bob,23,5,pal.body2);px(ctx,ox+17,1+bob,15,5,pal.body);px(ctx,ox+22,-2+bob,7,4,pal.accent);px(ctx,ox+20,12+bob,2,2,'#1e2b43');px(ctx,ox+27,12+bob,2,2,'#1e2b43');
+   px(ctx,ox+38+reach,16+bob,3,24,pal.leather);px(ctx,ox+35+reach,10+bob,9,9,pal.metal);px(ctx,ox+37+reach,12+bob,5,5,pal.accent);px(ctx,ox+39+reach,7+bob,2,3,'#ffffff');
+   if(attack){for(let q=0;q<4;q++)px(ctx,ox+34+reach+(q%2)*9,7+bob+q*4,2,2,q%2?pal.accent:'#d6a9ff')}
+  }else if(id==='archer'){
+   px(ctx,ox+17+step,32+bob,5,9,pal.dark);px(ctx,ox+27-step,32+bob,5,9,pal.dark);px(ctx,ox+15,18+bob,18,16,pal.body);px(ctx,ox+12,20+bob,5,13,pal.body2);px(ctx,ox+32,20+bob,5,12,pal.body2);
+   px(ctx,ox+16,7+bob,17,11,pal.skin);px(ctx,ox+14,4+bob,20,7,pal.body2);px(ctx,ox+13,8+bob,4,9,pal.body2);px(ctx,ox+29,8+bob,4,6,pal.hair);px(ctx,ox+20,12+bob,2,2,'#253524');px(ctx,ox+27,12+bob,2,2,'#253524');
+   px(ctx,ox+9,14+bob,4,20,pal.leather);px(ctx,ox+7,10+bob,2,14,pal.metal);px(ctx,ox+10,9+bob,2,14,pal.metal);px(ctx,ox+13,10+bob,2,14,pal.metal);
+   ctx.strokeStyle=pal.leather;ctx.lineWidth=2;ctx.beginPath();ctx.arc(ox+37+reach,22+bob,11,-1.25,1.25);ctx.stroke();ctx.strokeStyle=pal.metal;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(ox+40+reach,12+bob);ctx.lineTo(ox+40+reach,32+bob);ctx.stroke();line(ctx,ox+30,22+bob,ox+45+reach,22+bob,pal.accent,2);
+   if(attack)px(ctx,ox+45+reach,20+bob,3,4,'#ffffff');
+  }else if(id==='rogue'){
+   px(ctx,ox+18+step,32+bob,5,9,pal.dark);px(ctx,ox+27-step,32+bob,5,9,pal.dark);px(ctx,ox+16,19+bob,17,15,pal.body);px(ctx,ox+13,20+bob,5,11,pal.body2);px(ctx,ox+32,20+bob,5,11,pal.body2);
+   px(ctx,ox+16,7+bob,17,11,pal.skin);px(ctx,ox+13,4+bob,21,8,pal.dark);px(ctx,ox+12,8+bob,5,11,pal.dark);px(ctx,ox+30,8+bob,4,8,pal.dark);px(ctx,ox+17,14+bob,15,4,pal.body2);px(ctx,ox+20,11+bob,2,2,pal.accent);px(ctx,ox+27,11+bob,2,2,pal.accent);
+   px(ctx,ox+8-step,19+bob,9,3,pal.metal);px(ctx,ox+6-step,18+bob,5,2,'#ffffff');px(ctx,ox+33+reach,19+bob,10,3,pal.metal);px(ctx,ox+40+reach,18+bob,5,2,'#ffffff');
+   px(ctx,ox+10,13+bob,3,13,pal.accent);px(ctx,ox+7,19+bob,3,10,pal.body2);
+   if(attack){ctx.globalAlpha=.6;line(ctx,ox+28,13+bob,ox+46,7+bob,pal.accent,2);line(ctx,ox+27,20+bob,ox+46,27+bob,pal.accent,2);ctx.globalAlpha=1}
+  }else{
+   px(ctx,ox+15+step,32+bob,7,9,pal.dark);px(ctx,ox+27-step,32+bob,7,9,pal.dark);px(ctx,ox+12,18+bob,24,17,pal.body2);px(ctx,ox+14,16+bob,20,17,pal.body);px(ctx,ox+9,18+bob,7,9,pal.metal);px(ctx,ox+33,18+bob,7,9,pal.metal);
+   px(ctx,ox+16,7+bob,17,10,pal.skin);px(ctx,ox+14,3+bob,21,7,pal.metal);px(ctx,ox+15,9+bob,19,4,pal.metal);px(ctx,ox+19,11+bob,3,2,'#514923');px(ctx,ox+27,11+bob,3,2,'#514923');px(ctx,ox+23,0+bob,4,5,pal.accent);
+   px(ctx,ox+5,16+bob,10,20,pal.body2);px(ctx,ox+3,18+bob,12,15,pal.metal);px(ctx,ox+5,20+bob,8,11,pal.body);px(ctx,ox+7,23+bob,4,5,pal.accent);
+   px(ctx,ox+37+reach,16+bob,3,21,pal.leather);px(ctx,ox+34+reach,10+bob,9,8,pal.metal);px(ctx,ox+36+reach,8+bob,5,4,pal.accent);
+   if(attack){ctx.globalAlpha=.5;ctx.strokeStyle=pal.accent;ctx.lineWidth=2;ctx.strokeRect(ox+2,15+bob,14,23);ctx.globalAlpha=1}
+  }
+ }
+ return c
+}
 function makeSlimeSheet(){ const size=32,frames=4,c=sprCanvas(size*frames,size),ctx=c.getContext('2d'); for(let f=0;f<frames;f++){ const ox=f*size, squish=[0,2,1,3][f], lift=[0,-1,0,1][f]; px(ctx,ox+6,24,18,3,'rgba(0,0,0,.22)'); px(ctx,ox+7,11+lift,18,12+squish,'#4fa350'); px(ctx,ox+8,9+lift,16,12+squish,'#73cf65'); px(ctx,ox+10,6+lift,12,7,'#97eb7d'); px(ctx,ox+11,14+lift,3,3,'#19331f'); px(ctx,ox+18,14+lift,3,3,'#19331f'); px(ctx,ox+12,14+lift,1,1,'#eaffef'); px(ctx,ox+19,14+lift,1,1,'#eaffef'); px(ctx,ox+12,20+lift,8,2,'#468e46'); px(ctx,ox+15,1+lift,2,6,'#4d9c43'); px(ctx,ox+12,-1+lift,5,3,'#8fe079'); px(ctx,ox+16,-3+lift,6,3,'#8fe079'); } return c;}
 function makeBossSheet(){ const size=48,frames=4,c=sprCanvas(size*frames,size),ctx=c.getContext('2d'); for(let f=0;f<frames;f++){ const ox=f*size, sway=[0,1,0,-1][f]; px(ctx,ox+5,40,38,4,'rgba(0,0,0,.26)'); px(ctx,ox+10+sway,12,28,25,'#5f422f'); px(ctx,ox+11+sway,13,26,23,'#755039'); px(ctx,ox+7+sway,18,6,18,'#7f5942'); px(ctx,ox+35+sway,18,6,18,'#7f5942'); px(ctx,ox+13+sway,7,8,7,'#5f964c'); px(ctx,ox+24+sway,4,10,9,'#70a958'); px(ctx,ox+14+sway,18,5,6,'#402c22'); px(ctx,ox+29+sway,18,5,7,'#402c22'); px(ctx,ox+18+sway,26,5,5,'#ffdf7c'); px(ctx,ox+27+sway,26,5,5,'#ffdf7c'); px(ctx,ox+19+sway,27,2,2,'#fff3ae'); px(ctx,ox+28+sway,27,2,2,'#fff3ae'); px(ctx,ox+20+sway,33,10,3,'#2f2019'); px(ctx,ox+21+sway,34,8,1,'#a45f45'); px(ctx,ox+11+sway,32,6,8,'#517f42'); px(ctx,ox+31+sway,31,6,9,'#517f42'); } return c;}
 function makeCompanionSheet(idx){ const size=24,frames=2,c=sprCanvas(size*frames,size),ctx=c.getContext('2d'), cols=[['#ffd166','#d1a83b'],['#79d8ff','#4fa4ca'],['#c89cff','#8c65b0'],['#8fffe1','#4db79c']][idx%4]; for(let f=0;f<frames;f++){ const ox=f*size, lift=f?1:0; px(ctx,ox+4,17,12,3,'rgba(0,0,0,.18)'); px(ctx,ox+5,7-lift,10,7,cols[0]); px(ctx,ox+3,11-lift,14,6,cols[1]); px(ctx,ox+7,10-lift,2,2,'#222'); px(ctx,ox+11,10-lift,2,2,'#222'); px(ctx,ox+8,13-lift,4,1,'rgba(255,255,255,.45)'); } return c;}
