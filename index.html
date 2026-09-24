@@ -490,7 +490,7 @@ function drawEffects(ctx,dt){
  VFX.damages.forEach(d=>{d.life-=dt;d.y-=25*dt;ctx.globalAlpha=Math.max(0,d.life);ctx.textAlign='center';ctx.lineJoin='round';ctx.lineWidth=d.crit?6:5;ctx.strokeStyle='#120a06';ctx.fillStyle=d.crit?'#ffe252':'#ffffff';ctx.font=(d.crit?'900 18px':'900 15px')+' ui-monospace,monospace';const txt=(d.crit?'CRIT ':'')+fmt(d.n);ctx.strokeText(txt,d.x,d.y);ctx.fillText(txt,d.x,d.y);if(d.tag){ctx.font='900 9px ui-monospace,monospace';ctx.lineWidth=3;ctx.strokeText(d.tag,d.x,d.y+11);ctx.fillText(d.tag,d.x,d.y+11)}ctx.globalAlpha=1});
  VFX.damages=VFX.damages.filter(d=>d.life>0).slice(-40);
 }
-function drawBattleScene(t){const c=canvas();if(!c)return;const ctx=c.getContext('2d');ctx.imageSmoothingEnabled=false;let dt=Math.min(.033,((t-(VFX.last||t))/1000));VFX.last=t;VFX.attack=Math.max(0,VFX.attack-dt);VFX.hit=Math.max(0,VFX.hit-dt);VFX.spawn=Math.max(0,VFX.spawn-dt);if(VFX.shake>0)VFX.shake=Math.max(0,VFX.shake-dt*12);ctx.save();if(VFX.shake>0)ctx.translate(rand(-VFX.shake,VFX.shake),rand(-VFX.shake,VFX.shake));drawBackground(ctx,t);drawHero(ctx,t);drawEnemy(ctx,t);drawSkillEffects(ctx,dt,t);drawEffects(ctx,dt);ctx.restore();}
+function drawBattleScene(t){const c=canvas();if(!c)return;const ctx=c.getContext('2d');ctx.imageSmoothingEnabled=false;let dt=Math.min(.033,((t-(VFX.last||t))/1000));VFX.last=t;VFX.attack=Math.max(0,VFX.attack-dt);VFX.hit=Math.max(0,VFX.hit-dt);VFX.spawn=Math.max(0,VFX.spawn-dt);if(VFX.shake>0)VFX.shake=Math.max(0,VFX.shake-dt*12);ctx.save();if(VFX.shake>0)ctx.translate(Math.round(rand(-VFX.shake,VFX.shake)),Math.round(rand(-VFX.shake,VFX.shake)));drawBackground(ctx,t);drawHero(ctx,t);drawEnemy(ctx,t);drawSkillEffects(ctx,dt,t);drawEffects(ctx,dt);ctx.restore();}
 
 
 function save(){S.lastSave=now();S.lastLogout=now();localStorage.setItem('sproutFinalV14',JSON.stringify(S));toast('저장 완료');}
@@ -504,7 +504,7 @@ function load(){
 }
 function getDef(){return CHARACTERS.find(x=>x.id===S.active)} function getC(){return S.chars[S.active]}
 function expNeed(lv){return Math.floor(20*Math.pow(1.14,lv-1));}
-const PROGRESSION_GROWTH=1.095;
+const PROGRESSION_GROWTH=1.13;
 const SKILL_UNLOCK_LEVELS=[1,5,10,25,45,70,100,135,175,220];
 function progressionScale(value){return Math.pow(PROGRESSION_GROWTH,Math.min(500,Math.max(0,(Number(value)||1)-1)))}
 function classMasteryLevel(c){return Math.max(1,Number(c&&c.level)||1)}
