@@ -158,7 +158,6 @@ try {
     const costSeries = {
       growthAtk: [0, 25, 50, 100].map(level => growthUnitCost('atk', level)),
       skill1: [0, 25, 50, 100].map(level => skillUnitCost(0, level)),
-      warriorJob: [0, 25, 50, 100].map(level => jobBoostCost('warrior', level)),
       enhance: [0, 5, 10, 25].map(level => enhanceCost({ level })),
       potentialLegend: [0, 5, 10, 20].map(star => potentialCost({ rarity: '전설', star, locks: [false, false, false] })),
       companionLegend: [1, 2, 3, 4].map(star => compGrowthCost({ rarity: '전설', star }))
@@ -170,12 +169,64 @@ try {
       boundedGrowth:
         costSeries.growthAtk.at(-1) / costSeries.growthAtk[0] < 40 &&
         costSeries.skill1.at(-1) / costSeries.skill1[0] < 40 &&
-        costSeries.warriorJob.at(-1) / costSeries.warriorJob[0] < 60 &&
         costSeries.enhance.at(-1) / costSeries.enhance[0] < 50 &&
         costSeries.potentialLegend.at(-1) / costSeries.potentialLegend[0] < 10 &&
         costSeries.companionLegend.at(-1) / costSeries.companionLegend[0] < 5
     };
     goldUpgradeCostTest.pass = goldUpgradeCostTest.monotonic && goldUpgradeCostTest.boundedGrowth;
+
+    const progressionSnapshot = JSON.stringify(S);
+    const levelProgressionTest = {};
+    try {
+      const c = getC();
+      S.active = 'warrior';
+      c.level = 1;
+      c.growth = { atk: 0, aspd: 0, crit: 0, speed: 0 };
+      c.mainStat = 0;
+      c.equipment = {};
+      c.companions = [];
+      const lv1 = calcStats();
+      c.level = 50;
+      const lv50 = calcStats();
+      const warrior1 = classLevelBonuses('warrior', 1);
+      const warrior100 = classLevelBonuses('warrior', 100);
+
+      Object.values(S.chars).forEach(ch => { ch.level = 1; ch.exp = 0; });
+      S.chars.warrior.level = 31;
+      S.chars.mage.level = 31;
+      S.chars.archer.level = 31;
+      S.chars.rogue.level = 31;
+      S.chars.paladin.level = 31;
+      const rr = rosterResonance();
+
+      levelProgressionTest.sharedFactor = PROGRESSION_GROWTH;
+      levelProgressionTest.scaleLv1 = progressionScale(1);
+      levelProgressionTest.scaleLv50 = progressionScale(50);
+      levelProgressionTest.enemyLevelRatioMatched =
+        Math.abs((progressionScale(50) / progressionScale(49)) - PROGRESSION_GROWTH) < 1e-9;
+      levelProgressionTest.attackGrowsWithLevel = lv50.atk > lv1.atk * 100;
+      levelProgressionTest.classMasteryGrows =
+        warrior100.finalDmg > warrior1.finalDmg && warrior100.bossDmg > warrior1.bossDmg;
+      levelProgressionTest.rosterTotalLevel = rr.totalLevel;
+      levelProgressionTest.rosterBonusesActive =
+        rr.finalPct > 0 && rr.skillPct > 0 && rr.aspdFlat > 0 && rr.critPct > 0 && rr.bossPct > 0;
+      levelProgressionTest.trainingUnlocked = rr.trainingPct > 0;
+      levelProgressionTest.noGoldClassUpgradeRuntime =
+        typeof jobBoostCost === 'undefined' &&
+        typeof upgradeJobBoost === 'undefined' &&
+        typeof jobBoostHTML === 'undefined';
+      levelProgressionTest.pass =
+        levelProgressionTest.sharedFactor === 1.13 &&
+        levelProgressionTest.scaleLv1 === 1 &&
+        levelProgressionTest.enemyLevelRatioMatched &&
+        levelProgressionTest.attackGrowsWithLevel &&
+        levelProgressionTest.classMasteryGrows &&
+        levelProgressionTest.rosterBonusesActive &&
+        levelProgressionTest.trainingUnlocked &&
+        levelProgressionTest.noGoldClassUpgradeRuntime;
+    } finally {
+      S = JSON.parse(progressionSnapshot);
+    }
 
     const resetSnapshot = JSON.stringify(S);
     S.profileStarted = true;
@@ -250,6 +301,7 @@ try {
       jobs,
       potentialMonteCarlo,
       goldUpgradeCostTest,
+      levelProgressionTest,
       v19FullResetTest,
       financeRemoved,
       potentialAutoTest,
@@ -265,6 +317,9 @@ try {
   }
   if (!report.goldUpgradeCostTest?.pass) {
     throw new Error('Gold upgrade cost curve test failed: ' + JSON.stringify(report.goldUpgradeCostTest));
+  }
+  if (!report.levelProgressionTest?.pass) {
+    throw new Error('Level/roster progression test failed: ' + JSON.stringify(report.levelProgressionTest));
   }
   if (!report.v19FullResetTest?.pass) {
     throw new Error('V19 full new-game reset test failed: ' + JSON.stringify(report.v19FullResetTest));
