@@ -13,6 +13,10 @@ These rules override stale UI labels, dead legacy code, duplicate older function
 - Normal monsters retain the intended ticket-drop structure and bosses retain guaranteed large ticket rewards unless the user explicitly requests a redesign.
 - V19 is the current save baseline. Preserve V19+ save compatibility after the one-time V18-and-earlier reset.
 - Gold-based upgrade costs must not use exponential/geometric growth curves. Linear or otherwise gently bounded cost growth is canonical.
+- Character/job mastery is **level-driven**, not purchased with gold. Gold-based per-job upgrade buttons/costs must not return.
+- Player level power and monster stage HP share the canonical progression factor **1.13** so baseline offensive growth and enemy durability advance on the same curve before build bonuses.
+- Alternate characters matter through **Expedition Resonance**: each job contributes an account-wide resonance based on its level, total roster level unlocks additional account bonuses, and sufficiently developed rosters grant passive EXP training to inactive characters.
+- The five base class sprites must keep clearly distinct silhouettes and class-readable equipment/pose language; do not collapse them back into one generic body with minor weapon swaps.
 - V19 intentionally performs a one-time complete fresh-start reset for every V18-or-earlier save: Lv.1, Stage 1, all currencies/resources 0, no equipment/companions, no rebirth progress, and all upgrades at base values.
 - The canonical entry flow is **title screen → Start → first-character selection → game**. Returning V19 profiles see the title screen and may Continue. Manual full reset returns to the title screen.
 - When runtime code and old duplicated source fragments disagree, treat these canonical rules plus the latest effective runtime behavior as authoritative.
