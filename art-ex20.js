@@ -3,6 +3,8 @@
 const ART_VERSION='EX21 Art Direction';
 const REGION_IMAGES={};
 for(const name of ['forest','swamp','roots']){const img=new Image();img.src='assets/'+name+'-ex21.webp';REGION_IMAGES[name]=img}
+const HERO_IMAGES={};for(const id of ['warrior','mage','archer','rogue','paladin']){const img=new Image();img.src='assets/hero-'+id+'-ex21.webp';HERO_IMAGES[id]=img}
+function readyArt(img){return !!(img&&img.complete&&img.naturalWidth)}
 const REGION_POOLS={
  forest:['새싹 슬라임','햇살 버섯','도토리 다람쥐','어린 나무정령','민들레 꽃요정'],
  swamp:['독안개 개구리','진흙 늪슬라임','갈대 거머리','청록 도깨비불','부패꽃 포식자'],
@@ -132,17 +134,21 @@ drawEnemyArt=function(ctx,t){
  drawEnemyAura(ctx,t,x,y,dw,dh);ctx.save();if(enemy.hp<=0){ctx.translate(x+dw/2,y+dh);ctx.rotate(.45);ctx.globalAlpha=.45;drawFrame(ctx,sheet,size,size,frame,-dw/2,-dh,dw,dh)}else{const shake=VFX.hit>0?Math.round(Math.sin(t*.35)*3):0;drawFrame(ctx,sheet,size,size,frame,x+shake,y,dw,dh);if(VFX.hit>0){ctx.globalCompositeOperation='screen';ctx.globalAlpha=.3;ipx(ctx,x+13,y+9,dw-26,dh-18,'#fff')}}ctx.restore();ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;
 };
 drawHeroArt=function(ctx,t){
- const d=getDef(),x=96,y=132;let frame=0;if(VFX.attack>0)frame=6+Math.floor(t/75)%2;else if(S.auto)frame=2+Math.floor(t/115)%4;else frame=Math.floor(t/330)%2;drawFrame(ctx,SPRITES.heroes[d.id],48,48,frame,x,y,96,96);drawEquipmentArt(ctx);getC().companions.slice(0,maxCompanionSlots()).forEach(function(comp,i){const name=comp.name||COMP_NAMES[i%COMP_NAMES.length],sheet=SPRITES.companions[name]||SPRITES.companions[COMP_NAMES[0]];drawFrame(ctx,sheet,24,24,(Math.floor(t/240)+i)%2,47-i*29,154+(i%2)*11,48,48)});
+ const d=getDef(),img=HERO_IMAGES[d.id],x=70,y=125;
+ if(readyArt(img)){const bob=Math.round(Math.sin(t/220)*2),lunge=VFX.attack>0?7:0;ctx.imageSmoothingEnabled=false;ctx.drawImage(img,x+lunge,y+bob,144,96)}
+ else{const frame=VFX.attack>0?6+Math.floor(t/75)%2:S.auto?2+Math.floor(t/115)%4:Math.floor(t/330)%2;drawFrame(ctx,SPRITES.heroes[d.id],48,48,frame,96,132,96,96);drawEquipmentArt(ctx)}
+ getC().companions.slice(0,maxCompanionSlots()).forEach(function(comp,i){const name=comp.name||COMP_NAMES[i%COMP_NAMES.length],sheet=SPRITES.companions[name]||SPRITES.companions[COMP_NAMES[0]];drawFrame(ctx,sheet,24,24,(Math.floor(t/240)+i)%2,47-i*29,154+(i%2)*11,48,48)});
 };
 const oldAddDamageVfx=addDamageVfx;
 addDamageVfx=function(n,crit,tag){oldAddDamageVfx(n,crit,tag);if(crit){for(let i=0;i<12;i++){const a=i/12*Math.PI*2;VFX.particles.push({x:349,y:139,vx:Math.cos(a)*rand(35,72),vy:Math.sin(a)*rand(35,72),life:rand(.24,.55),c:i%2?'#fff3a1':'#ff9f54',s:i%3?2:4})}}};
 const oldDrawEffects=drawEffects;
 drawEffects=function(ctx,dt){oldDrawEffects(ctx,dt);if(enemy&&enemy.hp<=0){const theme=stageTheme(),c=theme==='forest'?'#c9ff72':theme==='swamp'?'#77e6d5':'#82ffd3';ctx.globalAlpha=.7;for(let i=0;i<7;i++)ipx(ctx,337+(i%3)*9,150-Math.floor(i/3)*7,4,4,i%2?c:'#fff');ctx.globalAlpha=1}};
 const oldRenderTop=renderTop;
-renderTop=function(){oldRenderTop();installPortrait();const portrait=document.getElementById('charPortraitCanvas');if(portrait){const ctx=portrait.getContext('2d'),sheet=SPRITES.heroes[getDef().id];ctx.imageSmoothingEnabled=false;ctx.clearRect(0,0,72,72);ipx(ctx,0,0,72,72,'#10251a');ipx(ctx,0,55,72,17,'#264b32');if(sheet)drawFrame(ctx,sheet,48,48,Math.floor(performance.now()/420)%2,0,0,72,72)}};
+renderTop=function(){oldRenderTop();installPortrait();const portrait=document.getElementById('charPortraitCanvas');if(portrait){const ctx=portrait.getContext('2d'),id=getDef().id,img=HERO_IMAGES[id],sheet=SPRITES.heroes[id];ctx.imageSmoothingEnabled=false;ctx.clearRect(0,0,72,72);ipx(ctx,0,0,72,72,'#10251a');ipx(ctx,0,55,72,17,'#264b32');if(readyArt(img))ctx.drawImage(img,-14,7,100,67);else if(sheet)drawFrame(ctx,sheet,48,48,Math.floor(performance.now()/420)%2,0,0,72,72)}};
 const oldDrawIntroScene=drawIntroScene;
-drawIntroScene=function(t,canvasId){const c=document.getElementById(canvasId);if(!c)return;const ctx=c.getContext('2d'),scene=REGION_IMAGES.forest;ctx.imageSmoothingEnabled=false;if(scene.complete&&scene.naturalWidth){ctx.imageSmoothingEnabled=true;ctx.drawImage(scene,0,0,480,270);ctx.imageSmoothingEnabled=false}else drawForestEX20(ctx,t*.32);ctx.globalAlpha=.56;ipx(ctx,0,0,480,270,'#06110c');ctx.globalAlpha=1;for(let i=0;i<18;i++){const x=(i*73+Math.floor(t*.012))%520-20,y=24+(i*37)%105;ipx(ctx,x,y,2,2,i%3===0?'#d5ff79':'#75c99a')}const ids=['warrior','mage','archer','rogue','paladin'],frame=Math.floor(t/380)%2;ids.forEach(function(id,n){const sheet=SPRITES.heroes[id];if(sheet)drawFrame(ctx,sheet,48,48,frame,48+n*82,160+(n%2)*3,64,64)});ctx.globalAlpha=.18;ipx(ctx,0,0,480,3,'#d8ff87');ctx.globalAlpha=1};
+drawIntroScene=function(t,canvasId){const c=document.getElementById(canvasId);if(!c)return;const ctx=c.getContext('2d'),scene=REGION_IMAGES.forest;ctx.imageSmoothingEnabled=false;if(scene.complete&&scene.naturalWidth){ctx.imageSmoothingEnabled=true;ctx.drawImage(scene,0,0,480,270);ctx.imageSmoothingEnabled=false}else drawForestEX20(ctx,t*.32);ctx.globalAlpha=.56;ipx(ctx,0,0,480,270,'#06110c');ctx.globalAlpha=1;for(let i=0;i<18;i++){const x=(i*73+Math.floor(t*.012))%520-20,y=24+(i*37)%105;ipx(ctx,x,y,2,2,i%3===0?'#d5ff79':'#75c99a')}const ids=['warrior','mage','archer','rogue','paladin'],frame=Math.floor(t/380)%2;ids.forEach(function(id,n){const img=HERO_IMAGES[id];if(readyArt(img))ctx.drawImage(img,36+n*86,153+(n%2)*2,96,64);else drawFrame(ctx,SPRITES.heroes[id],48,48,frame,48+n*82,160+(n%2)*3,64,64)});ctx.globalAlpha=.18;ipx(ctx,0,0,480,3,'#d8ff87');ctx.globalAlpha=1};
+drawStarterPreviews=function(t){document.querySelectorAll('[data-starter-canvas]').forEach(function(c){const id=c.dataset.starterCanvas,ctx=c.getContext('2d'),img=HERO_IMAGES[id];ctx.imageSmoothingEnabled=false;ctx.clearRect(0,0,96,96);ctx.fillStyle='#102219';ctx.fillRect(0,0,96,96);if(readyArt(img))ctx.drawImage(img,0,16,96,64);else drawFrame(ctx,SPRITES.heroes[id],48,48,Math.floor(t/420)%2,0,0,96,96)})};
 function installPortrait(){const host=document.getElementById('charIcon');if(!host)return;host.textContent='';let c=document.getElementById('charPortraitCanvas');if(!c){c=document.createElement('canvas');c.id='charPortraitCanvas';c.width=72;c.height=72;c.setAttribute('aria-label','현재 캐릭터 도트 초상화');host.appendChild(c)}}
-function stampVersion(){document.title='새싹 원정대 - '+ART_VERSION;const foot=document.querySelector('.startFoot');if(foot)foot.textContent='EX21 ART DIRECTION · 신규 지역 배경 아트';const hint=document.querySelector('.pixelHint');if(hint)hint.textContent='AUTO BATTLE · INTEGER PIXEL SCALE';}
-rebuildArt();installPortrait();stampVersion();renderTop();log('🎨 EX20 아트 디렉션 적용 · 5직업 / 15몬스터 / 3보스 / 3지역');
+function stampVersion(){document.title='새싹 원정대 - '+ART_VERSION;const foot=document.querySelector('.startFoot');if(foot)foot.textContent='EX21 ART DIRECTION · 지역 배경·5직업 아트';const hint=document.querySelector('.pixelHint');if(hint)hint.textContent='AUTO BATTLE · INTEGER PIXEL SCALE';}
+rebuildArt();installPortrait();stampVersion();renderTop();log('🎨 EX21 아트 디렉션 적용 · 5직업 / 15몬스터 / 3보스 / 3지역');
 })();
