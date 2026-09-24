@@ -84,6 +84,79 @@ try {
       };
     }
     const financeExpectedReturnPerSettlement = 0.99 * 0.01 + 0.80 * 0.30 + 0.50 * 1.00 + 0.30 * 2.50;
+
+    const stateSnapshot = JSON.stringify(S);
+    const potentialAutoTest = {};
+    try {
+      S.active = initialActive;
+      const c = getC();
+      S.gold = 1000000000;
+      const item = {
+        id: '__potential_auto_test__',
+        name: '잠재 자동 테스트',
+        slot: '무기',
+        rarity: '희귀',
+        cls: 'rarity-rare',
+        level: 0,
+        star: 0,
+        power: 1,
+        potential: [14, 0, 0],
+        locks: [true, false, false],
+        autoPotTarget: 20,
+        trait: null
+      };
+      S.equipmentInventory.push(item);
+      c.equipment['무기'] = item;
+      const startGold = S.gold;
+      const expectedCost = potentialCost(item);
+      autoRerollPotential(item.id);
+      const sumAfter = potentialSum(item);
+      const statsAfter = calcStats();
+
+      const rejectItem = {
+        id: '__potential_reject_test__',
+        name: '잠재 최대치 테스트',
+        slot: '모자',
+        rarity: '일반',
+        cls: 'rarity-common',
+        level: 0,
+        star: 0,
+        power: 1,
+        potential: [2, 2, 2],
+        locks: [false, false, false],
+        autoPotTarget: 37,
+        trait: null
+      };
+      S.equipmentInventory.push(rejectItem);
+      const rejectGoldBefore = S.gold;
+      const rejectPotentialBefore = rejectItem.potential.slice();
+      autoRerollPotential(rejectItem.id);
+
+      const ancientSamples = [];
+      for (let n = 0; n < 1000; n++) ancientSamples.push(rollPotentialValue({ rarity: '고대' }));
+
+      potentialAutoTest.lockedLinePreserved = item.potential[0] === 14;
+      potentialAutoTest.targetReached = sumAfter >= 20;
+      potentialAutoTest.goldSpentExactlyOneRoll = startGold - S.gold === expectedCost;
+      potentialAutoTest.equippedConversionPct = statsAfter.potentialAttackPct;
+      potentialAutoTest.expectedEquippedConversionPct = sumAfter * 10;
+      potentialAutoTest.overMaxTargetRejectedWithoutSpend = S.gold === rejectGoldBefore;
+      potentialAutoTest.overMaxTargetPreservedPotential = rejectItem.potential.every((v, i) => v === rejectPotentialBefore[i]);
+      potentialAutoTest.ancientMinObserved = Math.min(...ancientSamples);
+      potentialAutoTest.ancientMaxObserved = Math.max(...ancientSamples);
+      potentialAutoTest.ancientRangeValid = ancientSamples.every(v => v >= 10 && v <= 22);
+      potentialAutoTest.pass =
+        potentialAutoTest.lockedLinePreserved &&
+        potentialAutoTest.targetReached &&
+        potentialAutoTest.goldSpentExactlyOneRoll &&
+        potentialAutoTest.equippedConversionPct === potentialAutoTest.expectedEquippedConversionPct &&
+        potentialAutoTest.overMaxTargetRejectedWithoutSpend &&
+        potentialAutoTest.overMaxTargetPreservedPotential &&
+        potentialAutoTest.ancientRangeValid;
+    } finally {
+      S = JSON.parse(stateSnapshot);
+    }
+
     return {
       expCurve,
       cumulativeExp,
@@ -95,12 +168,20 @@ try {
         expectedInterestRatePer30Seconds: financeExpectedReturnPerSettlement,
         expectedBalanceMultiplierPer30Seconds: 1 + financeExpectedReturnPerSettlement
       },
+      potentialAutoTest,
       invariants: {
         potential400MainStatPctToAttackPct: 400 * 10,
-        maxCompanions: 3
+        baseMaxCompanions: 3,
+        rebirth10MaxCompanions: 4
       }
     };
   });
+  if (!report.potentialAutoTest?.pass) {
+    throw new Error('Potential auto-reroll functional test failed: ' + JSON.stringify(report.potentialAutoTest));
+  }
+  if (report.invariants?.potential400MainStatPctToAttackPct !== 4000) {
+    throw new Error('Potential conversion invariant failed: 400% must convert to +4000% attack.');
+  }
   fs.writeFileSync(outPath, JSON.stringify(report, null, 2));
   console.log(JSON.stringify(report, null, 2));
 } finally {
