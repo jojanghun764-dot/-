@@ -11,13 +11,15 @@ const failures = [];
 if (candidateStatic.duplicateFunctionNames > baselineStatic.duplicateFunctionNames) failures.push('Duplicate named functions increased.');
 if (candidateRuntime.pageErrors?.length) failures.push('Candidate has browser page errors.');
 if (candidateRuntime.consoleErrors?.length) failures.push('Candidate has browser console errors.');
-for (const view of ['smallMobile', 'mobile', 'landscapeMobile']) {
+for (const view of ['smallMobile', 'mobile', 'mobileLandscape']) {
+  if (!candidateRuntime.views?.[view]) failures.push(view + ' runtime audit missing.');
   if (candidateRuntime.views?.[view]?.horizontalOverflow) failures.push(view + ' has horizontal overflow.');
   if (candidateRuntime.views?.[view]?.tinyTapTargets?.length) failures.push(view + ' has tap targets smaller than 32px.');
 }
-for (const view of ['smallMobile', 'mobile', 'landscapeMobile', 'desktop']) {
+for (const view of ['smallMobile', 'mobile', 'mobileLandscape', 'desktop']) {
   if (!candidateRuntime.views?.[view]?.canvas) failures.push(view + ' battle canvas missing.');
 }
+if (!candidateRuntime.saveProbe?.supported || candidateRuntime.saveProbe.savedVersion !== 18 || candidateRuntime.saveProbe.savedGold !== candidateRuntime.saveProbe.expectedGold) failures.push('V18 save persistence probe failed.');
 if (candidateBalance.invariants?.potential400MainStatPctToAttackPct !== 4000) failures.push('Potential conversion invariant broken.');
 const baselineTitle = baselineRuntime.views?.mobile?.title || '';
 const candidateTitle = candidateRuntime.views?.mobile?.title || '';
