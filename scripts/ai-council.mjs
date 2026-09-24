@@ -33,7 +33,7 @@ function buildSourcePack(reviewText='',maxChars=42000){
     'function calcStats','function attack','function expNeed','function addExp',
     'function skillUnitCost','function equipmentHTML','function companionsHTML','function applyV18RebalanceReset',
     'function growth','function skill','function companion','function rebirth',
-    'sproutFinalV15','potentialAttackPct=potentialPct*10','POTENTIAL_RANGES',
+    'sproutFinalV19','potentialAttackPct=potentialPct*10','POTENTIAL_RANGES','PROGRESSION_GROWTH=1.13','function rosterResonance',
     '@media','canvas','function render','function draw','function save','function load'
   ];
 
@@ -242,7 +242,7 @@ const implementer=await gemini([
   'If no change is sufficiently justified, output exactly NO_PATCH.',
   'Otherwise output one valid git unified diff for index.html only between BEGIN_PATCH and END_PATCH. Prefer full diff --git / --- / +++ headers; the CI can normalize missing file headers but not malformed hunks.',
   'Do not modify CI, workflows, council rules or secrets. Do not rewrite the whole file. Keep under 600 changed lines.',
-  'Preserve save compatibility and every canonical design invariant in council-rules.md. In particular: finance/dice/odd-even gameplay must not return, gold upgrade costs must remain non-exponential, and main-stat potential 1% = attack +10%.',
+  'Preserve save compatibility and every canonical design invariant in council-rules.md. In particular: finance/dice/odd-even gameplay must not return, per-job mastery must remain level-driven rather than gold-purchased, shared level/stage progression must remain 1.13, roster resonance must remain meaningful, gold upgrade costs must remain non-exponential, and main-stat potential 1% = attack +10%.',
   'Prefer at most three coherent changes. No prose inside patch markers.',
   'DIRECTOR REVIEW:\n'+director,
   'CRITIC REVIEW:\n'+critic,
@@ -265,7 +265,7 @@ if(!v.ok&&!/\bNO_PATCH\b/i.test(implementer)){
     'The previous Implementer response failed CI patch parsing/validation.',
     'Your only job is to preserve the Implementer\'s intended code changes and express them as ONE valid git unified diff for index.html.',
     'Do NOT invent new gameplay changes, rebalance anything, change design intent, or add commentary.',
-    'Respect every canonical rule below. Finance/dice/odd-even gameplay must not return; gold upgrade costs must remain non-exponential; save compatibility and potential conversion must remain intact.',
+    'Respect every canonical rule below. Finance/dice/odd-even gameplay must not return; job mastery must remain level-driven; roster resonance and the 1.13 shared progression factor must remain intact; gold upgrade costs must remain non-exponential; save compatibility and potential conversion must remain intact.',
     'The diff must start with: diff --git a/index.html b/index.html',
     'Then include --- a/index.html and +++ b/index.html and valid @@ hunks with exact context copied from CURRENT index.html.',
     'Keep the total changed lines under 600.',
