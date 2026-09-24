@@ -17,6 +17,7 @@ try {
   browser = await chromium.launch({ headless: true });
   const results = { views: {}, pageErrors: [], consoleErrors: [], checkedAt: new Date().toISOString() };
   const targets = [
+    ['smallMobile', { width: 360, height: 800 }],
     ['mobile', { width: 390, height: 844 }],
     ['desktop', { width: 1365, height: 768 }]
   ];
@@ -31,6 +32,11 @@ try {
       const body = document.body;
       const canvas = document.querySelector('canvas');
       const get = id => document.getElementById(id)?.textContent || '';
+      const visibleButtons = [...document.querySelectorAll('button')].filter(el => {
+        const r = el.getBoundingClientRect();
+        const style = getComputedStyle(el);
+        return r.width > 0 && r.height > 0 && style.display !== 'none' && style.visibility !== 'hidden';
+      });
       let balance = null;
       try {
         const levels = [1, 10, 25, 50, 100].map(level => ({ level, exp: expNeed(level) }));
@@ -59,6 +65,11 @@ try {
         clientWidth: body.clientWidth,
         horizontalOverflow: body.scrollWidth > body.clientWidth + 2,
         canvas: canvas ? { width: canvas.width, height: canvas.height, cssWidth: canvas.getBoundingClientRect().width, cssHeight: canvas.getBoundingClientRect().height } : null,
+        visibleButtonCount: visibleButtons.length,
+        tinyTapTargets: visibleButtons.filter(el => {
+          const r = el.getBoundingClientRect();
+          return r.width < 32 || r.height < 32;
+        }).map(el => ({ text: (el.textContent || '').trim().slice(0, 40), width: Math.round(el.getBoundingClientRect().width), height: Math.round(el.getBoundingClientRect().height) })),
         gold: get('gold'),
         attack: get('attack'),
         power: get('power'),
@@ -70,8 +81,9 @@ try {
     await context.close();
   }
   if (results.pageErrors.length) throw new Error('Page errors: ' + results.pageErrors.join(' | '));
-  if (!results.views.mobile.canvas || !results.views.desktop.canvas) throw new Error('Battle canvas missing.');
-  if (results.views.mobile.horizontalOverflow) throw new Error('Mobile page has horizontal overflow.');
+  if (!results.views.smallMobile.canvas || !results.views.mobile.canvas || !results.views.desktop.canvas) throw new Error('Battle canvas missing.');
+  if (results.views.smallMobile.horizontalOverflow || results.views.mobile.horizontalOverflow) throw new Error('Mobile page has horizontal overflow.');
+  if (results.views.smallMobile.tinyTapTargets.length || results.views.mobile.tinyTapTargets.length) throw new Error('Mobile UI has tap targets smaller than 32px.');
   if ((results.views.mobile.balance?.potentialExample400 || 0) !== 4000) throw new Error('Potential conversion rule is not 400% -> 4000% attack.');
   fs.writeFileSync(outPath, JSON.stringify(results, null, 2));
   console.log(JSON.stringify(results, null, 2));
