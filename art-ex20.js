@@ -2,7 +2,7 @@
 'use strict';
 const ART_VERSION='EX27 Infinite Expedition';
 const REGION_IMAGES={};
-for(const name of ['forest','swamp','roots']){const img=new Image();img.src='assets/'+name+'-ex21.webp';REGION_IMAGES[name]=img}
+for(const name of ['forest','swamp','roots','crystal','astral','forge']){const img=new Image();img.src='assets/'+name+(['forest','swamp','roots'].includes(name)?'-ex21.webp':'-ex28.webp');REGION_IMAGES[name]=img}
 const HERO_IMAGES={};for(const id of ['warrior','mage','archer','rogue','paladin']){const img=new Image();img.src='assets/hero-'+id+'-ex21.webp';HERO_IMAGES[id]=img}
 const HERO_UI_IMAGES={};for(const id of ['warrior','mage','archer','rogue','paladin']){const img=new Image();img.src='assets/hero-'+id+'-ui-ex22.webp';HERO_UI_IMAGES[id]=img}
 function readyArt(img){return !!(img&&img.complete&&img.naturalWidth)}
@@ -126,7 +126,7 @@ drawRegionBackground=function(ctx,t){ctx.clearRect(0,0,480,270);const theme=stag
 const baseDrawRegionBackground=drawRegionBackground;
 drawRegionBackground=function(ctx,t){
  const theme=stageTheme(),scene=REGION_IMAGES[theme];
- if(scene&&scene.complete&&scene.naturalWidth){ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.imageSmoothingEnabled=true;ctx.drawImage(scene,0,0,960,540);ctx.restore();ctx.imageSmoothingEnabled=false;const cycle=regionCycle(getC().stage)%4;if(cycle){ctx.globalAlpha=[0,.10,.13,.11][cycle];ipx(ctx,0,0,480,270,['','#ffe1a4','#81c9ff','#b294e9'][cycle]);ctx.globalAlpha=1}return}
+ if(scene&&scene.complete&&scene.naturalWidth){ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.imageSmoothingEnabled=true;ctx.drawImage(scene,0,0,960,540);ctx.restore();ctx.imageSmoothingEnabled=false;const cycle=getC().stage<200?regionCycle(getC().stage)%4:0;if(cycle){ctx.globalAlpha=[0,.10,.13,.11][cycle];ipx(ctx,0,0,480,270,['','#ffe1a4','#81c9ff','#b294e9'][cycle]);ctx.globalAlpha=1}return}
  baseDrawRegionBackground(ctx,t);
  // Layered pixel clusters give each region its own architecture and material texture.
  if(theme==='forest'){
@@ -168,7 +168,7 @@ drawStarterPreviews=function(t){document.querySelectorAll('[data-starter-canvas]
 function installPortrait(){const host=document.getElementById('charIcon');if(!host)return;host.textContent='';let c=document.getElementById('charPortraitCanvas');if(!c){c=document.createElement('canvas');c.id='charPortraitCanvas';c.width=72;c.height=72;c.setAttribute('aria-label','현재 캐릭터 도트 초상화');host.appendChild(c)}}
 function stampVersion(){document.title='새싹 원정대 - '+ART_VERSION;const foot=document.querySelector('.startFoot');if(foot)foot.textContent='EX27 INFINITE EXPEDITION · 무한 원정';const hint=document.querySelector('.pixelHint');if(hint)hint.textContent='AUTO BATTLE · INTEGER PIXEL SCALE';}
 const baseRegionEX27=drawRegionBackground;
-drawRegionBackground=function(ctx,t){baseRegionEX27(ctx,t);const realm=stageTheme();if(!['crystal','astral','forge'].includes(realm))return;ctx.save();ctx.globalAlpha=.14;ctx.fillStyle={crystal:'#8edbff',astral:'#af8fff',forge:'#ff9651'}[realm];ctx.fillRect(0,0,480,270);ctx.globalAlpha=.55;for(let i=0;i<10;i++){const x=(i*83+Math.floor(t*.012)*(i%2?1:-1)+960)%500-10,y=20+(i*41)%160;ctx.fillStyle=i%3?'#e5faff':'#ffe7ac';ctx.fillRect(x,y,2+i%2,3+i%3)}ctx.restore()};
+drawRegionBackground=function(ctx,t){baseRegionEX27(ctx,t);const realm=stageTheme();if(!['crystal','astral','forge'].includes(realm))return;ctx.save();ctx.globalAlpha=.42;for(let i=0;i<9;i++){const x=(i*83+Math.floor(t*.01)*(i%2?1:-1)+960)%500-10,y=18+(i*41)%148;ctx.fillStyle=realm==='forge'?'#ffbd6a':realm==='astral'?'#c7c9ff':'#d1fbff';ctx.fillRect(x,y,2+i%2,2+i%3)}ctx.restore()};
 const baseSkillEX27=drawPixelSkillFx;
 drawPixelSkillFx=function(ctx,dt,t){baseSkillEX27(ctx,dt,t);const f=VFX.skillFx;if(!f)return;const phase=1-f.life/.7,r=16+phase*75,palette={warrior:'#ff6859',archer:'#adff76',mage:'#78d5ff',rogue:'#cf8bff',paladin:'#ffe3a0'},color=palette[getDef().id]||'#fff';ctx.save();ctx.globalAlpha=Math.max(0,.65*(1-phase));ctx.strokeStyle=color;ctx.lineWidth=3;ctx.shadowColor=color;ctx.shadowBlur=12;ctx.beginPath();ctx.ellipse(356,151,r,r*.48,-.3,0,Math.PI*1.8);ctx.stroke();for(let i=0;i<5;i++){const a=i*1.256+t*.002,x=356+Math.cos(a)*r,y=151+Math.sin(a)*r*.5;ctx.fillStyle=i%2?'#fff':color;ctx.fillRect(x,y,3,3)}ctx.restore()};
 const baseHeroEX27=drawHeroArt;

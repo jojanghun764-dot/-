@@ -1063,6 +1063,6 @@ function log(msg){var host=$('#log'),row=document.createElement('div');row.textC
 document.addEventListener('visibilitychange',function(){if(!S.profileStarted)return;if(document.visibilityState==='hidden'){S.lastLogout=now();persistState();return}var elapsed=Math.max(0,(now()-(S.lastLogout||now()))/1000);if(elapsed>1){applyOfflineProgress(elapsed);enemy=null;render()}persistState()});
 buildSprites();load();render();initIntroFlow();log('🌱 새싹 원정대 EX19 Pixel Art 시작');requestAnimationFrame(loop);
 </script>
-<script src="art-ex20.js?v=ex27"></script>
+<script src="art-ex20.js?v=ex28"></script>
 </body>
 </html>
