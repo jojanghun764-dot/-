@@ -12,8 +12,14 @@ if (candidateStatic.duplicateFunctionNames > baselineStatic.duplicateFunctionNam
   failures.push('Duplicate named functions increased.');
 }
 if (candidateRuntime.pageErrors?.length) failures.push('Candidate has browser page errors.');
-if (candidateRuntime.views?.mobile?.horizontalOverflow) failures.push('Candidate has mobile horizontal overflow.');
-if (!candidateRuntime.views?.mobile?.canvas || !candidateRuntime.views?.desktop?.canvas) failures.push('Battle canvas missing.');
+if (candidateRuntime.consoleErrors?.length) failures.push('Candidate has browser console errors.');
+for (const view of ['smallMobile', 'mobile']) {
+  if (candidateRuntime.views?.[view]?.horizontalOverflow) failures.push(view + ' has horizontal overflow.');
+  if (candidateRuntime.views?.[view]?.tinyTapTargets?.length) failures.push(view + ' has tap targets smaller than 32px.');
+}
+for (const view of ['smallMobile', 'mobile', 'desktop']) {
+  if (!candidateRuntime.views?.[view]?.canvas) failures.push(view + ' battle canvas missing.');
+}
 if (candidateBalance.invariants?.potential400MainStatPctToAttackPct !== 4000) failures.push('Potential conversion invariant broken.');
 const baselineTitle = baselineRuntime.views?.mobile?.title || '';
 const candidateTitle = candidateRuntime.views?.mobile?.title || '';
