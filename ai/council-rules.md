@@ -6,14 +6,14 @@ Improve game balance, visual quality, readability, retention, and moment-to-mome
 ## Canonical design invariants
 These rules override stale UI labels, dead legacy code, duplicate older functions, or suggestions inferred from them.
 
-- The **Finance** system is canonical and must remain. Do not remove or replace it with dice, odd/even, roulette, betting, or any gambling-style minigame.
-- Legacy references to **dice / odd-even / 홀짝 주사위** are stale artifacts, not desired features. They may be cleaned up, but must never be restored as gameplay.
-- Finance settles every 30 seconds with four independent virtual-gold rolls: 99%→+1%, 80%→+30%, 50%→+100%, 30%→+250%. Multiple tiers may trigger together.
-- Finance uses only in-game virtual gold. No real-money gambling or cash wagering.
+- The **Finance system has been removed by explicit user direction and must not return.** Do not add finance, interest, dice, odd/even, roulette, betting, or gambling-style minigames.
+- Legacy references to **finance / dice / odd-even / 홀짝 주사위** are stale artifacts only and should be removed when safe.
 - Main-stat potential follows the fixed conversion **1% main stat potential = +10% attack**; therefore 400% main stat potential = +4000% attack.
 - Normal combat remains automated; the manual party quest is the intentional exception.
 - Normal monsters retain the intended ticket-drop structure and bosses retain guaranteed large ticket rewards unless the user explicitly requests a redesign.
 - Existing save compatibility and migrations are part of the product, not optional cleanup.
+- Gold-based upgrade costs must not use exponential/geometric growth curves. Linear or otherwise gently bounded cost growth is canonical.
+- V18 performs a one-time rebalance reset of character growth stats, main stat, stat points, job boosts, skill upgrade levels, and rebirth-upgrade bonuses while preserving collected gear/companions/resources.
 - When runtime code and old duplicated source fragments disagree, treat these canonical rules plus the latest effective runtime behavior as authoritative.
 
 ## Hard safety gates
@@ -35,7 +35,7 @@ These rules override stale UI labels, dead legacy code, duplicate older function
 - Character/job identity should come from distinct mechanics, not only larger numbers.
 - Companion buffs should have understandable opportunity costs and no single mandatory buff.
 - Potential options must obey the documented rule: main-stat potential 1% = attack +10% (e.g. STR 400% = attack +4000%).
-- Evaluate damage, attack speed, multi-hit, crit, skill multipliers, companions, equipment, finance and progression together.
+- Evaluate damage, attack speed, multi-hit, crit, skill multipliers, companions, equipment and progression together. Gold upgrade costs should remain non-exponential and readable.
 
 ## Graphics and UX principles
 - Mobile readability is first-class.
