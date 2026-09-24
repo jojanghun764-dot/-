@@ -1,0 +1,53 @@
+name: Game Integrity Check
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'scripts/**'
+      - '.github/workflows/game-check.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sprout-game-check
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+
+      - name: Static check
+        run: node scripts/static-check.mjs --out artifacts/static.json
+
+      - name: Browser runtime audit
+        run: node scripts/runtime-audit.mjs --out artifacts/runtime.json
+
+      - name: Balance and potential functional tests
+        run: node scripts/balance-sim.mjs --out artifacts/balance.json
+
+      - name: Upload check evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: game-check-${{ github.run_id }}
+          path: artifacts/
+          if-no-files-found: warn
+          retention-days: 14
