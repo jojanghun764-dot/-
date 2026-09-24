@@ -19,7 +19,13 @@ for (const view of ['smallMobile', 'mobile', 'mobileLandscape']) {
 for (const view of ['smallMobile', 'mobile', 'mobileLandscape', 'desktop']) {
   if (!candidateRuntime.views?.[view]?.canvas) failures.push(view + ' battle canvas missing.');
 }
-if (!candidateRuntime.saveProbe?.supported || candidateRuntime.saveProbe.savedVersion !== 18 || candidateRuntime.saveProbe.savedGold !== candidateRuntime.saveProbe.expectedGold) failures.push('V18 save persistence probe failed.');
+if (!candidateRuntime.saveProbe?.supported || candidateRuntime.saveProbe.savedVersion !== 19 || candidateRuntime.saveProbe.reloadedVersion !== 19 || candidateRuntime.saveProbe.savedGold !== candidateRuntime.saveProbe.expectedGold || candidateRuntime.saveProbe.reloadedGold !== candidateRuntime.saveProbe.expectedGold) failures.push('V19 save persistence probe failed.');
+if (!candidateBalance.v19FullResetTest?.pass) failures.push('V19 complete reset invariant failed.');
+for (const view of ['smallMobile', 'mobile', 'mobileLandscape', 'desktop']) {
+  if (!candidateRuntime.views?.[view]?.intro?.startVisible) failures.push(view + ' title screen missing.');
+  if (candidateRuntime.views?.[view]?.starter?.cards !== 5) failures.push(view + ' starter selection is incomplete.');
+  if (!candidateRuntime.views?.[view]?.profileStarted || !candidateRuntime.views?.[view]?.runtimeSessionActive) failures.push(view + ' did not enter game after character selection.');
+}
 if (candidateBalance.invariants?.potential400MainStatPctToAttackPct !== 4000) failures.push('Potential conversion invariant broken.');
 const baselineTitle = baselineRuntime.views?.mobile?.title || '';
 const candidateTitle = candidateRuntime.views?.mobile?.title || '';
