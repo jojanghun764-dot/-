@@ -42,6 +42,11 @@ const forbidden = [
   'function financeHTML',
   'function financeTick',
   'financeProcessDue()',
+  'function diceHTML',
+  'function diceTick',
+  'diceGameLive',
+  '.diceHero{',
+  '.financeHero{',
   "localStorage.setItem('sproutFinalV17'"
 ];
 const forbiddenPresent = forbidden.filter(token => html.includes(token));
