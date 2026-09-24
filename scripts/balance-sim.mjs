@@ -83,8 +83,6 @@ try {
         maxObservedMainStatPct: samples[samples.length - 1]
       };
     }
-    const financeExpectedReturnPerSettlement = 0.99 * 0.01 + 0.80 * 0.30 + 0.50 * 1.00 + 0.30 * 2.50;
-
     const stateSnapshot = JSON.stringify(S);
     const potentialAutoTest = {};
     try {
@@ -157,6 +155,56 @@ try {
       S = JSON.parse(stateSnapshot);
     }
 
+    const costSeries = {
+      growthAtk: [0, 25, 50, 100].map(level => growthUnitCost('atk', level)),
+      skill1: [0, 25, 50, 100].map(level => skillUnitCost(0, level)),
+      warriorJob: [0, 25, 50, 100].map(level => jobBoostCost('warrior', level)),
+      enhance: [0, 5, 10, 25].map(level => enhanceCost({ level })),
+      potentialLegend: [0, 5, 10, 20].map(star => potentialCost({ rarity: '전설', star, locks: [false, false, false] })),
+      companionLegend: [1, 2, 3, 4].map(star => compGrowthCost({ rarity: '전설', star }))
+    };
+    const monotonic = values => values.every((v, i) => i === 0 || v >= values[i - 1]);
+    const goldUpgradeCostTest = {
+      series: costSeries,
+      monotonic: Object.values(costSeries).every(monotonic),
+      boundedGrowth:
+        costSeries.growthAtk.at(-1) / costSeries.growthAtk[0] < 40 &&
+        costSeries.skill1.at(-1) / costSeries.skill1[0] < 40 &&
+        costSeries.warriorJob.at(-1) / costSeries.warriorJob[0] < 60 &&
+        costSeries.enhance.at(-1) / costSeries.enhance[0] < 50 &&
+        costSeries.potentialLegend.at(-1) / costSeries.potentialLegend[0] < 10 &&
+        costSeries.companionLegend.at(-1) / costSeries.companionLegend[0] < 5
+    };
+    goldUpgradeCostTest.pass = goldUpgradeCostTest.monotonic && goldUpgradeCostTest.boundedGrowth;
+
+    const resetSnapshot = JSON.stringify(S);
+    const resetC = getC();
+    resetC.growth = { atk: 9, aspd: 8, crit: 7, speed: 6 };
+    resetC.mainStat = 99;
+    resetC.statPoints = 12;
+    resetC.jobBoost = 5;
+    resetC.skillLv = [8, 7, 6];
+    S.rebirthUpgrades = { atk: 3, exp: 3, gold: 3, boss: 3, speed: 3, offline: 3 };
+    S.finance = { balance: 12345 };
+    const resetApplied = applyV18RebalanceReset(17);
+    const v18ResetTest = {
+      resetApplied,
+      growthZero: Object.values(resetC.growth).every(v => v === 0),
+      mainStatZero: resetC.mainStat === 0,
+      statPointsZero: resetC.statPoints === 0,
+      jobBoostZero: resetC.jobBoost === 0,
+      skillUpgradeReset: resetC.skillLv.every((v, i) => i < resetC.unlockedSkills ? v === 1 : v === 0),
+      rebirthUpgradesZero: Object.values(S.rebirthUpgrades).every(v => v === 0),
+      financeDeleted: !('finance' in S)
+    };
+    v18ResetTest.pass = Object.values(v18ResetTest).every(Boolean);
+    S = JSON.parse(resetSnapshot);
+
+    const financeRemoved = typeof financeTick === 'undefined' &&
+      typeof financeHTML === 'undefined' &&
+      !document.querySelector('[data-tab="finance"]') &&
+      !('finance' in S);
+
     return {
       expCurve,
       cumulativeExp,
@@ -164,10 +212,9 @@ try {
       growthCosts,
       jobs,
       potentialMonteCarlo,
-      finance: {
-        expectedInterestRatePer30Seconds: financeExpectedReturnPerSettlement,
-        expectedBalanceMultiplierPer30Seconds: 1 + financeExpectedReturnPerSettlement
-      },
+      goldUpgradeCostTest,
+      v18ResetTest,
+      financeRemoved,
       potentialAutoTest,
       invariants: {
         potential400MainStatPctToAttackPct: 400 * 10,
@@ -178,6 +225,15 @@ try {
   });
   if (!report.potentialAutoTest?.pass) {
     throw new Error('Potential auto-reroll functional test failed: ' + JSON.stringify(report.potentialAutoTest));
+  }
+  if (!report.goldUpgradeCostTest?.pass) {
+    throw new Error('Gold upgrade cost curve test failed: ' + JSON.stringify(report.goldUpgradeCostTest));
+  }
+  if (!report.v18ResetTest?.pass) {
+    throw new Error('V18 stat reset test failed: ' + JSON.stringify(report.v18ResetTest));
+  }
+  if (!report.financeRemoved) {
+    throw new Error('Finance system is still present in the effective runtime.');
   }
   if (report.invariants?.potential400MainStatPctToAttackPct !== 4000) {
     throw new Error('Potential conversion invariant failed: 400% must convert to +4000% attack.');
