@@ -77,14 +77,33 @@ try {
       };
     });
     results.views[name] = audit;
+
+    if (name === 'desktop') {
+      const saveProbe = await page.evaluate(() => {
+        if (typeof save !== 'function' || typeof S !== 'object') return { supported: false };
+        const originalGold = S.gold;
+        const probeGold = 1234567;
+        S.gold = probeGold;
+        save();
+        const raw = localStorage.getItem('sproutFinalV18');
+        const parsed = raw ? JSON.parse(raw) : null;
+        S.gold = originalGold;
+        localStorage.removeItem('sproutFinalV18');
+        return { supported: true, savedVersion: parsed?.version, savedGold: parsed?.gold, expectedGold: probeGold };
+      });
+      results.saveProbe = saveProbe;
+    }
+
     await page.screenshot({ path: 'artifacts/' + name + '.png', fullPage: false });
     await context.close();
   }
   if (results.pageErrors.length) throw new Error('Page errors: ' + results.pageErrors.join(' | '));
+  if (results.consoleErrors.length) throw new Error('Console errors: ' + results.consoleErrors.join(' | '));
   if (!results.views.smallMobile.canvas || !results.views.mobile.canvas || !results.views.desktop.canvas) throw new Error('Battle canvas missing.');
   if (results.views.smallMobile.horizontalOverflow || results.views.mobile.horizontalOverflow) throw new Error('Mobile page has horizontal overflow.');
   if (results.views.smallMobile.tinyTapTargets.length || results.views.mobile.tinyTapTargets.length) throw new Error('Mobile UI has tap targets smaller than 32px.');
   if ((results.views.mobile.balance?.potentialExample400 || 0) !== 4000) throw new Error('Potential conversion rule is not 400% -> 4000% attack.');
+  if (!results.saveProbe?.supported || results.saveProbe.savedVersion !== 18 || results.saveProbe.savedGold !== results.saveProbe.expectedGold) throw new Error('V18 save persistence probe failed.');
   fs.writeFileSync(outPath, JSON.stringify(results, null, 2));
   console.log(JSON.stringify(results, null, 2));
 } finally {
