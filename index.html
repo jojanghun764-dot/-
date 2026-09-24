@@ -981,7 +981,7 @@ function worldBossRecommended(stage){return Math.floor(worldBossMaxHp(stage===un
 function worldBossTier(stage){return Math.max(1,Math.floor((Math.max(20,stage)-20)/20)+1)}
 function worldBossDropRate(stage){return Math.min(.25,.05+(worldBossTier(stage)-1)*.015)}
 function worldBossClueRate(stage){return Math.max(.55,.84-(worldBossTier(stage)-1)*.035)}
-function worldBossPatternDamage(stage){return .08*Math.pow(.87,worldBossTier(stage)-1)}
+function worldBossPatternDamage(stage){return Math.max(.06,.08*Math.pow(.87,worldBossTier(stage)-1))}
 function worldBossTierName(stage){return ['싹눈','심층','봉인','균열','심연','태고'][Math.min(5,worldBossTier(stage)-1)]+' '+worldBossTier(stage)+'단계'}
 const WORLD_PATTERNS=[
  {stance:'defend',name:'거목 내려찍기',hint:'땅이 울리고 굵은 뿌리가 움직입니다'},
