@@ -8,16 +8,14 @@ const candidateRuntime = read('artifacts/candidate-runtime.json');
 const candidateBalance = read('artifacts/candidate-balance.json');
 
 const failures = [];
-if (candidateStatic.duplicateFunctionNames > baselineStatic.duplicateFunctionNames) {
-  failures.push('Duplicate named functions increased.');
-}
+if (candidateStatic.duplicateFunctionNames > baselineStatic.duplicateFunctionNames) failures.push('Duplicate named functions increased.');
 if (candidateRuntime.pageErrors?.length) failures.push('Candidate has browser page errors.');
 if (candidateRuntime.consoleErrors?.length) failures.push('Candidate has browser console errors.');
-for (const view of ['smallMobile', 'mobile']) {
+for (const view of ['smallMobile', 'mobile', 'landscapeMobile']) {
   if (candidateRuntime.views?.[view]?.horizontalOverflow) failures.push(view + ' has horizontal overflow.');
   if (candidateRuntime.views?.[view]?.tinyTapTargets?.length) failures.push(view + ' has tap targets smaller than 32px.');
 }
-for (const view of ['smallMobile', 'mobile', 'desktop']) {
+for (const view of ['smallMobile', 'mobile', 'landscapeMobile', 'desktop']) {
   if (!candidateRuntime.views?.[view]?.canvas) failures.push(view + ' battle canvas missing.');
 }
 if (candidateBalance.invariants?.potential400MainStatPctToAttackPct !== 4000) failures.push('Potential conversion invariant broken.');
