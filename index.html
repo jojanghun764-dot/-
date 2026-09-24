@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>새싹 원정대 - EX8 Mobile</title>
+<title>새싹 원정대 - EX11 Final</title>
 <style>
 :root{
   --bg:#0f1714;--panel:#17231e;--panel2:#1f3028;--line:#355243;--text:#effff5;
@@ -89,7 +89,7 @@ button,input,select{font:inherit} button{cursor:pointer;border:0}.wrap{max-width
 .battlefield{contain:layout paint style;isolation:isolate}
 .battleCanvas{backface-visibility:hidden;transform:translateZ(0);will-change:contents}
 .card,.invCard,.compCard{transform:translateZ(0)}
-@media(max-width:800px){.battleCanvas{filter:saturate(1.04) contrast(1.02)}.potentialAutoRow .btn{flex:1 1 auto}.potentialAuto input{flex:0 0 92px}}
+@media(max-width:800px){.battleCanvas{filter:saturate(1.04) contrast(1.02)}.pixelHint{display:none}.stagebar{top:6px;left:6px;right:6px;gap:5px}.stagebar .badge{max-width:48%;padding:5px 7px;font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.enemyName{bottom:32px;width:76%;font-size:11px}.hpWrap{left:12%;right:12%;bottom:12px}.potentialAutoRow .btn{flex:1 1 auto}.potentialAuto input{flex:0 0 92px}}
 @media(prefers-reduced-motion:reduce){.battleCanvas,.card,.invCard,.compCard{transition:none!important;animation:none!important}}
 
 </style>
@@ -152,7 +152,7 @@ button,input,select{font:inherit} button{cursor:pointer;border:0}.wrap{max-width
       <button class="tab" data-tab="gacha">소환</button>
       <button class="tab" data-tab="companions">동료</button>
       <button class="tab" data-tab="shop">보석 상점</button>
-      <button class="tab" data-tab="finance">홀짝 주사위</button>
+      <button class="tab" data-tab="finance">금융</button>
     </div>
     <div class="panelBody">
       <div class="tabPage active" id="growth"></div>
@@ -601,7 +601,7 @@ function growthHTML(){var c=getC(),d=getDef(),st=calcStats();if(c.growth.speed==
  return jobBoostHTML()+'<div class="cards"><div class="card statPointBox"><h3>◆ 주스탯 '+d.main+'</h3><div class="kv"><span>현재 '+fmt(c.mainStat||0)+'</span><b>남은 포인트 '+fmt(c.statPoints||0)+'</b></div><div class="mini">레벨업마다 스탯포인트 +1 · '+d.main+' 1당 공격력 +10 · 잠재 '+st.potentialPct.toFixed(0)+'% = 공격력 +'+st.potentialAttackPct.toFixed(0)+'%</div><div style="margin-top:8px"><button class="btn primary" onclick="spendStatPoint(1)">+1</button> <button class="btn" onclick="spendStatPoint(10)">+10</button> <button class="btn gold" onclick="spendStatPoint(getC().statPoints||0)">전부 투자</button></div></div>'+cards+'</div>'
 }
 
-function skillUnitCost(i,lv){var x=Math.max(1,(lv||0)+1);return Math.floor(8000*Math.pow(x,1.7)*(1+i*.5))}
+function skillUnitCost(i,lv){var x=Math.max(1,(lv||0)+1);return Math.floor(120*Math.pow(x,1.45)*(1+i*.35))}
 function skillsHTML(){var c=getC(),d=getDef(),st=calcStats(),desc={warrior:['전방 초록 참격','회전하며 넓은 원형 참격','지면을 깨뜨리는 대형 충격파'],mage:['청록 마력탄 폭발','주변을 감싸는 덩굴 마력 폭발','보라빛 별빛 다중 폭발'],archer:['직선 씨앗 화살','다중 연사 화살비','화면을 가르는 바람 화살'],rogue:['순간 잎칼 참격','보라색 잔상 돌진','교차 낙엽 난무'],paladin:['빛의 방패 파동','황금 수호 돌진','성광 기둥과 보호 결계']}[d.id];return d.skills.map(function(name,i){var locked=i>=c.unlockedSkills,lv=c.skillLv[i]||0,mult=skillMultiplier(i,lv),effective=mult*st.skillDmg,next=skillUnitCost(i,lv);return '<div class="skillRow"><div><b>'+name+'</b> <span class="pill">'+(locked?'잠김':'Lv.'+lv)+'</span><div class="skillDesc">'+desc[i]+' · '+(i===0?'기본 자동 스킬':i===1?'Lv.5 해금':'Lv.10 해금')+'</div><span class="skillPower">공격력 ×'+mult.toFixed(2)+(st.skillDmg!==1?' · 직업보정 포함 ×'+effective.toFixed(2):'')+'</span><div class="mini">다음 강화 '+fmt(next)+'G</div></div><div class="batchBtns"><button class="btn primary" '+(locked?'disabled':'')+' onclick="upgradeSkill('+i+',1)">+1</button><button class="btn" '+(locked?'disabled':'')+' onclick="upgradeSkill('+i+',10)">+10</button><button class="btn" '+(locked?'disabled':'')+' onclick="upgradeSkill('+i+',100)">+100</button><button class="btn gold" '+(locked?'disabled':'')+' onclick="upgradeSkill('+i+',\'max\')">최대</button></div></div>'}).join('')}
 
 function potentialSum(e){return (e.potential||[]).reduce(function(a,v){return a+(Number(v)||0)},0)}
@@ -629,7 +629,7 @@ function drawEffects(ctx,dt){VFX.particles.forEach(function(p){p.life-=dt;p.x+=p
 function drawBattleScene(t){var c=canvas();if(!c)return;var ctx=c.getContext('2d');ctx.setTransform(1,0,0,1,0,0);ctx.imageSmoothingEnabled=false;var dt=Math.min(.028,Math.max(0,(t-(VFX.last||t))/1000));VFX.last=t;VFX.attack=Math.max(0,VFX.attack-dt);VFX.hit=Math.max(0,VFX.hit-dt);VFX.spawn=Math.max(0,VFX.spawn-dt);VFX.shake=0;ctx.save();drawBackground(ctx,t);drawHero(ctx,t);drawEnemy(ctx,t);drawSkillEffects(ctx,dt,t);drawEffects(ctx,dt);ctx.restore()}
 function loop(t){if(document.visibilityState!=='hidden')drawBattleScene(t);if(S.auto){var st=calcStats(),gap=1000/Math.max(.25,st.aspd);if(t-attackTimer>gap){attackTimer=t;attack()}}if(t-buffTimer>1000){buffTimer=t;buffCheck();financeProcessDue();renderTop();renderFinanceLive()}requestAnimationFrame(loop)}
 
-buildSprites();load();financeProcessDue();spawn(false);render();log('🌱 새싹 원정대 EX10 Mobile 시작');requestAnimationFrame(loop);
+buildSprites();load();financeProcessDue();spawn(false);render();log('🌱 새싹 원정대 EX11 Final 시작');requestAnimationFrame(loop);
 </script>
 </body>
 </html>
