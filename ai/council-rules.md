@@ -11,9 +11,10 @@ These rules override stale UI labels, dead legacy code, duplicate older function
 - Main-stat potential follows the fixed conversion **1% main stat potential = +10% attack**; therefore 400% main stat potential = +4000% attack.
 - Normal combat remains automated; the manual party quest is the intentional exception.
 - Normal monsters retain the intended ticket-drop structure and bosses retain guaranteed large ticket rewards unless the user explicitly requests a redesign.
-- Existing save compatibility and migrations are part of the product, not optional cleanup.
+- V19 is the current save baseline. Preserve V19+ save compatibility after the one-time V18-and-earlier reset.
 - Gold-based upgrade costs must not use exponential/geometric growth curves. Linear or otherwise gently bounded cost growth is canonical.
-- V18 performs a one-time rebalance reset of character growth stats, main stat, stat points, job boosts, skill upgrade levels, and rebirth-upgrade bonuses while preserving collected gear/companions/resources.
+- V19 intentionally performs a one-time complete fresh-start reset for every V18-or-earlier save: Lv.1, Stage 1, all currencies/resources 0, no equipment/companions, no rebirth progress, and all upgrades at base values.
+- The canonical entry flow is **title screen → Start → first-character selection → game**. Returning V19 profiles see the title screen and may Continue. Manual full reset returns to the title screen.
 - When runtime code and old duplicated source fragments disagree, treat these canonical rules plus the latest effective runtime behavior as authoritative.
 
 ## Hard safety gates
