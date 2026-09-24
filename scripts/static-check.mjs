@@ -32,11 +32,19 @@ const required = [
   'function expNeed',
   'function equipmentHTML',
   'function companionsHTML',
-  'function financeHTML',
-  'sproutFinalV15',
+  'function applyV18RebalanceReset',
+  'sproutFinalV18',
   'potentialAttackPct=potentialPct*10'
 ];
 const missing = required.filter(token => !html.includes(token));
+const forbidden = [
+  'data-tab="finance"',
+  'function financeHTML',
+  'function financeTick',
+  'financeProcessDue()',
+  "localStorage.setItem('sproutFinalV17'"
+];
+const forbiddenPresent = forbidden.filter(token => html.includes(token));
 const result = {
   bytes: Buffer.byteLength(html),
   scriptBytes: Buffer.byteLength(match[1]),
@@ -44,10 +52,15 @@ const result = {
   duplicateFunctionNames: duplicates.length,
   duplicates: duplicates.slice(0, 50),
   missingRequiredTokens: missing,
+  forbiddenTokensPresent: forbiddenPresent,
   checkedAt: new Date().toISOString()
 };
 if (missing.length) {
   console.error('Missing required runtime tokens:', missing.join(', '));
+  process.exit(1);
+}
+if (forbiddenPresent.length) {
+  console.error('Forbidden legacy runtime tokens still present:', forbiddenPresent.join(', '));
   process.exit(1);
 }
 if (baselinePath && fs.existsSync(baselinePath)) {
