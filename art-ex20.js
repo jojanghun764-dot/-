@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-const ART_VERSION='EX25 Expedition';
+const ART_VERSION='EX27 Infinite Expedition';
 const REGION_IMAGES={};
 for(const name of ['forest','swamp','roots']){const img=new Image();img.src='assets/'+name+'-ex21.webp';REGION_IMAGES[name]=img}
 const HERO_IMAGES={};for(const id of ['warrior','mage','archer','rogue','paladin']){const img=new Image();img.src='assets/hero-'+id+'-ex21.webp';HERO_IMAGES[id]=img}
@@ -84,11 +84,15 @@ function bossSheet(key){
 }
 const originalEnemyBaseName=enemyBaseName;
 enemyBaseName=function(stage,boss){
+ if(stage>=200){const realm=['crystal','astral','forge'][Math.floor((stage-200)/20)%3],pool={crystal:['수정 갑주 딱정벌레','가시 낫 사마귀'],astral:['별빛 해파리','월석 늑대'],forge:['태엽 씨앗 기사','흑요석 바실리스크']}[realm];return boss?{crystal:'수정 군주 · 절대수호자',astral:'성운 군주 · 별의 포식자',forge:'용광로 군주 · 심연의 심장'}[realm]:pool[(stage+Math.floor(Math.random()*pool.length))%pool.length]}
  const theme=['forest','swamp','roots'][Math.floor((Math.max(1,stage)-1)/10)%3];
  if(boss)return {forest:'숲의 수호자 · 거목왕',swamp:'늪의 지배자 · 포자군주',roots:'고대의 심장 · 뿌리거신'}[theme];
  const pool=REGION_POOLS[theme];return pool[(stage+Math.floor(Math.random()*pool.length))%pool.length];
 };
 monsterVisualKey=function(){const n=((enemy&&enemy.name)||'').replace(/^✦ 보물 /,'');for(const label in MONSTER_KEYS)if(n.includes(label))return MONSTER_KEYS[label];return stageTheme()==='swamp'?'mudSlime':stageTheme()==='roots'?'rootImp':'forestSlime'};
+const LATE_MONSTER_NAMES=['수정 갑주 딱정벌레','별빛 해파리','가시 낫 사마귀','태엽 씨앗 기사','월석 늑대','흑요석 바실리스크'];
+const LATE_MONSTERS=new Image();LATE_MONSTERS.src='assets/late-monsters-ex27.webp';
+const LATE_BOSSES=new Image();LATE_BOSSES.src='assets/worldboss-portraits-ex27.webp';
 function rebuildArt(){
  CHARACTERS.forEach(function(d){SPRITES.heroes[d.id]=buildHeroEX20(d.id)});
  Object.values(MONSTER_KEYS).forEach(function(k){SPRITES.monsters[k]=monsterSheet(k)});
@@ -142,6 +146,7 @@ drawRegionBackground=function(ctx,t){
 };
 drawEnemyArt=function(ctx,t){
  if(!enemy)return;const theme=stageTheme(),boss=enemy.boss,key=boss?(theme==='forest'?'forestGuardian':theme==='swamp'?'sporeLord':'rootTitan'):monsterVisualKey(),sheet=boss?SPRITES.bosses[key]:SPRITES.monsters[key],img=boss?BOSS_IMAGES[key]:MONSTER_IMAGES[key],size=boss?56:32,dw=boss?144:112,dh=dw,x=boss?300:320,y=boss?96:127,frame=Math.floor(t/(boss?210:165))%4;
+ if(getC().stage>=200){const source=boss?LATE_BOSSES:LATE_MONSTERS;if(readyArt(source)){const i=boss?Math.floor((getC().stage-200)/20)%3:Math.max(0,LATE_MONSTER_NAMES.findIndex(n=>enemy.name.includes(n))),sx=boss?i*652:(i%3)*512,sy=boss?0:Math.floor(i/3)*512,sw=boss?652:512,sh=boss?804:512,bw=boss?144:116,bh=boss?177:116,bx=boss?303:316,by=boss?73:113;ctx.save();ctx.globalAlpha=enemy.hp<=0?.35:1;ctx.imageSmoothingEnabled=true;ctx.shadowBlur=14;ctx.shadowColor=boss?'#ffd886':'#91eafa';ctx.drawImage(source,sx,sy,sw,sh,bx+(VFX.hit>0?2:0),by+Math.sin(t/240)*3,bw,bh);ctx.restore();return}}
  drawEnemyAura(ctx,t,x,y,dw,dh);ctx.save();ctx.imageSmoothingEnabled=false;const bob=Math.round(Math.sin(t/(boss?280:210))*2);if(enemy.hp<=0){ctx.translate(x+dw/2,y+dh);ctx.rotate(.45);ctx.globalAlpha=.45;if(readyArt(img))ctx.drawImage(img,-dw/2,-dh,dw,dh);else drawFrame(ctx,sheet,size,size,frame,-dw/2,-dh,dw,dh)}else{const shake=VFX.hit>0?Math.round(Math.sin(t*.35)*3):0;if(readyArt(img))ctx.drawImage(img,x+shake,y+bob,dw,dh);else drawFrame(ctx,sheet,size,size,frame,x+shake,y+bob,dw,dh);if(VFX.hit>0){ctx.globalCompositeOperation='screen';ctx.globalAlpha=.2;ipx(ctx,x+13,y+9,dw-26,dh-18,'#fff')}}ctx.restore();ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;
 };
 const COMPANION_IMAGES={};COMP_NAMES.forEach(function(name){const img=new Image();img.src='assets/companion-'+name+'-ex23.webp';COMPANION_IMAGES[name]=img});
@@ -162,5 +167,11 @@ drawIntroScene=function(t,canvasId){const c=document.getElementById(canvasId);if
 drawStarterPreviews=function(t){document.querySelectorAll('[data-starter-canvas]').forEach(function(c){const id=c.dataset.starterCanvas,ctx=c.getContext('2d'),img=HERO_UI_IMAGES[id];ctx.imageSmoothingEnabled=false;ctx.clearRect(0,0,96,96);ctx.fillStyle='#102219';ctx.fillRect(0,0,96,96);if(readyArt(img))ctx.drawImage(img,0,16,96,64);else drawFrame(ctx,SPRITES.heroes[id],48,48,Math.floor(t/420)%2,0,0,96,96)})};
 function installPortrait(){const host=document.getElementById('charIcon');if(!host)return;host.textContent='';let c=document.getElementById('charPortraitCanvas');if(!c){c=document.createElement('canvas');c.id='charPortraitCanvas';c.width=72;c.height=72;c.setAttribute('aria-label','현재 캐릭터 도트 초상화');host.appendChild(c)}}
 function stampVersion(){document.title='새싹 원정대 - '+ART_VERSION;const foot=document.querySelector('.startFoot');if(foot)foot.textContent='EX25 EXPEDITION · 보스 선택과 한계초월';const hint=document.querySelector('.pixelHint');if(hint)hint.textContent='AUTO BATTLE · INTEGER PIXEL SCALE';}
+const baseRegionEX27=drawRegionBackground;
+drawRegionBackground=function(ctx,t){baseRegionEX27(ctx,t);const realm=stageTheme();if(!['crystal','astral','forge'].includes(realm))return;ctx.save();ctx.globalAlpha=.14;ctx.fillStyle={crystal:'#8edbff',astral:'#af8fff',forge:'#ff9651'}[realm];ctx.fillRect(0,0,480,270);ctx.globalAlpha=.55;for(let i=0;i<10;i++){const x=(i*83+Math.floor(t*.012)*(i%2?1:-1)+960)%500-10,y=20+(i*41)%160;ctx.fillStyle=i%3?'#e5faff':'#ffe7ac';ctx.fillRect(x,y,2+i%2,3+i%3)}ctx.restore()};
+const baseSkillEX27=drawPixelSkillFx;
+drawPixelSkillFx=function(ctx,dt,t){baseSkillEX27(ctx,dt,t);const f=VFX.skillFx;if(!f)return;const phase=1-f.life/.7,r=16+phase*75,palette={warrior:'#ff6859',archer:'#adff76',mage:'#78d5ff',rogue:'#cf8bff',paladin:'#ffe3a0'},color=palette[getDef().id]||'#fff';ctx.save();ctx.globalAlpha=Math.max(0,.65*(1-phase));ctx.strokeStyle=color;ctx.lineWidth=3;ctx.shadowColor=color;ctx.shadowBlur=12;ctx.beginPath();ctx.ellipse(356,151,r,r*.48,-.3,0,Math.PI*1.8);ctx.stroke();for(let i=0;i<5;i++){const a=i*1.256+t*.002,x=356+Math.cos(a)*r,y=151+Math.sin(a)*r*.5;ctx.fillStyle=i%2?'#fff':color;ctx.fillRect(x,y,3,3)}ctx.restore()};
+const baseHeroEX27=drawHeroArt;
+drawHeroArt=function(ctx,t){if(VFX.attack>0){ctx.save();ctx.globalAlpha=VFX.attack*1.5;ctx.fillStyle='#d8fff2';ctx.beginPath();ctx.ellipse(184,167,25,68,-.4,0,Math.PI*2);ctx.fill();ctx.restore()}baseHeroEX27(ctx,t)};
 rebuildArt();installPortrait();stampVersion();renderTop();log('🎨 EX22 몬스터 아트 적용 · 15몬스터 / 3보스');
 })();
