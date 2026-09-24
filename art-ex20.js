@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-const ART_VERSION='EX23 Expedition';
+const ART_VERSION='EX24 Expedition';
 const REGION_IMAGES={};
 for(const name of ['forest','swamp','roots']){const img=new Image();img.src='assets/'+name+'-ex21.webp';REGION_IMAGES[name]=img}
 const HERO_IMAGES={};for(const id of ['warrior','mage','archer','rogue','paladin']){const img=new Image();img.src='assets/hero-'+id+'-ex21.webp';HERO_IMAGES[id]=img}
@@ -84,9 +84,9 @@ function bossSheet(key){
 }
 const originalEnemyBaseName=enemyBaseName;
 enemyBaseName=function(stage,boss){
- if(boss)return stage<11?'숲의 수호자 · 거목왕':stage<21?'늪의 지배자 · 포자군주':'고대의 심장 · 뿌리거신';
- const pool=stage<11?REGION_POOLS.forest:stage<21?REGION_POOLS.swamp:REGION_POOLS.roots;
- return pool[(stage+Math.floor(Math.random()*pool.length))%pool.length];
+ const theme=['forest','swamp','roots'][Math.floor((Math.max(1,stage)-1)/10)%3];
+ if(boss)return {forest:'숲의 수호자 · 거목왕',swamp:'늪의 지배자 · 포자군주',roots:'고대의 심장 · 뿌리거신'}[theme];
+ const pool=REGION_POOLS[theme];return pool[(stage+Math.floor(Math.random()*pool.length))%pool.length];
 };
 monsterVisualKey=function(){const n=((enemy&&enemy.name)||'').replace(/^✦ 보물 /,'');for(const label in MONSTER_KEYS)if(n.includes(label))return MONSTER_KEYS[label];return stageTheme()==='swamp'?'mudSlime':stageTheme()==='roots'?'rootImp':'forestSlime'};
 function rebuildArt(){
@@ -122,7 +122,7 @@ drawRegionBackground=function(ctx,t){ctx.clearRect(0,0,480,270);const theme=stag
 const baseDrawRegionBackground=drawRegionBackground;
 drawRegionBackground=function(ctx,t){
  const theme=stageTheme(),scene=REGION_IMAGES[theme];
- if(scene&&scene.complete&&scene.naturalWidth){ctx.imageSmoothingEnabled=true;ctx.drawImage(scene,0,0,480,270);ctx.imageSmoothingEnabled=false;return}
+ if(scene&&scene.complete&&scene.naturalWidth){ctx.imageSmoothingEnabled=true;ctx.drawImage(scene,0,0,480,270);ctx.imageSmoothingEnabled=false;const cycle=regionCycle(getC().stage)%4;if(cycle){ctx.globalAlpha=[0,.10,.13,.11][cycle];ipx(ctx,0,0,480,270,['','#ffe1a4','#81c9ff','#b294e9'][cycle]);ctx.globalAlpha=1}return}
  baseDrawRegionBackground(ctx,t);
  // Layered pixel clusters give each region its own architecture and material texture.
  if(theme==='forest'){
@@ -141,13 +141,13 @@ drawRegionBackground=function(ctx,t){
  for(let i=0;i<27;i++){const x=(i*83+11)%480,y=192+(i*29)%67;ipx(ctx,x,y,5+(i%3)*2,2,theme==='forest'?'#547c46':theme==='swamp'?'#49756d':'#5a493b');if(i%5===0)ipx(ctx,x+4,y-4,2,3,theme==='roots'?'#d99858':'#a4bd78')}
 };
 drawEnemyArt=function(ctx,t){
- if(!enemy)return;const theme=stageTheme(),boss=enemy.boss,key=boss?(theme==='forest'?'forestGuardian':theme==='swamp'?'sporeLord':'rootTitan'):monsterVisualKey(),sheet=boss?SPRITES.bosses[key]:SPRITES.monsters[key],img=boss?BOSS_IMAGES[key]:MONSTER_IMAGES[key],size=boss?56:32,dw=boss?144:96,dh=dw,x=boss?300:328,y=boss?96:139,frame=Math.floor(t/(boss?210:165))%4;
+ if(!enemy)return;const theme=stageTheme(),boss=enemy.boss,key=boss?(theme==='forest'?'forestGuardian':theme==='swamp'?'sporeLord':'rootTitan'):monsterVisualKey(),sheet=boss?SPRITES.bosses[key]:SPRITES.monsters[key],img=boss?BOSS_IMAGES[key]:MONSTER_IMAGES[key],size=boss?56:32,dw=boss?144:112,dh=dw,x=boss?300:320,y=boss?96:127,frame=Math.floor(t/(boss?210:165))%4;
  drawEnemyAura(ctx,t,x,y,dw,dh);ctx.save();ctx.imageSmoothingEnabled=false;const bob=Math.round(Math.sin(t/(boss?280:210))*2);if(enemy.hp<=0){ctx.translate(x+dw/2,y+dh);ctx.rotate(.45);ctx.globalAlpha=.45;if(readyArt(img))ctx.drawImage(img,-dw/2,-dh,dw,dh);else drawFrame(ctx,sheet,size,size,frame,-dw/2,-dh,dw,dh)}else{const shake=VFX.hit>0?Math.round(Math.sin(t*.35)*3):0;if(readyArt(img))ctx.drawImage(img,x+shake,y+bob,dw,dh);else drawFrame(ctx,sheet,size,size,frame,x+shake,y+bob,dw,dh);if(VFX.hit>0){ctx.globalCompositeOperation='screen';ctx.globalAlpha=.2;ipx(ctx,x+13,y+9,dw-26,dh-18,'#fff')}}ctx.restore();ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;
 };
 const COMPANION_IMAGES={};COMP_NAMES.forEach(function(name){const img=new Image();img.src='assets/companion-'+name+'-ex23.webp';COMPANION_IMAGES[name]=img});
 drawHeroArt=function(ctx,t){
- const d=getDef(),img=HERO_IMAGES[d.id],x=45,y=105;
- if(readyArt(img)){const bob=Math.round(Math.sin(t/220)*2),lunge=VFX.attack>0?7:0;ctx.imageSmoothingEnabled=false;ctx.drawImage(img,x+lunge,y+bob,192,128)}
+ const d=getDef(),img=HERO_IMAGES[d.id],x=37,y=100;
+ if(readyArt(img)){const bob=Math.round(Math.sin(t/220)*2),lunge=VFX.attack>0?7:0;ctx.imageSmoothingEnabled=false;ctx.drawImage(img,x+lunge,y+bob,208,139)}
  else{const frame=VFX.attack>0?6+Math.floor(t/75)%2:S.auto?2+Math.floor(t/115)%4:Math.floor(t/330)%2;drawFrame(ctx,SPRITES.heroes[d.id],48,48,frame,96,132,96,96);drawEquipmentArt(ctx)}
  getC().companions.slice(0,maxCompanionSlots()).forEach(function(comp,i){const name=compBaseName(comp),img=COMPANION_IMAGES[name],sheet=SPRITES.companions[name]||SPRITES.companions[COMP_NAMES[0]],x=47-i*29,y=154+(i%2)*11;if(readyArt(img))ctx.drawImage(img,x,y,48,48);else drawFrame(ctx,sheet,24,24,(Math.floor(t/240)+i)%2,x,y,48,48)});
 };
@@ -161,6 +161,6 @@ const oldDrawIntroScene=drawIntroScene;
 drawIntroScene=function(t,canvasId){const c=document.getElementById(canvasId);if(!c)return;const ctx=c.getContext('2d'),scene=REGION_IMAGES.forest;ctx.imageSmoothingEnabled=false;if(scene.complete&&scene.naturalWidth){ctx.imageSmoothingEnabled=true;ctx.drawImage(scene,0,0,480,270);ctx.imageSmoothingEnabled=false}else drawForestEX20(ctx,t*.32);ctx.globalAlpha=.56;ipx(ctx,0,0,480,270,'#06110c');ctx.globalAlpha=1;for(let i=0;i<18;i++){const x=(i*73+Math.floor(t*.012))%520-20,y=24+(i*37)%105;ipx(ctx,x,y,2,2,i%3===0?'#d5ff79':'#75c99a')}const ids=['warrior','mage','archer','rogue','paladin'],frame=Math.floor(t/380)%2;ids.forEach(function(id,n){const img=HERO_IMAGES[id];if(readyArt(img))ctx.drawImage(img,36+n*86,153+(n%2)*2,96,64);else drawFrame(ctx,SPRITES.heroes[id],48,48,frame,48+n*82,160+(n%2)*3,64,64)});ctx.globalAlpha=.18;ipx(ctx,0,0,480,3,'#d8ff87');ctx.globalAlpha=1};
 drawStarterPreviews=function(t){document.querySelectorAll('[data-starter-canvas]').forEach(function(c){const id=c.dataset.starterCanvas,ctx=c.getContext('2d'),img=HERO_UI_IMAGES[id];ctx.imageSmoothingEnabled=false;ctx.clearRect(0,0,96,96);ctx.fillStyle='#102219';ctx.fillRect(0,0,96,96);if(readyArt(img))ctx.drawImage(img,0,16,96,64);else drawFrame(ctx,SPRITES.heroes[id],48,48,Math.floor(t/420)%2,0,0,96,96)})};
 function installPortrait(){const host=document.getElementById('charIcon');if(!host)return;host.textContent='';let c=document.getElementById('charPortraitCanvas');if(!c){c=document.createElement('canvas');c.id='charPortraitCanvas';c.width=72;c.height=72;c.setAttribute('aria-label','현재 캐릭터 도트 초상화');host.appendChild(c)}}
-function stampVersion(){document.title='새싹 원정대 - '+ART_VERSION;const foot=document.querySelector('.startFoot');if(foot)foot.textContent='EX23 EXPEDITION · 월드 보스 패턴';const hint=document.querySelector('.pixelHint');if(hint)hint.textContent='AUTO BATTLE · INTEGER PIXEL SCALE';}
+function stampVersion(){document.title='새싹 원정대 - '+ART_VERSION;const foot=document.querySelector('.startFoot');if(foot)foot.textContent='EX24 EXPEDITION · 순환 지역과 초월무기';const hint=document.querySelector('.pixelHint');if(hint)hint.textContent='AUTO BATTLE · INTEGER PIXEL SCALE';}
 rebuildArt();installPortrait();stampVersion();renderTop();log('🎨 EX22 몬스터 아트 적용 · 15몬스터 / 3보스');
 })();
