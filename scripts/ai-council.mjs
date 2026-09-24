@@ -16,6 +16,58 @@ const balance=fs.readFileSync('artifacts/baseline-balance.json','utf8');
 const img=p=>fs.existsSync(p)?fs.readFileSync(p).toString('base64'):null;
 const mobile=img('artifacts/mobile.png'),desktop=img('artifacts/desktop.png');
 
+const sourceLines=source.split(/\r?\n/);
+const functionNames=[...source.matchAll(/\bfunction\s+([A-Za-z_$][\w$]*)\s*\(/g)].map(m=>m[1]);
+const sourceOutline=[
+  'index.html bytes: '+Buffer.byteLength(source),
+  'named functions: '+[...new Set(functionNames)].join(', ')
+].join('\n');
+
+function buildSourcePack(reviewText='',maxChars=42000){
+  const ranges=[];
+  const addRange=(center,before=14,after=18)=>{
+    const start=Math.max(0,center-before),end=Math.min(sourceLines.length-1,center+after);
+    ranges.push([start,end]);
+  };
+  const anchors=[
+    'function calcStats','function attack','function expNeed','function addExp',
+    'function skillUnitCost','function equipmentHTML','function companionsHTML','function financeHTML',
+    'function growth','function skill','function companion','function finance',
+    'sproutFinalV15','potentialAttackPct=potentialPct*10','POTENTIAL_RANGES',
+    '@media','canvas','function render','function draw','function save','function load'
+  ];
+
+  for(const anchor of anchors){
+    let hits=0;
+    for(let i=0;i<sourceLines.length&&hits<3;i++){
+      if(sourceLines[i].includes(anchor)){addRange(i);hits++;}
+    }
+  }
+
+  const review=String(reviewText||'').toLowerCase();
+  for(const name of [...new Set(functionNames)]){
+    if(name.length<4||!review.includes(name.toLowerCase()))continue;
+    const idx=sourceLines.findIndex(line=>line.includes('function '+name+'(')||line.includes('function '+name+' ('));
+    if(idx>=0)addRange(idx,18,24);
+  }
+
+  ranges.sort((a,b)=>a[0]-b[0]);
+  const merged=[];
+  for(const r of ranges){
+    const last=merged[merged.length-1];
+    if(last&&r[0]<=last[1]+2)last[1]=Math.max(last[1],r[1]);
+    else merged.push([...r]);
+  }
+
+  let out='';
+  for(const [start,end] of merged){
+    const block='\n### index.html lines '+(start+1)+'-'+(end+1)+'\n'+sourceLines.slice(start,end+1).join('\n')+'\n';
+    if(out.length+block.length>maxChars)break;
+    out+=block;
+  }
+  return out.trim();
+}
+
 function geminiText(j){
   return (j.candidates||[])
     .flatMap(c=>c.content?.parts||[])
@@ -54,6 +106,7 @@ async function gemini(prompt,{images=true,key=null,maxOutputTokens=12000,tempera
         let r;
         try{
           r=await fetch(url,{
+            signal:AbortSignal.timeout(90000),
             method:'POST',
             headers:{'x-goog-api-key':credential.value,'Content-Type':'application/json'},
             body:JSON.stringify({
@@ -151,13 +204,15 @@ function validate(p){
   return{ok:true,changed};
 }
 
+const auditSourcePack=buildSourcePack('',26000);
 const common=[
   'USER GOAL:\n'+GOAL,
   'COUNCIL RULES:\n'+rules,
   'STATIC REPORT:\n'+stat,
   'RUNTIME REPORT:\n'+runtime,
   'BALANCE REPORT (includes 10,000 potential rolls per rarity):\n'+balance,
-  'CURRENT index.html:\n'+source
+  'SOURCE OUTLINE:\n'+sourceOutline,
+  'SELECTED CURRENT index.html SOURCE (exact excerpts only):\n'+auditSourcePack
 ].join('\n\n');
 
 console.log('1/4 Gemini Director audit');
@@ -167,7 +222,7 @@ const director=await gemini([
   'Use the supplied metrics and screenshots as evidence. Propose at most five changes.',
   'Do not write code yet. Give concise findings, evidence, impact and risks only. Do not reveal private chain-of-thought.',
   common
-].join('\n\n'),{images:true,key:G1,maxOutputTokens:8000});
+].join('\n\n'),{images:true,key:G1,maxOutputTokens:6000});
 
 console.log('2/4 Gemini Critic challenge');
 const critic=await gemini([
@@ -176,7 +231,10 @@ const critic=await gemini([
   'Keep strong ideas, reject weak ones, and give safer alternatives. No code patch and no private chain-of-thought.',
   'DIRECTOR REVIEW:\n'+director,
   common
-].join('\n\n'),{images:true,key:G3,maxOutputTokens:8000});
+].join('\n\n'),{images:true,key:G3,maxOutputTokens:6000});
+
+const implementationSourcePack=buildSourcePack(director+'\n'+critic,46000);
+console.log('Source context bytes: full='+Buffer.byteLength(source)+' audit='+Buffer.byteLength(auditSourcePack)+' implementer='+Buffer.byteLength(implementationSourcePack));
 
 console.log('3/4 Gemini Implementer patch');
 const implementer=await gemini([
@@ -188,8 +246,13 @@ const implementer=await gemini([
   'Prefer at most three coherent changes. No prose inside patch markers.',
   'DIRECTOR REVIEW:\n'+director,
   'CRITIC REVIEW:\n'+critic,
-  common
-].join('\n\n'),{images:false,key:G1,maxOutputTokens:20000});
+  'USER GOAL:\n'+GOAL,
+  'COUNCIL RULES:\n'+rules,
+  'STATIC REPORT:\n'+stat,
+  'RUNTIME REPORT:\n'+runtime,
+  'BALANCE REPORT:\n'+balance,
+  'SELECTED CURRENT index.html SOURCE. These are exact excerpts; patch only code for which exact context is provided here:\n'+implementationSourcePack
+].join('\n\n'),{images:false,key:G1,maxOutputTokens:12000});
 
 let patch=patchFrom(implementer);
 let v=validate(patch);
@@ -212,8 +275,8 @@ if(!v.ok&&!/\bNO_PATCH\b/i.test(implementer)){
     'DIRECTOR REVIEW:\n'+director,
     'CRITIC REVIEW:\n'+critic,
     'IMPLEMENTER RESPONSE TO REPAIR:\n'+implementer,
-    'CURRENT index.html:\n'+source
-  ].join('\n\n'),{images:false,key:G3,maxOutputTokens:20000,temperature:0.1});
+    'SELECTED CURRENT index.html SOURCE (exact excerpts used by Implementer):\n'+implementationSourcePack
+  ].join('\n\n'),{images:false,key:G3,maxOutputTokens:12000,temperature:0.1});
 
   const repairedPatch=patchFrom(repair);
   const repairedValidation=validate(repairedPatch);
@@ -264,6 +327,7 @@ const report=[
 ].join('\n');
 
 fs.writeFileSync('artifacts/council.md',report);
+fs.writeFileSync('artifacts/source-context.txt',['SOURCE OUTLINE',sourceOutline,'','AUDIT SOURCE PACK',auditSourcePack,'','IMPLEMENTER SOURCE PACK',implementationSourcePack].join('\n'));
 if(repair)fs.writeFileSync('artifacts/repair-response.txt',repair);
 if(patch)fs.writeFileSync('artifacts/proposal.patch',patch);
 if(approved&&v.ok)fs.writeFileSync('artifacts/approved.patch',patch);
