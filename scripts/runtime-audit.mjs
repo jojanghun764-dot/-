@@ -6,10 +6,17 @@ const args = process.argv.slice(2);
 const outIndex = args.indexOf('--out');
 const outPath = outIndex >= 0 ? args[outIndex + 1] : 'artifacts/runtime.json';
 fs.mkdirSync('artifacts', { recursive: true });
-const html = fs.readFileSync('index.html');
 const server = http.createServer((req, res) => {
-  res.writeHead(200, { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' });
-  res.end(html);
+  const routes = {
+    '/': ['index.html', 'text/html; charset=utf-8'],
+    '/index.html': ['index.html', 'text/html; charset=utf-8'],
+    '/art-ex20.css': ['art-ex20.css', 'text/css; charset=utf-8'],
+    '/art-ex20.js': ['art-ex20.js', 'text/javascript; charset=utf-8']
+  };
+  const asset = routes[(req.url || '/').split('?')[0]];
+  if (!asset) { res.writeHead(404); res.end('Not found'); return; }
+  res.writeHead(200, { 'content-type': asset[1], 'cache-control': 'no-store' });
+  res.end(fs.readFileSync(asset[0]));
 });
 await new Promise(resolve => server.listen(4173, '127.0.0.1', resolve));
 let browser;

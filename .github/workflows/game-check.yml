@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - 'index.html'
+      - 'art-ex20.css'
+      - 'art-ex20.js'
       - 'scripts/**'
       - '.github/workflows/game-check.yml'
   workflow_dispatch:

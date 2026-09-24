@@ -1,0 +1,40 @@
+/* EX20 commercial pixel-art direction layer */
+:root{
+  --bg:#07110d;--panel:#101d18;--panel2:#172a21;--line:#52705b;
+  --text:#f7f2d8;--muted:#a6b9a9;--green:#6fe08b;--lime:#c9ff72;
+  --gold:#ffd36b;--gem:#7adfff;--violet:#c68cff;
+  --pixel-shadow:0 4px 0 #050a07,0 12px 26px rgba(0,0,0,.42);
+}
+*{scrollbar-color:#3f6950 #09130f}
+body{background:
+  linear-gradient(rgba(4,11,7,.66),rgba(4,11,7,.86)),
+  repeating-linear-gradient(90deg,#0b1711 0 24px,#0d1b14 24px 48px);
+  font-family:"Noto Sans KR",system-ui,-apple-system,sans-serif}
+.wrap{max-width:1240px;padding:14px}
+.topbar{grid-template-columns:1.45fr repeat(5,.66fr);gap:7px}
+.brand,.stat,.panel{border:2px solid #385545;border-radius:5px;box-shadow:var(--pixel-shadow)}
+.brand{min-height:72px;background:linear-gradient(135deg,#254b34,#10241a 70%);box-shadow:inset 0 0 0 2px #0a1710,var(--pixel-shadow)}
+.brand h1{font-size:24px;color:#fff8d8;text-shadow:3px 3px 0 #08110d}
+.brand small{letter-spacing:.04em}.stat{position:relative;overflow:hidden;padding:11px 12px;background:linear-gradient(180deg,#1e3528,#0f1c16);box-shadow:inset 0 0 0 1px #203b2c,0 4px 0 #050a07}
+.stat:before{position:absolute;right:8px;top:8px;opacity:.18;font-size:26px}.stat:nth-child(2):before{content:'●';color:#ffd36b}.stat:nth-child(3):before{content:'◆';color:#76deff}.stat:nth-child(4):before{content:'❧';color:#baff76}.stat:nth-child(5):before,.stat:nth-child(6):before{content:'✦';color:#e8c7ff}
+.stat small{font:800 10px/1.2 ui-monospace,monospace;letter-spacing:.08em}.stat b{font:900 18px/1.1 ui-monospace,monospace;color:#fff7dd;text-shadow:2px 2px 0 #07100c}
+.grid{grid-template-columns:minmax(0,1.45fr) minmax(300px,.55fr);gap:12px;margin-top:12px}
+.panel{background:#0e1a15;border-color:#344e40}.panelHead{min-height:50px;padding:11px 14px;border-bottom:2px solid #2d4738;background:linear-gradient(180deg,#1d3528,#12231a);box-shadow:inset 0 -2px 0 #09120e}.panelHead h2{font-size:16px;color:#fff1c9;text-shadow:2px 2px 0 #07100c}.panelBody{padding:12px}
+.battlefield{border:4px solid #5c7c56;border-radius:3px;box-shadow:inset 0 0 0 2px #0a120d,0 7px 0 #050905,0 18px 40px rgba(0,0,0,.45);background:#08120e;aspect-ratio:16/9;min-height:0}
+.battlefield:before{content:'';position:absolute;z-index:4;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.2),transparent 16%,transparent 82%,rgba(0,0,0,.25));box-shadow:inset 0 0 42px rgba(3,9,6,.4)}
+.battlefield:after{background:repeating-linear-gradient(0deg,rgba(255,255,255,.02) 0 1px,transparent 1px 3px);mix-blend-mode:overlay;opacity:.35}
+.battleCanvas{height:auto;aspect-ratio:16/9;image-rendering:pixelated;image-rendering:crisp-edges;filter:saturate(1.08) contrast(1.04)}
+.stagebar{z-index:6;top:8px;left:8px;right:8px}.badge{padding:6px 9px;border:2px solid #789270;border-radius:2px;background:#0b1710e8;box-shadow:3px 3px 0 #050905;color:#fff5cd;font-size:11px}.enemyName{z-index:6;bottom:37px;font-size:12px;color:#fff3ce;text-shadow:2px 2px 0 #080c09}.hpWrap{z-index:6;height:12px;border-radius:1px;border:2px solid #110b09;box-shadow:0 0 0 2px #b38b58;background:#190d0d}.hp{background:linear-gradient(90deg,#bd2f38,#ff6b4f 65%,#ffc56b)}.pixelHint{z-index:6;border:1px solid #55715e;border-radius:1px;color:#c6dbc9;background:#09130ee8;font-size:9px;letter-spacing:.06em}
+.controls{gap:6px;margin-top:13px}.btn{min-height:40px;padding:8px 11px;border:2px solid #4a6a55;border-radius:3px;background:linear-gradient(180deg,#284637,#17291f);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 3px 0 #070d09;text-shadow:1px 1px 0 #0a120d}.btn:hover{filter:brightness(1.14) saturate(1.08)}.btn:active{transform:translateY(2px);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 1px 0 #070d09}.btn.primary{background:linear-gradient(180deg,#5fd780,#2b934d);border-color:#7df29b}.btn.gold{background:linear-gradient(180deg,#8b6b2c,#574019);border-color:#d3a94a}.btn.violet{background:linear-gradient(180deg,#76549a,#493460);border-color:#a97bd3}.btn.red{background:linear-gradient(180deg,#8d4141,#572626);border-color:#d25b5b}
+.charCard{border:2px solid #41614d;border-radius:4px;background:linear-gradient(135deg,#1d3a2a,#102017);box-shadow:inset 0 0 0 1px #294936}.portrait{width:72px;height:72px;border:2px solid #63836b;border-radius:3px;background:radial-gradient(circle,#34553e,#112219 70%);font-size:0;overflow:hidden;box-shadow:inset 0 0 0 2px #0c1711}.portrait canvas{width:100%;height:100%;image-rendering:pixelated}.xpbar,.bar{border-radius:1px;height:8px;border:1px solid #0a120e}.xpbar i,.bar i{background:linear-gradient(90deg,#61d782,#caff73)}
+.tabs{border-bottom:2px solid #294536;background:#09150f}.tab{padding:12px 13px;color:#8fa896;font-size:13px;border-right:1px solid #203b2c}.tab.active{color:#fff4cd;background:#203d2c;border-bottom:3px solid #c8ff72;text-shadow:1px 1px 0 #07100c}
+.card,.invCard,.compCard,.shopRow,.questRow,.skillRow,.equipRow,.compRow,.jobBoostHero,.rosterHero,.rebirthCard,.rebirthUpgrade{border-radius:4px!important;border-width:2px!important;background:linear-gradient(180deg,#1a3025,#101e17)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 3px 0 #09100c!important}
+.card h3,.skillRow b,.questRow b,.shopRow b{color:#fff2c8}.pill,.equipTag,.bossModePill,.rosterMilestone,.rebirthCharPill{border-radius:2px!important}.inventoryToolbar,.compToolbar,.potentialBox,.potentialAuto,.autoEquipNote,.ancientNote{border-radius:4px!important;background:#0b1711!important;border-width:2px!important}
+.startScreen{background:#040a07}.startBackdrop{background:radial-gradient(circle at 50% 28%,#28543a 0,#0c2518 42%,#040a07 78%)}.startPanel{width:min(800px,100%);padding:31px 27px 26px;border:3px solid #698968;border-radius:4px;background:linear-gradient(180deg,rgba(13,31,21,.94),rgba(5,15,10,.96));box-shadow:0 0 0 3px #07130c,0 0 0 5px #344e3d,0 16px 0 #030604,0 30px 70px rgba(0,0,0,.58)}
+.startPanel:before,.startPanel:after{content:'◆';position:absolute;top:9px;color:#d8b85c}.startPanel:before{left:12px}.startPanel:after{right:12px}.startEyebrow{color:#b8d9bc}.startLogo{font-family:ui-monospace,monospace;color:#fff7d7;text-shadow:4px 4px 0 #030805,0 0 22px rgba(197,255,111,.24)}.startLogo span{color:#caff6b}.startSub{color:#c6d8c9}.startFeature{border:2px solid #355442;border-radius:2px;background:#0a1710;box-shadow:0 3px 0 #030805}.startFoot{color:#779181}.starterCard{border:2px solid #3f6650;border-radius:4px;background:linear-gradient(180deg,#173527,#0a1911);box-shadow:0 5px 0 #040905}.starterPortrait{border:2px solid #5d8067;border-radius:3px}.starterJob{color:#d9ff7b}.starterDesc{font-size:11px;color:#b4c8b7}.starterStat{font:800 9px ui-monospace,monospace;color:#dbecd7}
+.log{border-radius:3px;background:#07110c;border:2px solid #294538;color:#adbdaf}
+.toast{border:2px solid #74b982;border-radius:3px;background:#183526;box-shadow:0 4px 0 #070d09,0 10px 25px #0008}
+.overlay{background:rgba(1,5,3,.82)}.modal{border:3px solid #58735e;border-radius:4px;background:#0d1a14;box-shadow:0 8px 0 #030604,0 30px 70px #0009}
+@media(max-width:800px){.topbar{grid-template-columns:1fr 1fr 1fr}.brand{grid-column:1/-1}.grid{grid-template-columns:1fr}.wrap{padding:6px}.panelBody{padding:8px}.battlefield{border-width:3px}.charCard{margin-bottom:8px}.portrait{width:64px;height:64px}.controls{grid-template-columns:1fr 1fr}.startPanel{padding:23px 13px 20px}.starterCard{padding:11px 8px}.starterPortrait{width:96px;height:96px}}
+@media(max-width:480px){.topbar{grid-template-columns:1fr 1fr}.stat:nth-child(6){grid-column:span 2}.brand h1{font-size:20px}.stat{min-height:57px}.panelHead h2{font-size:14px}.startLogo{font-size:38px}.startSub br{display:none}}
+@media(prefers-reduced-motion:reduce){.battleCanvas{filter:saturate(1.06) contrast(1.03)}}
