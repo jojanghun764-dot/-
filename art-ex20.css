@@ -42,3 +42,14 @@ body{background:
 @media(max-width:520px){.titleCanvas{width:480px;height:270px}.battlefield{width:100%;height:auto;aspect-ratio:16/9;border-width:3px}.battleCanvas{width:100%;height:auto;max-width:100%;aspect-ratio:16/9}}
 @media(max-width:480px){.topbar{grid-template-columns:1fr 1fr}.stat:nth-child(6){grid-column:span 2}.brand h1{font-size:20px}.stat{min-height:57px}.panelHead h2{font-size:14px}.startLogo{font-size:38px}.startSub br{display:none}.startPanel{width:calc(100% - 16px);padding:20px 10px 16px}.startFeature{min-height:44px;padding:9px}.starterCard{min-height:112px}.starterDesc{font-size:12px;line-height:1.45}.starterStat{font-size:10px;line-height:1.35}.startFoot{font-size:10px;line-height:1.4}}
 @media(prefers-reduced-motion:reduce){.battleCanvas{filter:saturate(1.06) contrast(1.03)}}
+/* Reference-inspired material depth and readable pixel RPG accents. */
+.panel,.startPanel,.modal{background-image:linear-gradient(180deg,rgba(255,226,145,.045),transparent 45%),linear-gradient(180deg,#19281f,#0c1712);border-color:#776e50;box-shadow:inset 0 0 0 2px #14231b,inset 0 3px 0 #b4a57355,0 5px 0 #060b08,0 18px 34px #0008}
+.panelHead{border-bottom-color:#866f48;background:linear-gradient(180deg,#34412b,#1c2a20);box-shadow:inset 0 2px 0 #a3a36d77,inset 0 -2px 0 #10170e}
+.panelHead h2,.card h3{color:#fff0c3;text-shadow:2px 2px 0 #14170e,0 0 10px #e6ad5755}
+.tab.active{background:linear-gradient(180deg,#45613d,#223e31);border-bottom-color:#ffdc83;color:#fff2cf;box-shadow:inset 0 2px 0 #a8c57b88}
+.card,.invCard,.compCard,.shopRow{border-color:#5b6547!important;box-shadow:inset 0 2px 0 #b4a36b33,0 4px 0 #080e0a!important}
+.btn.gold{background:linear-gradient(180deg,#d29a43,#73501e);color:#fff5d8;border-color:#f4ca71}.btn.violet{background:linear-gradient(180deg,#8061aa,#483567);border-color:#cba5ed}
+.invCard .rarity-legend,.compCard .rarity-legend{color:#ffdb82;text-shadow:0 0 10px #eaa83d}.invCard .rarity-mythic,.compCard .rarity-mythic{color:#f5b7ff;text-shadow:0 0 12px #c06df0}
+.summonReveal:before,.summonReveal:after{content:'✦';position:absolute;color:#fff9c7;font-size:28px;text-shadow:0 0 15px #fff;animation:summonSpark 600ms steps(3,end) infinite alternate}.summonReveal:before{left:-20px;top:-24px}.summonReveal:after{right:-22px;bottom:-21px;animation-delay:200ms}
+@keyframes summonSpark{from{transform:scale(.6) rotate(-16deg);opacity:.4}to{transform:scale(1.35) rotate(20deg);opacity:1}}
+@media(prefers-reduced-motion:reduce){.summonReveal:before,.summonReveal:after{animation:none}}
