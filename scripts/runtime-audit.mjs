@@ -19,6 +19,7 @@ try {
   const targets = [
     ['smallMobile', { width: 360, height: 800 }],
     ['mobile', { width: 390, height: 844 }],
+    ['mobileLandscape', { width: 844, height: 390 }],
     ['desktop', { width: 1365, height: 768 }]
   ];
   for (const [name, viewport] of targets) {
@@ -99,9 +100,9 @@ try {
   }
   if (results.pageErrors.length) throw new Error('Page errors: ' + results.pageErrors.join(' | '));
   if (results.consoleErrors.length) throw new Error('Console errors: ' + results.consoleErrors.join(' | '));
-  if (!results.views.smallMobile.canvas || !results.views.mobile.canvas || !results.views.desktop.canvas) throw new Error('Battle canvas missing.');
-  if (results.views.smallMobile.horizontalOverflow || results.views.mobile.horizontalOverflow) throw new Error('Mobile page has horizontal overflow.');
-  if (results.views.smallMobile.tinyTapTargets.length || results.views.mobile.tinyTapTargets.length) throw new Error('Mobile UI has tap targets smaller than 32px.');
+  if (!results.views.smallMobile.canvas || !results.views.mobile.canvas || !results.views.mobileLandscape.canvas || !results.views.desktop.canvas) throw new Error('Battle canvas missing.');
+  if (results.views.smallMobile.horizontalOverflow || results.views.mobile.horizontalOverflow || results.views.mobileLandscape.horizontalOverflow) throw new Error('Mobile page has horizontal overflow.');
+  if (results.views.smallMobile.tinyTapTargets.length || results.views.mobile.tinyTapTargets.length || results.views.mobileLandscape.tinyTapTargets.length) throw new Error('Mobile UI has tap targets smaller than 32px.');
   if ((results.views.mobile.balance?.potentialExample400 || 0) !== 4000) throw new Error('Potential conversion rule is not 400% -> 4000% attack.');
   if (!results.saveProbe?.supported || results.saveProbe.savedVersion !== 18 || results.saveProbe.savedGold !== results.saveProbe.expectedGold) throw new Error('V18 save persistence probe failed.');
   fs.writeFileSync(outPath, JSON.stringify(results, null, 2));
