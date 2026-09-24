@@ -130,7 +130,7 @@ drawRegionBackground=function(ctx,t){
  for(let i=0;i<27;i++){const x=(i*83+11)%480,y=192+(i*29)%67;ipx(ctx,x,y,5+(i%3)*2,2,theme==='forest'?'#547c46':theme==='swamp'?'#49756d':'#5a493b');if(i%5===0)ipx(ctx,x+4,y-4,2,3,theme==='roots'?'#d99858':'#a4bd78')}
 };
 drawEnemyArt=function(ctx,t){
- if(!enemy)return;const theme=stageTheme(),boss=enemy.boss,key=boss?(theme==='forest'?'forestGuardian':theme==='swamp'?'sporeLord':'rootTitan'):monsterVisualKey(),sheet=boss?SPRITES.bosses[key]:SPRITES.monsters[key],size=boss?56:32,scale=boss?3:3,dw=size*scale,dh=size*scale,x=boss?287:307,y=boss?71:107,frame=Math.floor(t/(boss?210:165))%4;
+ if(!enemy)return;const theme=stageTheme(),boss=enemy.boss,key=boss?(theme==='forest'?'forestGuardian':theme==='swamp'?'sporeLord':'rootTitan'):monsterVisualKey(),sheet=boss?SPRITES.bosses[key]:SPRITES.monsters[key],size=boss?56:32,scale=2,dw=size*scale,dh=size*scale,x=boss?310:332,y=boss?102:150,frame=Math.floor(t/(boss?210:165))%4;
  drawEnemyAura(ctx,t,x,y,dw,dh);ctx.save();if(enemy.hp<=0){ctx.translate(x+dw/2,y+dh);ctx.rotate(.45);ctx.globalAlpha=.45;drawFrame(ctx,sheet,size,size,frame,-dw/2,-dh,dw,dh)}else{const shake=VFX.hit>0?Math.round(Math.sin(t*.35)*3):0;drawFrame(ctx,sheet,size,size,frame,x+shake,y,dw,dh);if(VFX.hit>0){ctx.globalCompositeOperation='screen';ctx.globalAlpha=.3;ipx(ctx,x+13,y+9,dw-26,dh-18,'#fff')}}ctx.restore();ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;
 };
 drawHeroArt=function(ctx,t){
@@ -140,7 +140,7 @@ drawHeroArt=function(ctx,t){
  getC().companions.slice(0,maxCompanionSlots()).forEach(function(comp,i){const name=comp.name||COMP_NAMES[i%COMP_NAMES.length],sheet=SPRITES.companions[name]||SPRITES.companions[COMP_NAMES[0]];drawFrame(ctx,sheet,24,24,(Math.floor(t/240)+i)%2,47-i*29,154+(i%2)*11,48,48)});
 };
 const oldAddDamageVfx=addDamageVfx;
-addDamageVfx=function(n,crit,tag){oldAddDamageVfx(n,crit,tag);if(crit){for(let i=0;i<12;i++){const a=i/12*Math.PI*2;VFX.particles.push({x:349,y:139,vx:Math.cos(a)*rand(35,72),vy:Math.sin(a)*rand(35,72),life:rand(.24,.55),c:i%2?'#fff3a1':'#ff9f54',s:i%3?2:4})}}};
+addDamageVfx=function(n,crit,tag){oldAddDamageVfx(n,crit,tag);if(crit){for(let i=0;i<12;i++){const a=i/12*Math.PI*2;VFX.particles.push({x:365,y:160,vx:Math.cos(a)*rand(35,72),vy:Math.sin(a)*rand(35,72),life:rand(.24,.55),c:i%2?'#fff3a1':'#ff9f54',s:i%3?2:4})}}};
 const oldDrawEffects=drawEffects;
 drawEffects=function(ctx,dt){oldDrawEffects(ctx,dt);if(enemy&&enemy.hp<=0){const theme=stageTheme(),c=theme==='forest'?'#c9ff72':theme==='swamp'?'#77e6d5':'#82ffd3';ctx.globalAlpha=.7;for(let i=0;i<7;i++)ipx(ctx,337+(i%3)*9,150-Math.floor(i/3)*7,4,4,i%2?c:'#fff');ctx.globalAlpha=1}};
 const oldRenderTop=renderTop;
