@@ -21,6 +21,7 @@ for (const view of ['smallMobile', 'mobile', 'mobileLandscape', 'desktop']) {
 }
 if (!candidateRuntime.saveProbe?.supported || candidateRuntime.saveProbe.savedVersion !== 19 || candidateRuntime.saveProbe.reloadedVersion !== 19 || candidateRuntime.saveProbe.savedGold !== candidateRuntime.saveProbe.expectedGold || candidateRuntime.saveProbe.reloadedGold !== candidateRuntime.saveProbe.expectedGold) failures.push('V19 save persistence probe failed.');
 if (!candidateBalance.v19FullResetTest?.pass) failures.push('V19 complete reset invariant failed.');
+if (!candidateBalance.levelProgressionTest?.pass) failures.push('Level mastery / roster resonance / synchronized progression invariant failed.');
 for (const view of ['smallMobile', 'mobile', 'mobileLandscape', 'desktop']) {
   if (!candidateRuntime.views?.[view]?.intro?.startVisible) failures.push(view + ' title screen missing.');
   if (candidateRuntime.views?.[view]?.starter?.cards !== 5) failures.push(view + ' starter selection is incomplete.');
