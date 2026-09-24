@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-const ART_VERSION='EX29 Resonance';
+const ART_VERSION='EX30 Fusion';
 const REGION_IMAGES={};
 for(const name of ['forest','swamp','roots','crystal','astral','forge']){const img=new Image();img.src='assets/'+name+(['forest','swamp','roots'].includes(name)?'-ex21.webp':'-ex28.webp');REGION_IMAGES[name]=img}
 const REGION_SCENE_CACHE={};
@@ -169,12 +169,12 @@ const oldDrawIntroScene=drawIntroScene;
 drawIntroScene=function(t,canvasId){const c=document.getElementById(canvasId);if(!c)return;const ctx=c.getContext('2d'),scene=REGION_IMAGES.forest;ctx.setTransform(2,0,0,2,0,0);ctx.imageSmoothingEnabled=false;if(scene.complete&&scene.naturalWidth){ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.imageSmoothingEnabled=true;ctx.drawImage(scene,0,0,960,540);ctx.restore();ctx.imageSmoothingEnabled=false}else drawForestEX20(ctx,t*.32);ctx.globalAlpha=.56;ipx(ctx,0,0,480,270,'#06110c');ctx.globalAlpha=1;for(let i=0;i<18;i++){const x=(i*73+Math.floor(t*.012))%520-20,y=24+(i*37)%105;ipx(ctx,x,y,2,2,i%3===0?'#d5ff79':'#75c99a')}const ids=['warrior','mage','archer','rogue','paladin'],frame=Math.floor(t/380)%2;ids.forEach(function(id,n){const img=HERO_IMAGES[id];if(readyArt(img))ctx.drawImage(img,36+n*86,153+(n%2)*2,96,64);else drawFrame(ctx,SPRITES.heroes[id],48,48,frame,48+n*82,160+(n%2)*3,64,64)});ctx.globalAlpha=.18;ipx(ctx,0,0,480,3,'#d8ff87');ctx.globalAlpha=1};
 drawStarterPreviews=function(t){document.querySelectorAll('[data-starter-canvas]').forEach(function(c){const id=c.dataset.starterCanvas,ctx=c.getContext('2d'),img=HERO_UI_IMAGES[id];ctx.imageSmoothingEnabled=false;ctx.clearRect(0,0,96,96);ctx.fillStyle='#102219';ctx.fillRect(0,0,96,96);if(readyArt(img))ctx.drawImage(img,0,16,96,64);else drawFrame(ctx,SPRITES.heroes[id],48,48,Math.floor(t/420)%2,0,0,96,96)})};
 function installPortrait(){const host=document.getElementById('charIcon');if(!host)return;host.textContent='';let c=document.getElementById('charPortraitCanvas');if(!c){c=document.createElement('canvas');c.id='charPortraitCanvas';c.width=72;c.height=72;c.setAttribute('aria-label','현재 캐릭터 도트 초상화');host.appendChild(c)}}
-function stampVersion(){document.title='새싹 원정대 - EX29 Resonance';const foot=document.querySelector('.startFoot');if(foot)foot.textContent='EX29 RESONANCE · 잠재 등급 / 공명 2000';const hint=document.querySelector('.pixelHint');if(hint)hint.textContent='AUTO BATTLE · INTEGER PIXEL SCALE';}
+function stampVersion(){document.title='새싹 원정대 - EX30 Fusion';const foot=document.querySelector('.startFoot');if(foot)foot.textContent='EX30 FUSION · 신화 동료 / 3배 돌파';const hint=document.querySelector('.pixelHint');if(hint)hint.textContent='AUTO BATTLE · INTEGER PIXEL SCALE';}
 const baseRegionEX27=drawRegionBackground;
 drawRegionBackground=function(ctx,t){baseRegionEX27(ctx,t);const realm=stageTheme();if(!['crystal','astral','forge'].includes(realm))return;ctx.save();ctx.globalAlpha=.42;for(let i=0;i<9;i++){const x=(i*83+Math.floor(t*.01)*(i%2?1:-1)+960)%500-10,y=18+(i*41)%148;ctx.fillStyle=realm==='forge'?'#ffbd6a':realm==='astral'?'#c7c9ff':'#d1fbff';ctx.fillRect(x,y,2+i%2,2+i%3)}ctx.restore()};
 const baseSkillEX27=drawPixelSkillFx;
 drawPixelSkillFx=function(ctx,dt,t){baseSkillEX27(ctx,dt,t);const f=VFX.skillFx;if(!f)return;const phase=1-f.life/.7,r=16+phase*75,palette={warrior:'#ff6859',archer:'#adff76',mage:'#78d5ff',rogue:'#cf8bff',paladin:'#ffe3a0'},color=palette[getDef().id]||'#fff';ctx.save();ctx.globalAlpha=Math.max(0,.65*(1-phase));ctx.strokeStyle=color;ctx.lineWidth=3;ctx.shadowColor=color;ctx.shadowBlur=12;ctx.beginPath();ctx.ellipse(356,151,r,r*.48,-.3,0,Math.PI*1.8);ctx.stroke();for(let i=0;i<5;i++){const a=i*1.256+t*.002,x=356+Math.cos(a)*r,y=151+Math.sin(a)*r*.5;ctx.fillStyle=i%2?'#fff':color;ctx.fillRect(x,y,3,3)}ctx.restore()};
 const baseHeroEX27=drawHeroArt;
 drawHeroArt=function(ctx,t){if(VFX.attack>0){ctx.save();ctx.globalAlpha=VFX.attack*1.5;ctx.fillStyle='#d8fff2';ctx.beginPath();ctx.ellipse(184,167,25,68,-.4,0,Math.PI*2);ctx.fill();ctx.restore()}baseHeroEX27(ctx,t)};
-rebuildArt();installPortrait();stampVersion();renderTop();log('🎨 EX29 배경 캐시 · 잠재 등급 5단계 / 공명 2000');
+rebuildArt();installPortrait();stampVersion();renderTop();log('🎨 EX30 프레임 최적화 · 동료 합성 / 잠재 자동 중지');
 })();
