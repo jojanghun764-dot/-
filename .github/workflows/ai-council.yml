@@ -39,7 +39,8 @@ jobs:
       - name: Verify API secrets
         shell: bash
         run: |
-          test -n "$GEMINI_API_KEY" || { echo 'Missing GEMINI_API_KEY repository secret'; exit 1; }          test -n "$GEMINI3_API_KEY" || { echo 'Missing GEMINI3_API_KEY repository secret'; exit 1; }
+          test -n "$GEMINI_API_KEY" || { echo 'Missing GEMINI_API_KEY repository secret'; exit 1; }
+          test -n "$GEMINI3_API_KEY" || { echo 'Missing GEMINI3_API_KEY repository secret'; exit 1; }
           echo 'GEMINI3_API_KEY configured'
 
       - name: Install browser test dependency
