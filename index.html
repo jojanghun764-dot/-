@@ -542,12 +542,12 @@ function classProgressionHTML(){
 }
 
 function enemyBaseName(stage,boss){if(boss)return stage<11?'숲의 거대 수호수':stage<21?'늪의 포자 군주':'고대 뿌리 거신';const pool=stage<11?['새싹 슬라임','이끼 버섯','숲멧돼지']:stage<21?['늪개구리','독포자 버섯','덩굴 포식자']:['뿌리 골렘','고대 나방','수호목 기사'];return choice(pool)}
-// 스테이지 69의 평타 2B를 기준으로 일반몹 약 3타, 보스 약 30타를 목표로 한다.
+// 스테이지별 전투 화력을 기준으로 일반몹과 보스의 체력을 조정한다.
 // 낮은 스테이지는 기존 초반 진행을 유지하고, 69 이후에는 레벨 화력과 같은 13%로 증가한다.
 const STAGE_HP_ANCHORS=[[1,32],[10,250],[20,2000],[30,25000],[40,500000],[50,15000000],[60,500000000],[69,6000000000]];
 function stageHealthTarget(stage){stage=Math.max(1,Math.floor(Number(stage)||1));if(stage>=200)return 6000000000*Math.pow(1.13,131)*Math.pow(1+(stage-200)/45,4);if(stage>=69)return 6000000000*Math.pow(1.13,stage-69);for(let i=1;i<STAGE_HP_ANCHORS.length;i++){const [end,hp]=STAGE_HP_ANCHORS[i],[start,prior]=STAGE_HP_ANCHORS[i-1];if(stage<=end)return prior*Math.pow(hp/prior,(stage-start)/(end-start))}return 32}
 function stageRecommendedPower(stage,hp){return Math.max(100,Math.floor((hp===undefined?stageHealthTarget(stage):hp)*3))}
-function stageCombatHp(stage,boss,st){var c=getC();if(c.stageHpAt!==stage||!(c.stageHpNormal>0)||!(c.stageHpBoss>0)){var target=stageHealthTarget(stage),late=Math.max(0,stage-200),normalHits=stage<30?3:stage<69?30:180+Math.min(80,late*.4),bossHits=stage<30?4:stage<69?10:16+Math.min(5,late*.04),normalBasic=combatBasicDamage(st,false),bossBasic=combatBasicDamage(st,true);c.stageHpAt=stage;c.stageHpNormal=Math.max(1,Math.floor(Math.max(normalBasic*normalHits,Math.min(target,normalBasic*normalHits*1.2))));c.stageHpBoss=Math.max(12,Math.floor(Math.max(bossBasic*bossHits,Math.min(target,bossBasic*bossHits*1.2))*12))}return boss?c.stageHpBoss:c.stageHpNormal}
+function stageCombatHp(stage,boss,st){var c=getC();if(c.stageHpAt!==stage||!(c.stageHpNormal>0)||!(c.stageHpBoss>0)){var target=stageHealthTarget(stage),late=Math.max(0,stage-200),normalHits=stage<30?5:stage<69?45:270+Math.min(120,late*.6),bossHits=stage<30?6:stage<69?15:24+Math.min(8,late*.06),normalBasic=combatBasicDamage(st,false),bossBasic=combatBasicDamage(st,true);c.stageHpAt=stage;c.stageHpNormal=Math.max(1,Math.floor(Math.max(normalBasic*normalHits,Math.min(target,normalBasic*normalHits*1.2))));c.stageHpBoss=Math.max(12,Math.floor(Math.max(bossBasic*bossHits,Math.min(target,bossBasic*bossHits*1.2))*12))}return boss?c.stageHpBoss:c.stageHpNormal}
 function combatBasicDamage(st,boss){return Math.max(1,st.atk*(boss?st.bossDmg:st.normalDmg)*st.finalDmg)}
 function breakthroughCost(){return Math.floor(4000+125*Math.pow(Math.max(1,getC().stage),1.4))}
 function breakthroughActive(c){return S.breakthroughChar===S.active&&(S.breakthroughUntil||0)>now()}
@@ -767,7 +767,7 @@ window.addEventListener('beforeunload',()=>persistState());
 setInterval(()=>persistState(),15000);
 
 
-function defaultState(){return {version:19,balanceVersion:33,breakthroughUntil:0,breakthroughChar:null,profileStarted:false,firstCharacter:null,gold:0,gems:0,worldLeaves:0,expeditionSeals:0,transcendTickets:0,transcendPity:0,armoryResearch:0,rebirthUpgrades:{atk:0,exp:0,gold:0,boss:0,speed:0,offline:0},equipTickets:0,compTickets:0,starScrolls:0,cubes:0,additionalCubes:0,randomGoldBoxes:0,autoEquip:true,autoTrash:true,autoTrashThreshold:'희귀',salvageCount:0,inventorySort:'rarity',autoCompEquip:true,autoCompTrash:true,autoTrashThreshold:'희귀',compSalvageCount:0,chars:Object.fromEntries(CHARACTERS.map(function(c){return [c.id,defaultChar(c)]})),active:'warrior',auto:true,totalKills:0,bossKills:0,equipmentInventory:[],companionInventory:[],gacha:{equipPity:0,compPity:0},buff:{type:null,until:0},lastBuffCheck:0,missions:{killsClaimed:0,bossClaimed:0,levelClaimed:0},lastSave:now(),lastLogout:now(),offlineClaimed:false}}
+function defaultState(){return {version:19,balanceVersion:34,breakthroughUntil:0,breakthroughChar:null,profileStarted:false,firstCharacter:null,gold:0,gems:0,worldLeaves:0,expeditionSeals:0,transcendTickets:0,transcendPity:0,armoryResearch:0,rebirthUpgrades:{atk:0,exp:0,gold:0,boss:0,speed:0,offline:0},equipTickets:0,compTickets:0,starScrolls:0,cubes:0,additionalCubes:0,randomGoldBoxes:0,autoEquip:true,autoTrash:true,autoTrashThreshold:'희귀',salvageCount:0,inventorySort:'rarity',autoCompEquip:true,autoCompTrash:true,autoTrashThreshold:'희귀',compSalvageCount:0,chars:Object.fromEntries(CHARACTERS.map(function(c){return [c.id,defaultChar(c)]})),active:'warrior',auto:true,totalKills:0,bossKills:0,equipmentInventory:[],companionInventory:[],gacha:{equipPity:0,compPity:0},buff:{type:null,until:0},lastBuffCheck:0,missions:{killsClaimed:0,bossClaimed:0,levelClaimed:0},lastSave:now(),lastLogout:now(),offlineClaimed:false}}
 
 const COMP_BUFFS_EX9={
  fury:{name:'폭주 증폭',icon:'🔥'},
@@ -883,11 +883,11 @@ function load(){try{
   if(c.bossReady===undefined)c.bossReady=false;if(c.mainStat===undefined)c.mainStat=0;if(c.statPoints===undefined)c.statPoints=0;c.jobBoost=0;
   if(!c.growth)c.growth={atk:0,aspd:0,crit:0,speed:0};if(c.growth.speed===undefined)c.growth.speed=0;
   if(c.rebirths===undefined)c.rebirths=0;if(c.rebirthRushUntil===undefined)c.rebirthRushUntil=0;if(c.rebirthBest===undefined)c.rebirthBest=c.highest||1;if(!Number.isFinite(c.resonanceBestLevel))c.resonanceBestLevel=c.level||1;c.resonanceBestLevel=Math.max(c.resonanceBestLevel,c.level||1);if(!Number.isFinite(c.worldBossCleared))c.worldBossCleared=(c.stageCap||100)>100?Math.max(0,(c.stageCap||100)-20):0;
-  if(S.balanceVersion!==33)c.stageHpAt=0;c.stageCap=Math.max(100,Number(c.stageCap)||0,Math.ceil(Math.max(c.stage||1,c.highest||1)/20)*20);syncCharacterSkills(c);
+  if(S.balanceVersion!==34)c.stageHpAt=0;c.stageCap=Math.max(100,Number(c.stageCap)||0,Math.ceil(Math.max(c.stage||1,c.highest||1)/20)*20);syncCharacterSkills(c);
   c.companions=(c.companions||[]).map(function(ac){var found=(S.companionInventory||[]).find(function(x){return x.id===ac.id});return ensureCompBuff(found||ac)});
  });
  if(S.profileStarted&&!didFullReset){var elapsed=Math.max(0,(now()-(S.lastLogout||now()))/1000);if(elapsed>1)applyOfflineProgress(elapsed)}
- S.balanceVersion=33;S.lastLogout=now();persistState();
+ S.balanceVersion=34;S.lastLogout=now();persistState();
  if(didFullReset)setTimeout(function(){toast('EX19 새 원정: 모든 능력치와 재화를 초기화했습니다.')},350);
 }catch(e){console.warn(e);S=defaultState();persistState()}}
 
