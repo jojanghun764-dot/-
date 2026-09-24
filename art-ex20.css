@@ -75,3 +75,8 @@ body{background:
 .btn,.tab,.forgeTab{transition:filter .15s,transform .15s}.btn:not(:disabled):hover{filter:brightness(1.14);transform:translateY(-1px)}.btn:focus-visible,.forgeTab:focus-visible,.forgeListItem:focus-visible{outline:3px solid #ffe5a1;outline-offset:2px}
 @media(max-width:700px){.forgeLayout{grid-template-columns:1fr}.forgeList{max-height:118px}.forgeListItem{display:inline-flex;width:auto;margin-right:5px}.forgeTabs{grid-template-columns:repeat(2,1fr)}.forgeDetails{padding:10px}.forgeResult{gap:4px}.forgeResult strong{font-size:23px}.enhanceModal{padding:10px}.worldBossPortrait{height:155px}}
 @media(prefers-reduced-motion:reduce){.btn,.tab,.forgeTab{transition:none}}
+/* EX29: readable probability and bulk-purchase controls. */
+.forgeLineHead{background:linear-gradient(90deg,#385244,#1a2e27);border-left:4px solid #d5b779;padding:10px 12px;margin-bottom:10px;border-radius:3px;font-variant-numeric:tabular-nums}
+.forgeDetails .mini{line-height:1.55;color:#d2ddcb}.forgeDetails .forgeCost{font-size:14px}.forgeItemStats{display:flex;gap:6px;flex-wrap:wrap}.forgeItemStats>span{padding:4px 7px;border-radius:4px;background:#263b2b;color:#f6e2a2;font-weight:800}
+.shopRow>div:last-child{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}.shopRow .btn{white-space:nowrap}
+.rosterMilestones{max-height:180px;overflow:auto}.bossTierGrid{max-height:200px;overflow:auto}
