@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>새싹 원정대 - EX17 New Dawn</title>
+<title>새싹 원정대 - EX18 Roster</title>
 <style>
 :root{
   --bg:#0f1714;--panel:#17231e;--panel2:#1f3028;--line:#355243;--text:#effff5;
@@ -105,6 +105,13 @@ button,input,select{font:inherit} button{cursor:pointer;border:0}.wrap{max-width
 @media(max-width:800px){.startScreen{padding:10px}.startPanel{padding:20px 14px}.startFeatures{grid-template-columns:1fr 1fr 1fr}.starterGrid{grid-template-columns:1fr 1fr}.starterCard:last-child{grid-column:1/-1}.starterPortrait{width:84px;height:84px}.starterDesc{min-height:0}.starterPanel{padding-bottom:20px}}
 @media(max-width:420px){.startFeatures{grid-template-columns:1fr}.starterGrid{grid-template-columns:1fr}.starterCard:last-child{grid-column:auto}.starterCard{display:grid;grid-template-columns:76px 1fr;grid-template-areas:'pic title' 'pic desc' 'pic stat' 'button button';text-align:left;gap:2px 9px}.starterPortrait{grid-area:pic;width:76px;height:76px}.starterCard h3{grid-area:title;margin:0}.starterJob{position:absolute;right:10px;top:12px}.starterDesc{grid-area:desc;margin:2px 0}.starterStat{grid-area:stat}.starterChoose{grid-area:button}.startLogo{font-size:36px}}
 
+
+.rosterHero{margin-bottom:12px;padding:13px;border:1px solid #42644f;border-radius:12px;background:linear-gradient(180deg,#172d22,#0e1d16)}
+.rosterHead{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:9px}.rosterHead h3{margin:0}.rosterLevel{font:900 13px ui-monospace,monospace;color:#b8ff78}
+.rosterGrid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}.rosterCard{padding:9px 7px;border:1px solid #355640;border-radius:9px;background:#102018;min-width:0}.rosterCard.active{border-color:#9cffa8;box-shadow:inset 0 0 0 1px rgba(156,255,168,.22)}
+.rosterCard b{display:block;font-size:11px}.rosterCard .mastery{font:900 11px ui-monospace,monospace;color:#ffe391;margin:4px 0}.rosterEffect{font-size:9px;line-height:1.4;color:#a9c8b5}.rosterMilestones{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}.rosterMilestone{padding:5px 7px;border:1px solid #355640;border-radius:999px;font-size:9px;color:#8cae97}.rosterMilestone.done{color:#caffd1;border-color:#5d986c;background:#183624}
+.levelSync{margin:8px 0;padding:8px 9px;border-left:3px solid #b8ff78;background:#102018;color:#cfe8d6;font-size:10px}
+@media(max-width:800px){.rosterGrid{grid-template-columns:1fr 1fr}.rosterCard:last-child{grid-column:1/-1}}@media(max-width:420px){.rosterGrid{grid-template-columns:1fr}.rosterCard:last-child{grid-column:auto}}
 </style>
 </head>
 <body>
@@ -332,9 +339,44 @@ function load(){
 }
 function getDef(){return CHARACTERS.find(x=>x.id===S.active)} function getC(){return S.chars[S.active]}
 function expNeed(lv){return Math.floor(20*Math.pow(1.14,lv-1));}
+const PROGRESSION_GROWTH=1.13;
+function progressionScale(value){return Math.pow(PROGRESSION_GROWTH,Math.min(500,Math.max(0,(Number(value)||1)-1)))}
+function classMasteryLevel(c){return Math.max(1,Number(c&&c.level)||1)}
+function classLevelBonuses(id,level){
+ var n=Math.max(0,(Number(level)||1)-1),out={atkPct:0,finalDmg:0,bossDmg:0,skillDmg:0,doubleChance:0,critDamage:0,crit:0,extraHit:0,shieldPower:0};
+ if(id==='warrior'){out.finalDmg=n*.003;out.bossDmg=n*.005}
+ if(id==='mage'){out.skillDmg=n*.004;out.atkPct=n*.002}
+ if(id==='archer'){out.doubleChance=Math.min(.18,n*.001);out.critDamage=n*.003}
+ if(id==='rogue'){out.crit=n*.10;out.extraHit=Math.min(.18,n*.001);out.finalDmg=n*.002}
+ if(id==='paladin'){out.bossDmg=n*.004;out.finalDmg=n*.002;out.shieldPower=n*.003}
+ return out
+}
+function classMasteryText(id,level){
+ var b=classLevelBonuses(id,level);
+ if(id==='warrior')return '최종 피해 +'+(b.finalDmg*100).toFixed(1)+'% · 보스 +'+(b.bossDmg*100).toFixed(1)+'%';
+ if(id==='mage')return '스킬 피해 +'+(b.skillDmg*100).toFixed(1)+'% · 공격력 +'+(b.atkPct*100).toFixed(1)+'%';
+ if(id==='archer')return '2타 +'+(b.doubleChance*100).toFixed(1)+'% · 치피 +'+(b.critDamage*100).toFixed(1)+'%';
+ if(id==='rogue')return '치확 +'+b.crit.toFixed(1)+'% · 추가타 +'+(b.extraHit*100).toFixed(1)+'% · 최종 +'+(b.finalDmg*100).toFixed(1)+'%';
+ return '보스 +'+(b.bossDmg*100).toFixed(1)+'% · 최종 +'+(b.finalDmg*100).toFixed(1)+'% · 수호 +'+(b.shieldPower*100).toFixed(1)+'%'
+}
+function rosterResonance(){
+ var total=0,levels={};CHARACTERS.forEach(function(d){var lv=Math.max(1,S.chars[d.id]&&S.chars[d.id].level||1);levels[d.id]=lv;total+=lv});
+ var w=Math.floor(Math.max(0,levels.warrior-1)/10),m=Math.floor(Math.max(0,levels.mage-1)/10),a=Math.floor(Math.max(0,levels.archer-1)/10),r=Math.floor(Math.max(0,levels.rogue-1)/10),p=Math.floor(Math.max(0,levels.paladin-1)/10);
+ return {totalLevel:total,rank:Math.floor(total/25),finalPct:w*.015,skillPct:m*.02,aspdFlat:a*.015,critPct:r*.75,bossPct:p*.02,atkPct:total>=300?.10:total>=150?.05:0,expPct:total>=100?.10:0,trainingPct:total>=200?.20:total>=100?.15:total>=50?.10:total>=25?.05:0,levels:levels}
+}
+function rosterResonanceHTML(){
+ var rr=rosterResonance(),cards=CHARACTERS.map(function(d){var c=S.chars[d.id],tier=Math.floor(Math.max(0,c.level-1)/10),effect=d.id==='warrior'?'전체 최종피해 +'+(tier*1.5).toFixed(1)+'%':d.id==='mage'?'전체 스킬피해 +'+(tier*2).toFixed(0)+'%':d.id==='archer'?'전체 공속 +'+(tier*.015).toFixed(3)+'/s':d.id==='rogue'?'전체 치확 +'+(tier*.75).toFixed(2)+'%':'전체 보스피해 +'+(tier*2).toFixed(0)+'%';return '<div class="rosterCard '+(S.active===d.id?'active':'')+'"><b>'+d.icon+' '+d.job+' Lv.'+c.level+'</b><div class="mastery">공명 '+tier+'단계</div><div class="rosterEffect">'+effect+'</div></div>'}).join('');
+ var milestones=[[25,'부캐 훈련 5%'],[50,'부캐 훈련 10%'],[100,'훈련 15% · EXP +10%'],[150,'전체 공격 +5%'],[200,'부캐 훈련 20%'],[300,'전체 공격 +10%']].map(function(x){return '<span class="rosterMilestone '+(rr.totalLevel>=x[0]?'done':'')+'">ΣLv.'+x[0]+' '+x[1]+'</span>'}).join('');
+ return '<div class="rosterHero"><div class="rosterHead"><h3>🌿 원정대 공명</h3><span class="rosterLevel">총 Lv.'+rr.totalLevel+' · Rank '+rr.rank+'</span></div><div class="mini">부캐를 키우면 해당 직업의 공명 효과가 모든 캐릭터에 적용됩니다. 총 레벨이 높을수록 비활성 캐릭터도 자동 훈련합니다.</div><div class="rosterGrid">'+cards+'</div><div class="rosterMilestones">'+milestones+'</div></div>'
+}
+function classProgressionHTML(){
+ var c=getC(),d=getDef(),rr=rosterResonance(),scale=progressionScale(c.level);
+ return '<div class="jobBoostHero"><h3>⚔ '+d.job+' 레벨 숙련</h3><div class="jobBoostLv">캐릭터 Lv.'+c.level+' · 기본 화력 배율 ×'+fmt(scale)+'</div><div class="jobBoostEffect"><b>자동 직업 성장</b>'+classMasteryText(d.id,c.level)+'</div><div class="levelSync">골드를 사용하지 않습니다. 캐릭터 레벨이 오르면 기본 공격 성장과 직업 고유 효과가 자동으로 함께 상승합니다.</div></div>'+rosterResonanceHTML()
+}
+
 function enemyBaseName(stage,boss){if(boss)return stage<11?'숲의 거대 수호수':stage<21?'늪의 포자 군주':'고대 뿌리 거신';const pool=stage<11?['새싹 슬라임','이끼 버섯','숲멧돼지']:stage<21?['늪개구리','독포자 버섯','덩굴 포식자']:['뿌리 골렘','고대 나방','수호목 기사'];return choice(pool)}
 function stageEnemy(stage,boss=false){
- const c=getC(),rush=(c.rebirths||0)>0&&stage<=(c.rebirthRushUntil||0),base=32*Math.pow(1.18,stage-1),rushHp=rush?.35:1,elite=!boss&&stage>=8&&Math.random()<.12,kind=elite?choice(['guard','frenzy','treasure']):null;
+ const c=getC(),rush=(c.rebirths||0)>0&&stage<=(c.rebirthRushUntil||0),base=32*progressionScale(stage),rushHp=rush?.35:1,elite=!boss&&stage>=8&&Math.random()<.12,kind=elite?choice(['guard','frenzy','treasure']):null;
  let hpMult=boss?12:1,rewardMult=1,ticketChance=.20,damageTaken=1,prefix='';
  if(kind==='guard'){hpMult*=3.0;rewardMult=3;ticketChance=.45;damageTaken=.82;prefix='철갑 '}
  if(kind==='frenzy'){hpMult*=2.0;rewardMult=2.5;ticketChance=.50;damageTaken=1;prefix='광폭 '}
@@ -487,16 +529,6 @@ function skillUp(i){const c=getC();if(i>=c.unlockedSkills)return;const cost=100*
 function renderTop(){const st=calcStats(),c=getC(),d=getDef();$('#gold').textContent=fmt(S.gold);$('#gems').textContent=fmt(S.gems);$('#worldLeaves').textContent=fmt(S.worldLeaves||0);$('#equipTickets').textContent=fmt(S.equipTickets);$('#compTickets').textContent=fmt(S.compTickets);$('#power').textContent=fmt(st.power);$('#attack').textContent=fmt(st.atk);$('#crit').textContent=`${st.crit.toFixed(1)}% / 치피 ${(st.critDamage*100).toFixed(0)}%`;$('#aspd').textContent=`${st.aspd.toFixed(2)}/s · 2타 ${(st.doubleChance*100).toFixed(1)}%`;$('#charIcon').textContent=d.icon;$('#charName').textContent=d.name;$('#charJob').textContent=`${d.job} · Lv.${c.level} · 전용강화 Lv.${c.jobBoost||0} · ${d.main} ${fmt(c.mainStat||0)} (+${fmt(st.statAtk)} ATK) · 잠재 +${st.potentialPct.toFixed(0)}%`;const need=expNeed(c.level);$('#xpFill').style.width=(100*c.exp/need)+'%';$('#xpText').textContent=`${fmt(c.exp)} / ${fmt(need)} EXP`;$('#chapterTitle').textContent=`CHAPTER ${String(Math.ceil(c.stage/10)).padStart(2,'0')} · ${c.stage<11?'초록빛 숲':c.stage<21?'달빛 습지':'고대 뿌리'} `;const left=Math.max(0,Math.ceil((S.buff.until-now())/1000));$('#buffLabel').textContent=S.buff.type?`${S.buff.type} ×10 · ${left}s`:'버프 없음';}
 function renderBattle(){if(!enemy){enemy=stageEnemy(getC().stage,false)}$('#enemyHp').style.width=clamp(enemy.hp/enemy.maxHp*100,0,100)+'%';$('#enemyName').textContent=(enemy.boss?'⚠ ':'')+enemy.name;$('#stageLabel').textContent=`STAGE ${getC().stage} · ${enemy.boss?'BOSS / AUTO':enemy.elite?'ELITE / AUTO':'AUTO'}`;$('#killLabel').textContent=enemy.boss?'TIME ATTACK':`${getC().kills} / 10 KILLS`;$('#autoBtn').textContent=S.auto?'Ⅱ 자동사냥 일시정지':'▶ 자동사냥 재개';$('#bossBtn').disabled=true;$('#bossBtn').textContent=enemy.boss?'보스 자동전투 중':`보스 자동진입 ${getC().kills}/10`;$('#battlefield').classList.toggle('bossing',enemy.boss);$('#battlefield').classList.toggle('elite',!!enemy.elite);}
 function spendStatPoint(n=1){const c=getC();n=Math.max(1,Math.floor(n));if((c.statPoints||0)<n)return toast('스탯포인트 부족');c.statPoints-=n;c.mainStat=(c.mainStat||0)+n;toast(`${getDef().main} +${n} · 공격력 +${n*10}`);render()}
-const JOB_BOOST_INFO={
- warrior:{name:'불굴의 전투본능',effect:lv=>`최종데미지 +${lv*5}% · 보스데미지 +${lv*8}%`},
- mage:{name:'마력 과부하',effect:lv=>`스킬데미지 +${lv*10}% · 공격력 +${(lv*2.5).toFixed(1)}%`},
- archer:{name:'극한 연사',effect:lv=>`2타확률 +${lv*2}% · 치명타피해 +${lv*7}%`},
- rogue:{name:'그림자 폭주',effect:lv=>`치확 +${lv*2}% · 추가타확률 +${(lv*3.5).toFixed(1)}% · 최종데미지 +${lv*3}%`},
- paladin:{name:'성역의 맹세',effect:lv=>`보스데미지 +${lv*6}% · 최종데미지 +${(lv*2.5).toFixed(1)}% · 수호력 +${lv*5}%`}
-};
-function jobBoostCost(id,lv){return Math.floor(250*(1+Math.max(0,lv)*.45)*(1+CHARACTERS.findIndex(x=>x.id===id)*.08))}
-function upgradeJobBoost(id,count=1){const c=S.chars[id];if(!c)return;count=Math.max(1,Math.floor(count));let bought=0,total=0;for(let i=0;i<count;i++){const cost=jobBoostCost(id,c.jobBoost||0);if(S.gold<cost)break;S.gold-=cost;total+=cost;c.jobBoost=(c.jobBoost||0)+1;bought++;}if(!bought)return toast('직업 강화 골드 부족');toast(`${CHARACTERS.find(x=>x.id===id).job} 전용 강화 +${bought}`);log(`🔥 ${CHARACTERS.find(x=>x.id===id).job} 전용 강화 Lv.${c.jobBoost} · ${fmt(total)}G`);render()}
-function jobBoostHTML(){const cards=CHARACTERS.map(d=>{const c=S.chars[d.id],lv=c.jobBoost||0,info=JOB_BOOST_INFO[d.id],cost=jobBoostCost(d.id,lv);return `<div class="jobBoostCard ${S.active===d.id?'active':''}"><b>${d.icon} ${d.job}</b><div class="jobBoostLv">전용 Lv.${lv}</div><div class="jobBoostEffect"><b>${info.name}</b>${info.effect(lv)}</div><div class="mini">다음 강화 ${fmt(cost)}G</div><div class="jobBoostActions"><button class="btn primary" onclick="upgradeJobBoost('${d.id}',1)">+1</button><button class="btn" onclick="upgradeJobBoost('${d.id}',10)">+10</button></div></div>`}).join('');return `<div class="jobBoostHero"><h3>🔥 원정대 직업 전용 강화</h3><div class="mini">부캐 포함 5직업 강화가 모두 여기에 표시됩니다. 효과는 해당 직업 캐릭터에 직접 적용되며 일반 성장보다 훨씬 강력합니다.</div><div class="jobBoostGrid">${cards}</div><div class="mobileHint">모바일에서는 한 손으로 누르기 쉽도록 강화 버튼과 탭의 터치 영역을 확대했습니다.</div></div>`}
 function growthHTML(){const c=getC(),d=getDef(),st=calcStats();const defs=[['atk','⚔ 데미지 성장',`일반 +${c.growth.atk}% · 보스 +${c.growth.atk}%`],['aspd','↟ 연속 공격',`2타 확률 ${(st.doubleChance*100).toFixed(1)}%`],['crit','✦ 치명타 성장',`치확 ${st.crit.toFixed(1)}% · 치피 ${(st.critDamage*100).toFixed(0)}%`]];const cards=defs.map(([k,n,e])=>`<div class="card"><h3>${n}</h3><div class="kv"><span>Lv.${c.growth[k]}</span><b>${e}</b></div><div class="mini">${k==='atk'?'1레벨당 일반/보스 데미지 +1%':k==='aspd'?'1레벨당 2타 확률 +0.5% (최대 90%)':'1레벨당 치명타 확률 +0.8% · 100% 초과분은 치명타 피해로 전환'}</div><div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap"><button class="btn primary" onclick="upgradeGrowth('${k}',1)">+1</button><button class="btn" onclick="upgradeGrowth('${k}',10)">+10</button><button class="btn" onclick="upgradeGrowth('${k}',100)">+100</button><button class="btn gold" onclick="upgradeGrowth('${k}','max')">MAX</button></div></div>`).join('');return jobBoostHTML()+`<div class="cards"><div class="card statPointBox"><h3>◆ 주스탯 ${d.main}</h3><div class="kv"><span>현재 ${fmt(c.mainStat||0)}</span><b>남은 포인트 ${fmt(c.statPoints||0)}</b></div><div class="mini">레벨업마다 스탯포인트 +1 · ${d.main} 1당 공격력 +10</div><div style="margin-top:8px"><button class="btn primary" onclick="spendStatPoint(1)">+1</button> <button class="btn" onclick="spendStatPoint(10)">+10</button> <button class="btn gold" onclick="spendStatPoint(getC().statPoints||0)">전부 투자</button></div></div>${cards}</div>`}
 function skillsHTML(){const c=getC(),d=getDef();const desc={warrior:['전방 초록 참격','회전하며 넓은 원형 참격','지면을 깨뜨리는 대형 충격파'],mage:['청록 마력탄 폭발','주변을 감싸는 덩굴 마력 폭발','보라빛 별빛 다중 폭발'],archer:['직선 씨앗 화살','다중 연사 화살비','화면을 가르는 바람 화살'],rogue:['순간 잎칼 참격','보라색 잔상 돌진','교차 낙엽 난무'],paladin:['빛의 방패 파동','황금 수호 돌진','성광 기둥과 보호 결계']}[d.id];return d.skills.map((s,i)=>`<div class="skillRow"><div><b>${s}</b> <span class="pill">${i<c.unlockedSkills?'Lv.'+c.skillLv[i]:'잠김'}</span><div class="skillDesc">${desc[i]} · ${i===0?'기본 자동 스킬':i===1?'Lv.5 해금':'Lv.10 해금'}</div></div><button class="btn" ${i>=c.unlockedSkills?'disabled':''} onclick="skillUp(${i})">강화 ${100*((c.skillLv[i]||0)+1)}G</button></div>`).join('')}
 function equipmentHTML(){
@@ -578,10 +610,6 @@ function upgradeSkill(i,amount){if(amount===undefined)amount=1;var c=getC();if(i
 function skillUp(i){upgradeSkill(i,1)}
 function skillsHTML(){var c=getC(),d=getDef(),st=calcStats(),desc={warrior:['전방 초록 참격','회전하며 넓은 원형 참격','지면을 깨뜨리는 대형 충격파'],mage:['청록 마력탄 폭발','주변을 감싸는 덩굴 마력 폭발','보라빛 별빛 다중 폭발'],archer:['직선 씨앗 화살','다중 연사 화살비','화면을 가르는 바람 화살'],rogue:['순간 잎칼 참격','보라색 잔상 돌진','교차 낙엽 난무'],paladin:['빛의 방패 파동','황금 수호 돌진','성광 기둥과 보호 결계']}[d.id];return d.skills.map(function(name,i){var locked=i>=c.unlockedSkills,lv=c.skillLv[i]||0,mult=skillMultiplier(i,lv),effective=mult*st.skillDmg;return '<div class="skillRow"><div><b>'+name+'</b> <span class="pill">'+(locked?'잠김':'Lv.'+lv)+'</span><div class="skillDesc">'+desc[i]+' · '+(i===0?'기본 자동 스킬':i===1?'Lv.5 해금':'Lv.10 해금')+'</div><span class="skillPower">공격력 ×'+mult.toFixed(2)+(st.skillDmg!==1?' · 직업보정 포함 ×'+effective.toFixed(2):'')+'</span></div><div class="batchBtns"><button class="btn primary" '+(locked?'disabled':'')+' onclick="upgradeSkill('+i+',1)">+1</button><button class="btn" '+(locked?'disabled':'')+' onclick="upgradeSkill('+i+',10)">+10</button><button class="btn" '+(locked?'disabled':'')+' onclick="upgradeSkill('+i+',100)">+100</button><button class="btn gold" '+(locked?'disabled':'')+' onclick="upgradeSkill('+i+',\'max\')">최대</button></div></div>'}).join('')}
 
-function maxAffordableJobBoost(id,cap){if(cap===undefined)cap=10000;var c=S.chars[id],total=0,n=0;while(n<cap){var cost=jobBoostCost(id,(c.jobBoost||0)+n);if(total+cost>S.gold)break;total+=cost;n++}return n}
-function upgradeJobBoost(id,count){if(count===undefined)count=1;var c=S.chars[id];if(!c)return;count=count==='max'?maxAffordableJobBoost(id):Math.max(1,Math.floor(count));var bought=0,total=0;for(var i=0;i<count;i++){var cost=jobBoostCost(id,c.jobBoost||0);if(S.gold<cost)break;S.gold-=cost;total+=cost;c.jobBoost=(c.jobBoost||0)+1;bought++}if(!bought)return toast('직업 강화 골드 부족');toast(CHARACTERS.find(function(x){return x.id===id}).job+' 전용 강화 +'+bought);log('🔥 '+CHARACTERS.find(function(x){return x.id===id}).job+' 전용 강화 Lv.'+c.jobBoost+' · '+fmt(total)+'G');render()}
-function jobBoostHTML(){var cards=CHARACTERS.map(function(d){var c=S.chars[d.id],lv=c.jobBoost||0,info=JOB_BOOST_INFO[d.id],cost=jobBoostCost(d.id,lv);return '<div class="jobBoostCard '+(S.active===d.id?'active':'')+'"><b>'+d.icon+' '+d.job+'</b><div class="jobBoostLv">전용 Lv.'+lv+'</div><div class="jobBoostEffect"><b>'+info.name+'</b>'+info.effect(lv)+'</div><div class="mini">다음 강화 '+fmt(cost)+'G</div><div class="jobBoostActions"><button class="btn primary" onclick="upgradeJobBoost(\''+d.id+'\',1)">+1</button><button class="btn" onclick="upgradeJobBoost(\''+d.id+'\',10)">+10</button><button class="btn" onclick="upgradeJobBoost(\''+d.id+'\',100)">+100</button><button class="btn gold" onclick="upgradeJobBoost(\''+d.id+'\',\'max\')">최대</button></div></div>'}).join('');return '<div class="jobBoostHero"><h3>🔥 원정대 직업 전용 강화</h3><div class="mini">부캐 포함 5직업 강화가 모두 여기에 표시됩니다. 효과는 해당 직업 캐릭터에 직접 적용됩니다.</div><div class="jobBoostGrid">'+cards+'</div></div>'}
-
 function companionsHTML(){var all=[].concat(S.companionInventory),active=new Set(getC().companions.map(function(x){return x.id}));all.forEach(ensureCompBuff);var thresholds=['희귀','에픽','전설','신화'].map(function(r){return '<option value="'+r+'" '+(S.autoCompTrashThreshold===r?'selected':'')+'>'+r+' 미만</option>'}).join('');var toolbar='<div class="compToolbar"><button class="btn '+(S.autoCompEquip?'primary':'')+'" onclick="toggleAutoCompEquip()">높은등급 자동동행 '+(S.autoCompEquip?'ON':'OFF')+'</button><button class="btn '+(S.autoCompTrash?'gold':'')+'" onclick="toggleAutoCompTrash()">낮은등급 자동분해 '+(S.autoCompTrash?'ON':'OFF')+'</button><select onchange="setCompTrashThreshold(this.value)">'+thresholds+'</select><button class="btn red" onclick="bulkCompSalvage()">낮은등급 일괄정리</button><span class="invCount">보유 '+all.length+' · 동행 '+getC().companions.length+'/'+maxCompanionSlots()+'</span></div>';if(!all.length)return toolbar+'<div class="emptyState">아직 소환한 동료가 없습니다. 동료는 전투력 대신 랜덤 버프 스킬을 제공합니다.</div>';var icons=['🌰','🍄','🦊','🐥','🌿','✨','☁️','🌲'],sorted=[].concat(all).sort(function(a,b){return compScore(b)-compScore(a)}),cards=sorted.map(function(e){var isActive=active.has(e.id),baseName=compBaseName(e),icon=icons[Math.max(0,COMP_NAMES.indexOf(baseName))]||'🐾',mats=sameCompMaterials(e).length,star=e.star||1,aw=e.awaken||0,growth=star<5?'<span class="starCost">다음 성장 '+fmt(compGrowthCost(e))+'G</span>':'<span class="good">5성 완료</span>',awakenNeed=star>=5&&aw<3?(aw+1)+'명 필요 / 보유 재료 '+mats:aw>=3?'최대 각성':'5성 후 각성';return '<div class="compCard '+(isActive?'active':'')+'"><div class="compAvatar">'+icon+'</div><b class="'+e.cls+'">'+e.name+'</b>'+(isActive?'<span class="equipTag">동행중</span>':'')+'<div class="compBuff"><b>'+compBuffText(e)+'</b><span>별 성장과 각성으로 버프 수치가 직접 상승합니다.</span></div><div class="invMeta">★'+star+(aw?' · 각성 '+aw:'')+'<br>'+growth+'<br><span class="matTag">동일 동료 각성재료 '+mats+'명 · '+awakenNeed+'</span><br><span class="ticketBack">분해 페이백: 티켓 '+ticketBackFor(e.rarity)+'장</span></div><div class="actions"><button class="btn '+(isActive?'red':'primary')+'" onclick="setComp(\''+e.id+'\')">'+(isActive?'동행 해제':'동행')+'</button><button class="btn gold" onclick="growComp(\''+e.id+'\')" '+(star>=5?'disabled':'')+'>★ 성장</button><button class="btn violet" onclick="awakenComp(\''+e.id+'\')" '+(star<5||aw>=3?'disabled':'')+'>각성</button><button class="btn red" onclick="salvageComp(\''+e.id+'\')">분해</button></div></div>'}).join('');return toolbar+'<div class="compGrid">'+cards+'</div><div class="salvageNote" style="margin-top:10px">동료 전투력은 폐기했습니다. 동행 동료의 랜덤 버프가 직접 적용되며 1★→5★ 골드 성장, 이후 동일 종류 1/2/3명으로 각성합니다.</div>'}
 
 
@@ -637,7 +665,7 @@ function load(){try{
  if(S.autoCompEquip===undefined)S.autoCompEquip=true;if(S.autoCompTrash===undefined)S.autoCompTrash=true;if(!S.autoCompTrashThreshold)S.autoCompTrashThreshold='희귀';if(S.compSalvageCount===undefined)S.compSalvageCount=0;
  (S.companionInventory||[]).forEach(ensureCompBuff);(S.equipmentInventory||[]).forEach(ensureEquipTrait);
  Object.values(S.chars||{}).forEach(function(c){
-  if(c.bossReady===undefined)c.bossReady=false;if(c.mainStat===undefined)c.mainStat=0;if(c.statPoints===undefined)c.statPoints=0;if(c.jobBoost===undefined)c.jobBoost=0;
+  if(c.bossReady===undefined)c.bossReady=false;if(c.mainStat===undefined)c.mainStat=0;if(c.statPoints===undefined)c.statPoints=0;c.jobBoost=0;
   if(!c.growth)c.growth={atk:0,aspd:0,crit:0,speed:0};if(c.growth.speed===undefined)c.growth.speed=0;
   if(c.rebirths===undefined)c.rebirths=0;if(c.rebirthRushUntil===undefined)c.rebirthRushUntil=0;if(c.rebirthBest===undefined)c.rebirthBest=c.highest||1;
   c.companions=(c.companions||[]).map(function(ac){var found=(S.companionInventory||[]).find(function(x){return x.id===ac.id});return ensureCompBuff(found||ac)});
@@ -648,31 +676,39 @@ function load(){try{
 }catch(e){console.warn(e);S=defaultState();persistState()}}
 
 function calcStats(){
- var d=getDef(),c=getC(),cb=companionBuffs(),potentialPct=currentPotentialPercent(),rb=rebirthBonuses(),et=equipmentTraitBonuses();
- c.potentialMain=potentialPct;
- var statAtk=(c.mainStat||0)*10,boost=c.jobBoost||0;
- var baseAtk=d.baseAtk+statAtk+equipPower();
+ var d=getDef(),c=getC(),cb=companionBuffs(),potentialPct=currentPotentialPercent(),rb=rebirthBonuses(),et=equipmentTraitBonuses(),rr=rosterResonance(),cl=classLevelBonuses(d.id,c.level),levelScale=progressionScale(c.level);
+ c.potentialMain=potentialPct;c.jobBoost=0;
+ var statAtk=(c.mainStat||0)*10;
+ var baseAtk=(d.baseAtk+statAtk+equipPower())*levelScale;
  var potentialAttackPct=potentialPct*10;
- var atk=baseAtk*(1+potentialAttackPct/100)*cb.attackMult*(1+rb.atkPct/100);
- var rawCrit=d.crit+(c.growth.crit||0)*.8,crit=Math.min(100,rawCrit);
- var critDamage=1.8+Math.max(0,rawCrit-100)/100+cb.critDamageBonus;
- var aspd=Math.min(rb.aspdCap,(d.aspd+(c.growth.speed||0)*.02+rb.aspdFlat+et.aspd)*(rebirthRushActive(c)?1.35:1));
- var doubleChance=Math.min(.90,(c.growth.aspd||0)*.005);
- var normalDmg=1+(c.growth.atk||0)*.01,bossDmg=(1+(c.growth.atk||0)*.01)*(1+rb.bossPct/100)*(1+et.bossDmg);
- var finalDmg=1,skillDmg=1,extraHit=0,shieldPower=0;
- if(d.id==='warrior'){finalDmg*=1+boost*.05;bossDmg*=1+boost*.08}
- if(d.id==='mage'){skillDmg*=1+boost*.10;atk*=1+boost*.025}
- if(d.id==='archer'){doubleChance=Math.min(.95,doubleChance+boost*.02);critDamage+=boost*.07}
- if(d.id==='rogue'){crit=Math.min(100,crit+boost*2);extraHit=Math.min(.65,boost*.035);finalDmg*=1+boost*.03}
- if(d.id==='paladin'){bossDmg*=1+boost*.06;finalDmg*=1+boost*.025;shieldPower=boost*.05}
+ var atk=baseAtk*(1+potentialAttackPct/100)*cb.attackMult*(1+rb.atkPct/100)*(1+cl.atkPct)*(1+rr.atkPct);
+ var rawCrit=d.crit+(c.growth.crit||0)*.8+cl.crit+rr.critPct,crit=Math.min(100,rawCrit);
+ var critDamage=1.8+Math.max(0,rawCrit-100)/100+cb.critDamageBonus+cl.critDamage;
+ var aspd=Math.min(rb.aspdCap,(d.aspd+(c.growth.speed||0)*.02+rb.aspdFlat+et.aspd+rr.aspdFlat)*(rebirthRushActive(c)?1.35:1));
+ var doubleChance=Math.min(.95,(c.growth.aspd||0)*.005+cl.doubleChance);
+ var normalDmg=1+(c.growth.atk||0)*.01,bossDmg=(1+(c.growth.atk||0)*.01)*(1+rb.bossPct/100)*(1+et.bossDmg)*(1+cl.bossDmg)*(1+rr.bossPct);
+ var finalDmg=(1+cl.finalDmg)*(1+rr.finalPct),skillDmg=(1+cl.skillDmg)*(1+rr.skillPct),extraHit=cl.extraHit,shieldPower=cl.shieldPower;
  extraHit=Math.min(.75,1-(1-extraHit)*(1-et.extraHit));
  var rawPower=atk*10*(1+crit/100)*critDamage*(1+doubleChance+extraHit+cb.chainChance)*normalDmg*finalDmg*skillDmg+c.level*8;
  var power=Number.isFinite(rawPower)?Math.floor(rawPower):Number.MAX_VALUE;
- return {atk:atk,crit:crit,rawCrit:rawCrit,critDamage:critDamage,aspd:aspd,doubleChance:doubleChance,normalDmg:normalDmg,bossDmg:bossDmg,finalDmg:finalDmg,skillDmg:skillDmg,extraHit:extraHit,shieldPower:shieldPower,power:power,potentialPct:potentialPct,potentialAttackPct:potentialAttackPct,mainStat:c.mainStat||0,statAtk:statAtk,jobBoost:boost,compChainChance:cb.chainChance,compGoldMult:cb.goldMult,compExpMult:cb.expMult,compAttackMult:cb.attackMult,skillChanceBonus:et.skillChance,equipGoldPct:et.goldPct,equipTraitBonus:et}
+ return {atk:atk,crit:crit,rawCrit:rawCrit,critDamage:critDamage,aspd:aspd,doubleChance:doubleChance,normalDmg:normalDmg,bossDmg:bossDmg,finalDmg:finalDmg,skillDmg:skillDmg,extraHit:extraHit,shieldPower:shieldPower,power:power,potentialPct:potentialPct,potentialAttackPct:potentialAttackPct,mainStat:c.mainStat||0,statAtk:statAtk,jobBoost:0,classMastery:classMasteryLevel(c),levelScale:levelScale,roster:rr,compChainChance:cb.chainChance,compGoldMult:cb.goldMult,compExpMult:cb.expMult,compAttackMult:cb.attackMult,skillChanceBonus:et.skillChance,equipGoldPct:et.goldPct,equipTraitBonus:et}
 }
-
-function addExp(v,silent){if(silent===undefined)silent=false;var c=getC(),cb=companionBuffs(),eventMult=(S.buff.type==='EXP'&&S.buff.until>now())?10:1,speedMult=1.8,rb=rebirthBonuses();c.exp+=v*eventMult*speedMult*cb.expMult*(1+rb.expPct/100);while(c.exp>=expNeed(c.level)){c.exp-=expNeed(c.level);c.level++;c.statPoints=(c.statPoints||0)+1;if(c.level%5===0&&c.unlockedSkills<3){c.unlockedSkills++;c.skillLv[c.unlockedSkills-1]=1;log('✨ Lv.'+c.level+'! 스탯포인트 +1 · 신규 스킬 해금: '+getDef().skills[c.unlockedSkills-1])}else log('✨ Lv.'+c.level+' 달성! 스탯포인트 +1')}if(!silent)render()}
-
+function applyCharacterExp(c,amount,announce){
+ c.exp+=Math.max(0,amount||0);
+ while(c.exp>=expNeed(c.level)){
+  c.exp-=expNeed(c.level);c.level++;c.statPoints=(c.statPoints||0)+1;
+  if(c.level%5===0&&c.unlockedSkills<3){c.unlockedSkills++;c.skillLv[c.unlockedSkills-1]=1;if(announce)log('✨ Lv.'+c.level+'! 스탯포인트 +1 · 신규 스킬 해금: '+getDef().skills[c.unlockedSkills-1])}
+  else if(announce)log('✨ Lv.'+c.level+' 달성! 레벨 화력 ×'+fmt(progressionScale(c.level))+' · 스탯포인트 +1');
+ }
+}
+function addExp(v,silent){
+ if(silent===undefined)silent=false;
+ var c=getC(),cb=companionBuffs(),eventMult=(S.buff.type==='EXP'&&S.buff.until>now())?10:1,speedMult=1.8,rb=rebirthBonuses(),rr=rosterResonance();
+ var gain=v*eventMult*speedMult*cb.expMult*(1+rb.expPct/100)*(1+rr.expPct);
+ applyCharacterExp(c,gain,true);
+ if(rr.trainingPct>0)CHARACTERS.forEach(function(d){if(d.id===S.active)return;applyCharacterExp(S.chars[d.id],gain*rr.trainingPct,false)});
+ if(!silent)render()
+}
 function growthUnitCost(k,lv){var base={atk:40,aspd:75,crit:95,speed:90}[k]||60;return Math.floor(base*(1+Math.max(0,lv)*.28))}
 function growthHTML(){var c=getC(),d=getDef(),st=calcStats();if(c.growth.speed===undefined)c.growth.speed=0;var defs=[
  ['atk','⚔ 데미지 성장','일반 +'+c.growth.atk+'% · 보스 +'+c.growth.atk+'%','1레벨당 일반/보스 데미지 +1%'],
@@ -680,7 +716,7 @@ function growthHTML(){var c=getC(),d=getDef(),st=calcStats();if(c.growth.speed==
  ['speed','⚡ 공격속도','현재 '+st.aspd.toFixed(2)+'/s','1레벨당 실제 공격속도 +0.02/s (최대 5.00/s)'],
  ['crit','✦ 치명타 성장','치확 '+st.crit.toFixed(1)+'% · 치피 '+(st.critDamage*100).toFixed(0)+'%','1레벨당 치명타 확률 +0.8% · 100% 초과분은 치명타 피해로 전환']
  ];var cards=defs.map(function(x){var k=x[0],n=x[1],e=x[2],help=x[3];return '<div class="card"><h3>'+n+'</h3><div class="kv"><span>Lv.'+(c.growth[k]||0)+'</span><b>'+e+'</b></div><div class="mini">'+help+'</div><div class="mini costHint">다음 강화 '+fmt(growthUnitCost(k,c.growth[k]||0))+'G</div><div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap"><button class="btn primary" onclick="upgradeGrowth(\''+k+'\',1)">+1</button><button class="btn" onclick="upgradeGrowth(\''+k+'\',10)">+10</button><button class="btn" onclick="upgradeGrowth(\''+k+'\',100)">+100</button><button class="btn gold" onclick="upgradeGrowth(\''+k+'\',\'max\')">MAX</button></div></div>'}).join('');
- return jobBoostHTML()+'<div class="cards"><div class="card statPointBox"><h3>◆ 주스탯 '+d.main+'</h3><div class="kv"><span>현재 '+fmt(c.mainStat||0)+'</span><b>남은 포인트 '+fmt(c.statPoints||0)+'</b></div><div class="mini">레벨업마다 스탯포인트 +1 · '+d.main+' 1당 공격력 +10 · 잠재 '+st.potentialPct.toFixed(0)+'% = 공격력 +'+st.potentialAttackPct.toFixed(0)+'%</div><div style="margin-top:8px"><button class="btn primary" onclick="spendStatPoint(1)">+1</button> <button class="btn" onclick="spendStatPoint(10)">+10</button> <button class="btn gold" onclick="spendStatPoint(getC().statPoints||0)">전부 투자</button></div></div>'+cards+'</div>'
+ return classProgressionHTML()+'<div class="cards"><div class="card statPointBox"><h3>◆ 주스탯 '+d.main+'</h3><div class="kv"><span>현재 '+fmt(c.mainStat||0)+'</span><b>남은 포인트 '+fmt(c.statPoints||0)+'</b></div><div class="mini">레벨업마다 스탯포인트 +1 · '+d.main+' 1당 공격력 +10 · 잠재 '+st.potentialPct.toFixed(0)+'% = 공격력 +'+st.potentialAttackPct.toFixed(0)+'%</div><div style="margin-top:8px"><button class="btn primary" onclick="spendStatPoint(1)">+1</button> <button class="btn" onclick="spendStatPoint(10)">+10</button> <button class="btn gold" onclick="spendStatPoint(getC().statPoints||0)">전부 투자</button></div></div>'+cards+'</div>'
 }
 
 function skillUnitCost(i,lv){var x=Math.max(1,(lv||0)+1);return Math.floor(120*(1+i*.35)*(1+(x-1)*.32))}
@@ -702,7 +738,7 @@ function equipmentHTML(){
  return toolbar+'<div class="inventoryGrid">'+cards+'</div><div class="salvageNote" style="margin-top:10px">잠재 환산 규칙: <b>'+getDef().main+' 잠재 1% = 공격력 +10%</b>. 예: '+getDef().main+' 400% = 공격력 +4000%.</div>'
 }
 
-function renderTop(){var st=calcStats(),c=getC(),d=getDef();$('#gold').textContent=fmt(S.gold);$('#gems').textContent=fmt(S.gems);$('#worldLeaves').textContent=fmt(S.worldLeaves||0);$('#equipTickets').textContent=fmt(S.equipTickets);$('#compTickets').textContent=fmt(S.compTickets);$('#power').textContent=fmt(st.power);$('#attack').textContent=fmt(st.atk);$('#crit').textContent=st.crit.toFixed(1)+'% / 치피 '+(st.critDamage*100).toFixed(0)+'%';$('#aspd').textContent=st.aspd.toFixed(2)+'/s · 2타 '+(st.doubleChance*100).toFixed(1)+'%';$('#charIcon').textContent=d.icon;$('#charName').textContent=d.name;$('#charJob').textContent=d.job+' · Lv.'+c.level+' · 전용강화 Lv.'+(c.jobBoost||0)+' · '+d.main+' '+fmt(c.mainStat||0)+' · 잠재 '+st.potentialPct.toFixed(0)+'% → ATK +'+st.potentialAttackPct.toFixed(0)+'%';var need=expNeed(c.level);$('#xpFill').style.width=(100*c.exp/need)+'%';$('#xpText').textContent=fmt(c.exp)+' / '+fmt(need)+' EXP';$('#chapterTitle').textContent='CHAPTER '+String(Math.ceil(c.stage/10)).padStart(2,'0')+' · '+(c.stage<11?'초록빛 숲':c.stage<21?'달빛 습지':'고대 뿌리')+' ';var left=Math.max(0,Math.ceil((S.buff.until-now())/1000));$('#buffLabel').textContent=S.buff.type?S.buff.type+' ×10 · '+left+'s':'버프 없음'}
+function renderTop(){var st=calcStats(),c=getC(),d=getDef();$('#gold').textContent=fmt(S.gold);$('#gems').textContent=fmt(S.gems);$('#worldLeaves').textContent=fmt(S.worldLeaves||0);$('#equipTickets').textContent=fmt(S.equipTickets);$('#compTickets').textContent=fmt(S.compTickets);$('#power').textContent=fmt(st.power);$('#attack').textContent=fmt(st.atk);$('#crit').textContent=st.crit.toFixed(1)+'% / 치피 '+(st.critDamage*100).toFixed(0)+'%';$('#aspd').textContent=st.aspd.toFixed(2)+'/s · 2타 '+(st.doubleChance*100).toFixed(1)+'%';$('#charIcon').textContent=d.icon;$('#charName').textContent=d.name;$('#charJob').textContent=d.job+' · Lv.'+c.level+' · 레벨화력 ×'+fmt(st.levelScale)+' · '+d.main+' '+fmt(c.mainStat||0)+' · 잠재 '+st.potentialPct.toFixed(0)+'% → ATK +'+st.potentialAttackPct.toFixed(0)+'%';var need=expNeed(c.level);$('#xpFill').style.width=(100*c.exp/need)+'%';$('#xpText').textContent=fmt(c.exp)+' / '+fmt(need)+' EXP';$('#chapterTitle').textContent='CHAPTER '+String(Math.ceil(c.stage/10)).padStart(2,'0')+' · '+(c.stage<11?'초록빛 숲':c.stage<21?'달빛 습지':'고대 뿌리')+' ';var left=Math.max(0,Math.ceil((S.buff.until-now())/1000));$('#buffLabel').textContent=S.buff.type?S.buff.type+' ×10 · '+left+'s':'버프 없음'}
 
 function addDamageVfx(n,crit,tag){if(tag===undefined)tag='';VFX.damages.push({n:n,crit:crit,tag:tag,x:335+rand(-7,7),y:105+rand(-5,5),life:.9});if(VFX.damages.length>30)VFX.damages=VFX.damages.slice(-30);VFX.hit=.13;VFX.shake=0;VFX.attack=.18;hitBurst(347,145,crit);if(crit)puff(347,130,'#ffe66d')}
 function puff(x,y,c){if(c===undefined)c='#eaffd8';for(var i=0;i<4;i++)VFX.particles.push({x:x+rand(-5,5),y:y+rand(-4,4),vx:rand(-16,16),vy:rand(-25,-8),life:rand(.22,.48),c:c,s:choice([2,3])});if(VFX.particles.length>75)VFX.particles=VFX.particles.slice(-75)}
@@ -755,7 +791,7 @@ function initIntroFlow(){
  $('#starterBackBtn').onclick=showTitleScreen;showTitleScreen();
 }
 function loop(t){drawIntroScene(t,'titleCanvas');drawIntroScene(t,'starterBackdropCanvas');drawStarterPreviews(t);if(!runtimeSessionActive){requestAnimationFrame(loop);return}if(document.visibilityState!=='hidden')drawBattleScene(t);if(S.auto){var st=calcStats(),gap=1000/Math.max(.25,st.aspd);if(t-attackTimer>gap){attackTimer=t;attack()}}if(t-buffTimer>1000){buffTimer=t;buffCheck();renderTop()}requestAnimationFrame(loop)}
-buildSprites();load();render();initIntroFlow();log('🌱 새싹 원정대 EX17 New Dawn 시작');requestAnimationFrame(loop);
+buildSprites();load();render();initIntroFlow();log('🌱 새싹 원정대 EX18 Roster 시작');requestAnimationFrame(loop);
 </script>
 </body>
 </html>
