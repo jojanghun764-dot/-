@@ -16,6 +16,6 @@ html = html.replace('width=device-width, initial-scale=1.0', 'width=device-width
 html = html.replace('</head>', '<link rel="stylesheet" href="mobile.css" />\n<script type="module" src="mobile.js"></script>\n</head>');
 writeFileSync(htmlPath, html);
 cpSync(join(root, 'mobile/mobile.css'), join(out, 'mobile.css'));
-await build({ entryPoints: [join(root, 'mobile/mobile.js')], outfile: join(out, 'mobile.js'), bundle: true, format: 'iife', platform: 'browser', minify: true });
+await build({ entryPoints: [join(root, 'mobile/mobile.js')], outfile: join(out, 'mobile.js'), bundle: true, format: 'iife', platform: 'browser', minify: true, define: { __SPROUT_TEST_ADS__: JSON.stringify(process.env.SPROUT_TEST_ADS === '1') } });
 if (!existsSync(join(out, 'assets'))) throw new Error('Mobile assets missing');
 console.log('Bundled local game files into www/');

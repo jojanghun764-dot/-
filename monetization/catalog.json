@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "status": "proposal_until_play_console_and_receipt_backend",
+  "rewarded_ad": {
+    "placement": "shop_opt_in",
+    "daily_limit": 2,
+    "gems_per_completed_ad": 80,
+    "forced_ads": false
+  },
+  "products": [
+    {
+      "id": "sprout_starter_01",
+      "type": "one_time",
+      "proposed_price_krw": 3300,
+      "limit": "once_per_account",
+      "grant": { "gems": 300, "equipment_tickets": 300, "companion_tickets": 300, "cosmetic": "founder_leaf" }
+    },
+    {
+      "id": "sprout_ad_skip_01",
+      "type": "permanent_entitlement",
+      "proposed_price_krw": 5900,
+      "limit": "once_per_account",
+      "grant": { "daily_reward_claims_without_ad": 2, "gems_per_claim": 80 }
+    },
+    {
+      "id": "sprout_season_01",
+      "type": "seasonal_one_time",
+      "proposed_price_krw": 9900,
+      "limit": "once_per_season_per_account",
+      "grant": { "gems": 600, "equipment_tickets": 500, "companion_tickets": 500, "cosmetic": "season_skin_and_effect" }
+    },
+    {
+      "id": "sprout_support_01",
+      "type": "monthly_limited",
+      "proposed_price_krw": 19900,
+      "limit": "once_per_month_per_account",
+      "grant": { "gems": 1500, "equipment_tickets": 1000, "companion_tickets": 1000, "cosmetic": "supporter_skin_set" }
+    }
+  ],
+  "excluded": ["direct_transcendent_equipment", "paid_only_stats", "paid_boss_entries", "forced_interstitials", "loot_boxes_for_cash"]
+}
