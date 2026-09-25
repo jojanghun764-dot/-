@@ -1,0 +1,6 @@
+@media (max-width: 800px) {
+  body { padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
+  .startScreen, .overlay { padding-top: max(18px, env(safe-area-inset-top)); padding-bottom: max(18px, env(safe-area-inset-bottom)); }
+  button, select, input { min-height: 40px; }
+  input, select { font-size: 16px; }
+}
