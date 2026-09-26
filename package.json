@@ -9,6 +9,7 @@
     "check:mobile": "node scripts/mobile-smoke.mjs && node scripts/static-check.mjs",
     "check:release-art": "node scripts/check-release-assets.mjs",
     "check:packaged-art": "node scripts/check-packaged-art.mjs",
+    "check:purchase-verifier": "node --test monetization/google-play-verifier.test.mjs",
     "open:android": "npx cap open android"
   },
   "dependencies": {
