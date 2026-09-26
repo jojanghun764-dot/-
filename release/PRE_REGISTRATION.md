@@ -8,6 +8,8 @@
 - JSON 세이브 내보내기·가져오기와 가져오기 직전 로컬 복구본.
 - 원본 코드로 재생성 가능한 Android 아이콘·스플래시, Play 아이콘 512×512, 피처 그래픽 1024×500, 소개문 초안.
 - Google 데모 AdMob 앱·광고 단위를 쓰는 debug 시험 경로. 정식판 광고와 구매 상품은 비활성 상태.
+- GitHub Actions에서 Android SDK/API 36과 JDK 21을 설치해 debug APK를 빌드하고 14일간 아티팩트로 제공하는 워크플로.
+- Android 패키지에는 제작 근거가 있는 아이콘만 포함하고, 50개 미확인 WebP는 코드 기반 그림으로 대체. `npm run check:release-art`는 원본 웹 아트 50건의 증빙을 요구한다.
 
 ## 등록 전 계정 소유자 정보가 필요한 항목
 
@@ -24,4 +26,4 @@
 - 실기기 APK 실행과 스크린샷, Play 테스트 트랙 AAB 업로드, Data Safety·콘텐츠 등급 최종 신고.
 - 신규 개인 개발자 계정에 적용되는 비공개 테스트 대상·기간 확인 및 생산 배포 접근 신청.
 
-현재 실행 환경에는 Android SDK와 Gradle 배포 파일 접근이 없어 APK/AAB를 완성하지 못했다. `npm run check:mobile`과 `npm run sync:android`는 통과했다. 실제 계정과 실기기 없이 결제·광고 수익이 발생한다고 표시해서는 안 된다.
+현재 로컬 실행 환경에는 Android SDK와 Gradle 배포 파일 접근이 없지만 GitHub Actions 러너를 사용해 Android debug 빌드를 실행한다. `npm run check:mobile`과 `npm run sync:android:test-ads`는 통과했다. 실제 계정과 실기기 없이 결제·광고 수익이 발생한다고 표시해서는 안 된다. 배포용 서명 AAB, 실기기 검증, 공개 스토어 제출은 아직 완료되지 않았다.
