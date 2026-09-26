@@ -4,3 +4,10 @@
   button, select, input { min-height: 40px; }
   input, select { font-size: 16px; }
 }
+
+/* Packaged builds use the game's code-drawn sprites until art rights are recorded. */
+.riftGuardian, .riftGuardian.wave1, .riftGuardian.wave2 {
+  background-image: radial-gradient(circle at 50% 40%, #527c58, #142b25 68%);
+}
+.compAvatar img, .equipIcon, .forgeSelected img { display: none; }
+.compAvatar::after { content: '🌿'; }
