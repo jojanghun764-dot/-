@@ -2,6 +2,7 @@
 'use strict';
 const ART_VERSION='새싹 원정대';
 const LOAD_LEGACY_ART=!window.SPROUT_VERIFIED_ASSETS_ONLY;
+const COMBAT_FX={};for(const kind of ['basic','warrior','mage','archer','rogue','paladin']){const img=new Image();img.src='vfx/'+kind+'.png';COMBAT_FX[kind]=img}
 const REGION_IMAGES={};
 for(const name of ['forest','swamp','roots','crystal','astral','forge']){const img=new Image();if(LOAD_LEGACY_ART)img.src='assets/'+name+(['forest','swamp','roots'].includes(name)?'-ex21.webp':'-ex28.webp');REGION_IMAGES[name]=img}
 const REGION_SCENE_CACHE={};
@@ -179,6 +180,7 @@ function fxHalo(ctx,x,y,r,color,phase){ctx.save();ctx.strokeStyle=color;ctx.line
 function fxShards(ctx,x,y,count,r,color,phase){for(let i=0;i<count;i++){const angle=i*6.283/count+phase*.4,dist=r*(.35+phase*.7),size=i%4===0?6:3;fxBlock(ctx,x+Math.cos(angle)*dist,y+Math.sin(angle)*dist*.65,size,size,i%3===0?'#fff8db':color,1-phase*.65)}}
 function fxSlash(ctx,x,y,r,angle,color,phase){ctx.save();ctx.translate(Math.round(x),Math.round(y));ctx.rotate(angle);ctx.globalAlpha=1-phase*.8;ctx.fillStyle=color;ctx.beginPath();ctx.moveTo(-r,8);ctx.quadraticCurveTo(-r*.1,-r*.55,r,-r*.2);ctx.lineTo(r+8,-r*.25);ctx.quadraticCurveTo(r*.2,-r*.7,-r-9,-3);ctx.closePath();ctx.fill();ctx.fillStyle='#fff9d0';ctx.beginPath();ctx.moveTo(-r+10,-4);ctx.quadraticCurveTo(0,-r*.54,r-4,-r*.22);ctx.lineTo(r-10,-r*.20);ctx.quadraticCurveTo(0,-r*.37,-r+10,0);ctx.fill();ctx.restore()}
 drawPixelSkillFx=function(ctx,dt,t){const f=VFX.skillFx;if(!f)return;f.life-=dt;if(f.life<=0){VFX.skillFx=null;return}const phase=Math.max(0,Math.min(1,1-f.life/.7)),job=f.job,rank=Math.min(2,f.idx||0),x=352,y=153,expand=phase*72;
+ const art=COMBAT_FX[job];if(readyArt(art)){const frame=Math.min(5,Math.floor(phase*6)),size=rank===2?158:rank===1?144:130;ctx.save();ctx.imageSmoothingEnabled=false;ctx.globalAlpha=Math.min(1,f.life*4);ctx.drawImage(art,frame*64,0,64,64,Math.round(x-size/2),Math.round(y-size/2),size,size);ctx.restore();return}
  ctx.save();ctx.imageSmoothingEnabled=false;
  if(job==='warrior'){fxHalo(ctx,x,y,20+expand,'#ff7460',phase);fxSlash(ctx,298+phase*28,151,58+rank*9,-.32-rank*.2,'#ff7758',phase);if(rank>0)fxSlash(ctx,349,161,43+rank*12,.74,'#ffe383',phase);for(let i=0;i<5+rank*2;i++)fxBlock(ctx,297+i*17,180-(i%3)*8-phase*7,12,5,i%2?'#ffd875':'#ff624d',1-phase*.6);fxShards(ctx,x,y,12,24+expand,'#ffb761',phase)}
  else if(job==='mage'){const color=rank===2?'#c990ff':'#66e4ff',r=27+expand*.7;fxHalo(ctx,x,y,r,color,phase);ctx.save();ctx.translate(x,y);ctx.rotate(phase*2);ctx.strokeStyle=color;ctx.lineWidth=4;ctx.globalAlpha=1-phase*.55;ctx.strokeRect(-r*.62,-r*.62,r*1.24,r*1.24);ctx.rotate(.78);ctx.strokeRect(-r*.47,-r*.47,r*.94,r*.94);ctx.restore();for(let i=0;i<8+rank*4;i++){let a=i*6.283/(8+rank*4)+phase*2;fxBlock(ctx,x+Math.cos(a)*r,y+Math.sin(a)*r,5,7,i%3?'#9af2ff':'#fff',1-phase*.65)}fxBlock(ctx,x-12-rank*3,y-13-rank*3,24+rank*6,26+rank*6,color,.75*(1-phase));fxShards(ctx,x,y,10,r+13,color,phase)}
@@ -187,6 +189,6 @@ drawPixelSkillFx=function(ctx,dt,t){const f=VFX.skillFx;if(!f)return;f.life-=dt;
  else if(job==='paladin'){const color='#ffe086';ctx.save();ctx.globalAlpha=1-phase*.7;ctx.fillStyle='#ffc552';ctx.fillRect(320,81,63,79);ctx.fillStyle='#fff6c4';ctx.fillRect(346,67,10,101);ctx.fillRect(327,106,48,10);ctx.fillStyle='#ebaa43';ctx.fillRect(337,79,6,72);ctx.fillRect(359,79,6,72);ctx.restore();for(let i=0;i<3+rank;i++){let xx=304+i*26;fxBlock(ctx,xx,88+phase*38,14,70-phase*22,i%2?'#ffe698':'#fff9d8',.72*(1-phase))}fxHalo(ctx,x,171,31+expand,'#ffd16b',phase);fxShards(ctx,x,156,10,24+expand,'#ffeaa0',phase)}
  ctx.restore()};
 const baseHeroEX27=drawHeroArt;
-drawHeroArt=function(ctx,t){if(VFX.attack>0){ctx.save();const color={warrior:'#ff9a70',mage:'#88dfff',archer:'#bdf284',rogue:'#cf96ff',paladin:'#ffe5a0'}[getDef().id];ctx.globalAlpha=Math.min(.48,VFX.attack*2);ctx.fillStyle=color;ctx.fillRect(107,113,58,5);ctx.fillRect(119,132,73,7);ctx.fillRect(126,156,56,5);ctx.restore()}baseHeroEX27(ctx,t)};
+drawHeroArt=function(ctx,t){baseHeroEX27(ctx,t);if(VFX.attack>0&&!VFX.skillFx&&readyArt(COMBAT_FX.basic)){const frame=Math.min(5,Math.floor((1-VFX.attack/.18)*6));ctx.save();ctx.imageSmoothingEnabled=false;ctx.globalAlpha=Math.min(1,VFX.attack*9);ctx.drawImage(COMBAT_FX.basic,frame*64,0,64,64,291,91,128,128);ctx.restore()}};
 rebuildArt();installPortrait();stampVersion();renderTop();log('🎨 전투 화면 최적화 · 직업 장비 / 동료 성장');
 })();

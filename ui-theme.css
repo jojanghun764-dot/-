@@ -70,3 +70,28 @@ body{font-size:14px;line-height:1.48;font-weight:550;font-synthesis:none}
 .toast{font-size:13px}
 @media(max-width:800px){.tab{font-size:11px;min-height:45px}.btn{font-size:11px}.panelHead h2{font-size:14px}}
 @media(prefers-reduced-motion:reduce){.tab,.btn{transition:none}}
+/* Carved game HUD: restrained color is reserved for runes, actions and rarity. */
+:root{--ui-base:#101c1b;--ui-line:#657465}
+body{background-color:#0b1514}
+.brand,.stat,.panel,.modal,.startPanel{border-radius:3px;background-image:linear-gradient(150deg,#1b2924 0,#111c1a 60%,#101919 100%);border:3px solid #4c6255;box-shadow:inset 0 0 0 2px #192f27,inset 0 2px 0 #78907455,0 0 0 1px #07100d,0 6px 0 #070e0c,0 16px 28px #0007}
+.panelHead{position:relative;min-height:47px;padding:10px 16px 10px 22px;background:linear-gradient(180deg,#26392e,#1b2b24);border-bottom:2px solid #607b65;box-shadow:inset 0 -3px 0 #112119}
+.panelHead::before{content:'◆';position:absolute;left:8px;top:50%;transform:translateY(-50%);font:10px Pretendard,sans-serif;color:#d2bd75;text-shadow:0 1px #0a150e}
+.panelHead::after{content:'';position:absolute;bottom:-4px;left:20px;width:74px;height:3px;background:#c1a96c}
+.brand h1,.startLogo,.starterHead h2,.panelHead h2,.modal h2,.enhanceModalHead h2,.enemyName{font-family:Galmuri11,Pretendard,sans-serif;font-weight:700;letter-spacing:-.04em;text-shadow:1px 2px 0 #07120e}
+.btn,.tab,.forgeTab,.startPrimary,.starterChoose{font-family:Pretendard,system-ui,sans-serif;font-weight:750;letter-spacing:-.015em;text-shadow:none}
+.tabs{display:flex;gap:3px;padding:4px 5px 0;background:#0c1915;border-bottom:3px solid #526a54}
+.tab{position:relative;min-height:43px;padding:9px 11px;border:1px solid #435b4c;border-bottom:0;border-radius:5px 5px 0 0;background:linear-gradient(#213229,#16241d);box-shadow:inset 0 1px #81967824;color:#c4d6c6;white-space:nowrap}
+.tab.active{color:#fff2cf;background:linear-gradient(#425c43,#2b4431);border-color:#a0ae75;box-shadow:inset 0 2px #cbdd91,inset 0 0 0 1px #1a3421;border-bottom:0}
+.tab.active::after{content:'';position:absolute;bottom:-4px;left:20%;width:60%;height:4px;background:#d6bc78}
+.tabIcon{background:#0c1b16;border:1px solid #63846b;border-radius:3px;box-shadow:inset 0 1px #dce4ab22}
+.tabPage.active{border-top:0;padding-top:11px}
+.tabPage :is(.card,.skillRow,.questRow,.invCard,.equipRow,.compCard,.compRow,.shopRow,.rebirthCard,.rebirthUpgrade,.riftRoom){background:linear-gradient(145deg,#1c2a24,#14211d 72%)!important;border:2px solid #425d4d!important;border-radius:3px!important;box-shadow:inset 0 1px 0 #adc1a318,0 3px 0 #0a1510!important;position:relative}
+.tabPage :is(.card,.skillRow,.questRow,.invCard,.equipRow,.compCard,.compRow,.shopRow,.rebirthCard,.rebirthUpgrade,.riftRoom)::after{content:'';position:absolute;right:3px;bottom:3px;width:5px;height:5px;border-right:2px solid var(--section-accent);border-bottom:2px solid var(--section-accent);opacity:.65;pointer-events:none}
+.tabPage :is(.card h3,.skillRow b,.questRow b,.shopRow b,.rebirthCard h3,.riftRoom b,.riftUpgrade b){color:#e5e7cc}
+.tabPage .btn.primary{background:linear-gradient(#5b9a64,#315b3b);border-color:#b4d191}
+.btn{border-radius:3px;background:linear-gradient(#334c3a,#1b3025);border-color:#809a76;box-shadow:inset 0 2px #d0db9a28,0 3px #090f0b}
+.btn:hover,.tab:hover{filter:brightness(1.14)}
+#equipment :is(.potentialBox,.potentialAuto,.petPotential){background:#221e2b!important;border-left-color:#a785c6!important}
+#rebirth :is(.rebirthCard,.rebirthUpgrade),#rift :is(.riftHero,.riftRoom,.riftUpgrade){background:linear-gradient(145deg,#252531,#171d27)!important;border-color:#67617e!important}
+#shop .shopRow{border-left-color:#c7aa6b!important}
+@media(max-width:800px){.tabs{gap:2px}.tab{padding:8px 9px;font-size:12px}.tabIcon{width:20px;height:20px}}
