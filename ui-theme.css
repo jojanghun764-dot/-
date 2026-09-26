@@ -95,3 +95,38 @@ body{background-color:#0b1514}
 #rebirth :is(.rebirthCard,.rebirthUpgrade),#rift :is(.riftHero,.riftRoom,.riftUpgrade){background:linear-gradient(145deg,#252531,#171d27)!important;border-color:#67617e!important}
 #shop .shopRow{border-left-color:#c7aa6b!important}
 @media(max-width:800px){.tabs{gap:2px}.tab{padding:8px 9px;font-size:12px}.tabIcon{width:20px;height:20px}}
+/* Medieval field guide: leather, aged brass, and restrained heraldic inks. */
+:root{--ui-base:#1b1a17;--ui-line:#8b754f;--ui-text:#eee4cb;--ui-muted:#c3b79d}
+body{background-color:#10130f;color:var(--ui-text)}
+.brand,.stat,.panel,.modal,.startPanel{border-color:#806947;background-image:linear-gradient(135deg,#30291f,#191d19 55%,#1e1a17);box-shadow:inset 0 0 0 2px #463a2b,inset 0 2px 0 #bc9d6255,0 0 0 1px #090e0a,0 6px 0 #0a0b08,0 17px 30px #0008}
+.panelHead{background:linear-gradient(#4a3b27,#29271e);border-bottom-color:#9f8050;box-shadow:inset 0 -3px #161a15}
+.panelHead::before,.panelHead::after{color:#e6c87b;background-color:#b99b62}
+.tabs{background:#151913;border-bottom-color:#8d7149}
+.tab{background:linear-gradient(#3b3528,#26271f);border-color:#5b513b;color:#d4c8ab}
+.tab.active{background:linear-gradient(#705938,#413b2a);border-color:#c0a36d;color:#fff1c7;box-shadow:inset 0 2px #ead394,inset 0 0 0 1px #3b3524}
+.tabIcon{background:#25261b;border-color:#a1895c}
+.btn{background:linear-gradient(#594b34,#302d23);border-color:#9d8556;color:#f3e8ca;box-shadow:inset 0 2px #f4d7a533,0 3px #0b100c}
+.btn.primary,.tabPage .btn.primary{background:linear-gradient(#4b7953,#284532);border-color:#94b17a}
+.btn.gold{background:linear-gradient(#9e7d3e,#6b4d27);border-color:#edcb7d}
+.btn.violet{background:linear-gradient(#735976,#42364f);border-color:#bc9bbd}
+.tabPage{--section-accent:#d3b784;--section-edge:#776749;--section-surface:#29271d}
+#growth,#skills{--section-accent:#9bc4af;--section-edge:#627c65}
+#equipment,#gacha{--section-accent:#dfbf77;--section-edge:#a28455}
+#companions{--section-accent:#9bbd81;--section-edge:#728755}
+#shop{--section-accent:#ddbb77;--section-edge:#96774d}
+#rebirth,#rift{--section-accent:#c8abd9;--section-edge:#867197}
+#effects{--section-accent:#c9c0a9;--section-edge:#77705c}
+.tabPage :is(.card,.skillRow,.questRow,.invCard,.equipRow,.compCard,.compRow,.shopRow,.rebirthCard,.rebirthUpgrade,.riftRoom){border-color:var(--section-edge)!important;background:linear-gradient(145deg,#302b20,#1c211c 75%)!important;box-shadow:inset 0 1px #e2c58e20,0 3px #0d120d!important}
+#rebirth :is(.rebirthCard,.rebirthUpgrade),#rift :is(.riftHero,.riftRoom,.riftUpgrade){background:linear-gradient(145deg,#30283a,#1a211f 75%)!important;border-color:#867197!important}
+#equipment :is(.potentialBox,.potentialAuto,.petPotential){background:#30293a!important}
+.equipShowcase{margin-bottom:14px;border:3px solid #987949;background:radial-gradient(ellipse at 50% 42%,#554120,#22251d 64%,#151a15);box-shadow:inset 0 0 0 2px #342719,0 5px #10120d;color:#eee2bf}
+.equipShowcase header,.equipShowcase footer{display:flex;justify-content:space-between;gap:10px;padding:7px 12px;background:#211f19df;border-bottom:1px solid #8b754b;font-size:12px}
+.equipShowcase header span{font-family:Galmuri11,Pretendard,sans-serif;color:#f0d28b}.equipShowcase footer{border-top:1px solid #766342;border-bottom:0;color:#bdb29b}
+.equipShowBody{display:grid;grid-template-columns:minmax(75px,1fr) minmax(135px,2.7fr) minmax(75px,1fr);align-items:center;gap:10px;padding:12px;max-width:640px;margin:auto}
+.equipShowColumn{display:grid;gap:7px}.equipShowSlot{position:relative;display:grid;place-items:center;min-height:74px;border:2px solid #927a55;background:linear-gradient(145deg,#181b18,#0d100e);box-shadow:inset 0 0 0 2px #332b20,inset 0 5px #0008}.equipShowSlot.empty{border-color:#554b3b;color:#746d55}.equipShowSlot img{height:46px;width:52px;object-fit:contain;image-rendering:pixelated}.equipShowSlot small{position:absolute;right:4px;bottom:2px;color:#8bc2e5;font-weight:900;text-shadow:1px 1px #081119}.equipShowLabel{position:absolute;left:4px;top:2px;color:#e1c684;font-size:10px}.equipShowEmpty{font-size:25px}
+.equipShowHero{display:grid;place-items:center;min-width:0;align-self:stretch;border:1px solid #977744;background:radial-gradient(circle,#72552b33,#191d19 75%);overflow:hidden}.equipShowHero img{width:min(100%,240px);max-height:210px;object-fit:contain;image-rendering:pixelated}.equipShowHero span{font-family:Galmuri11,Pretendard,sans-serif;font-size:11px;color:#f1d594;padding:4px}
+.equipShowSilhouette{display:grid;place-items:center;min-height:130px;color:#bca16c;font-size:64px;text-shadow:0 0 20px #d4ad6c66}
+.invCard.equipped,.compCard.active{border-color:#e4c985!important;box-shadow:inset 0 0 0 2px #d2a85b55,0 3px #0d120d!important}
+.equipTag{background:#66502b;color:#ffe0a0;border-radius:2px}
+.battleCanvas,.portrait canvas,.starterPortrait,.compAvatar img,.equipIcon,.forgeSelected img,.worldBossPortrait,.riftGuardian{image-rendering:pixelated!important}
+@media(max-width:550px){.equipShowBody{grid-template-columns:66px minmax(100px,1fr) 66px;gap:5px;padding:7px}.equipShowSlot{min-height:60px}.equipShowSlot img{height:38px;width:40px}.equipShowHero img{max-height:175px}.equipShowcase footer{font-size:10px}}
