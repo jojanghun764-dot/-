@@ -10,6 +10,8 @@ The game remains in the repository root for web deployment. `npm run build:web` 
 4. `cd android && ./gradlew assembleDebug`
 5. Install `android/app/build/outputs/apk/debug/app-debug.apk` on a test device.
 
+For a personal visual preview that matches the web game, run `npm run sync:android:preview` before `assembleDebug`. This includes the current 51 web artwork files in the APK. It is a debug build only: the artwork provenance is still unverified. The Android GitHub Actions workflow uploads this variant as `sprout-full-art-test-apk`. Public release packages continue to use `npm run sync:android` and the approved-art check.
+
 The checked-in Android project targets API 36. A signed release AAB requires a private signing key and Play Console setup; never commit signing material.
 
 ## Save data and launch gates
