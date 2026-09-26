@@ -1,0 +1,8 @@
+{
+  "appId": "com.sproutexpedition.game",
+  "appName": "새싹 원정대",
+  "webDir": "www",
+  "android": {
+    "backgroundColor": "#0f1714"
+  }
+}

@@ -1,0 +1,566 @@
+{
+  "note": "A repository commit records when a file entered this project; it does not prove ownership or commercial reuse rights.",
+  "assets": [
+    {
+      "path": "assets/app-icon-512.png",
+      "sha256": "8d568edee3e341f8a9aea3990fee4efd13e8efd764aa728515635010ddc7e9a4",
+      "dimensions": [
+        512,
+        512
+      ],
+      "first_repository_commit": "b2251defacdb9332e14c7e9123ef5c9b000c8767",
+      "source_evidence": "scripts/make-icon.py",
+      "commercial_rights_verified": true
+    },
+    {
+      "path": "assets/astral-ex28.webp",
+      "sha256": "f351cf10b6beead3449888fe410e3d6a49e6d6ec76617116a3c8c14d9ada8012",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "first_repository_commit": "4ae4af78db2302d3a92cc479c51cac8d17864d8b",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/companion-구름버섯-ex23.webp",
+      "sha256": "6729b4afdb9a809938cea3ebac1cef6c8b21e09080ad5c3e25fcb8f01a759837",
+      "dimensions": [
+        64,
+        64
+      ],
+      "first_repository_commit": "4d757574ce87dd02ff8de203d4af581a73b31ad2",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/companion-달씨앗-ex23.webp",
+      "sha256": "99630b3b0c3049afbcb928517bea8874a612dee8eec24fd369d3baa282d8e104",
+      "dimensions": [
+        64,
+        64
+      ],
+      "first_repository_commit": "4d757574ce87dd02ff8de203d4af581a73b31ad2",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/companion-모구-ex23.webp",
+      "sha256": "c3c35a097c6c17219da2bf8b3d21058fc97e76bb24a342705f63f18d9798db4f",
+      "dimensions": [
+        64,
+        64
+      ],
+      "first_repository_commit": "4d757574ce87dd02ff8de203d4af581a73b31ad2",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/companion-밤톨이-ex23.webp",
+      "sha256": "d2e1baf70ab126a42deb3084038418775029921aea8e57120b6d3b45dbc38ad1",
+      "dimensions": [
+        64,
+        64
+      ],
+      "first_repository_commit": "4d757574ce87dd02ff8de203d4af581a73b31ad2",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/companion-빛방울-ex23.webp",
+      "sha256": "97b16404f2590f2300c298eacf4c7238031d2a2be91ee9347c7335c205efeed3",
+      "dimensions": [
+        64,
+        64
+      ],
+      "first_repository_commit": "4d757574ce87dd02ff8de203d4af581a73b31ad2",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/companion-솔방울-ex23.webp",
+      "sha256": "0403fd6dbf3d4740f2b4dec65b157d2c7f5731eea96d177f55e2228a41773829",
+      "dimensions": [
+        64,
+        64
+      ],
+      "first_repository_commit": "4d757574ce87dd02ff8de203d4af581a73b31ad2",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/companion-초롱잎-ex23.webp",
+      "sha256": "ff2a22bae5f154bd9bae4f22c519098cb69b24355a18bed7dee0ee5633ed38e4",
+      "dimensions": [
+        64,
+        64
+      ],
+      "first_repository_commit": "4d757574ce87dd02ff8de203d4af581a73b31ad2",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/companion-콩이-ex23.webp",
+      "sha256": "715fcdf85ffdebfa321afb361657a1bc8b6c456198e5a977dc9551146ed9634b",
+      "dimensions": [
+        64,
+        64
+      ],
+      "first_repository_commit": "4d757574ce87dd02ff8de203d4af581a73b31ad2",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/crystal-ex28.webp",
+      "sha256": "5873a8e59af561891992dcc4ac27f1a3d34a31a20cc3b97f73d83fed7f743d34",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "first_repository_commit": "4ae4af78db2302d3a92cc479c51cac8d17864d8b",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/equip-모자-ex23.webp",
+      "sha256": "3405a664389f9e55a118b4ffc4366c6b6ecc5c8ab2523ffc3adb968843e82a3a",
+      "dimensions": [
+        64,
+        64
+      ],
+      "first_repository_commit": "4d757574ce87dd02ff8de203d4af581a73b31ad2",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/equip-무기-ex23.webp",
+      "sha256": "b558866d75801a8ff1bd2826e239c81ddd6a60e586c18ce626d3e1735318761f",
+      "dimensions": [
+        64,
+        64
+      ],
+      "first_repository_commit": "4d757574ce87dd02ff8de203d4af581a73b31ad2",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/equip-반지-ex23.webp",
+      "sha256": "b92567a21b2406021305434e3e9a511f47fbd1dd9f353d56614056027068cc0b",
+      "dimensions": [
+        64,
+        64
+      ],
+      "first_repository_commit": "4d757574ce87dd02ff8de203d4af581a73b31ad2",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/equip-상의-ex23.webp",
+      "sha256": "71a637c1201b49be7ed3379288e2a658e9db2df9f0ad934fcdbef221e14fae04",
+      "dimensions": [
+        64,
+        64
+      ],
+      "first_repository_commit": "4d757574ce87dd02ff8de203d4af581a73b31ad2",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/equip-신발-ex23.webp",
+      "sha256": "ee439945f5ff6443b8d1bf0e37bfec15d054ad6909f869a5861a90334c0eae05",
+      "dimensions": [
+        64,
+        64
+      ],
+      "first_repository_commit": "4d757574ce87dd02ff8de203d4af581a73b31ad2",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/equip-장갑-ex23.webp",
+      "sha256": "7a9ec621825b3d32c7d52e22191b149c48669d2210e4b78eae6a9cbfac3d976c",
+      "dimensions": [
+        64,
+        64
+      ],
+      "first_repository_commit": "4d757574ce87dd02ff8de203d4af581a73b31ad2",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/forest-ex21.webp",
+      "sha256": "81a1cdc5db5ca3e6ca7abdc66e0f36a84f129bc997b317e4ddba2176f9a44655",
+      "dimensions": [
+        960,
+        540
+      ],
+      "first_repository_commit": "420c7db6fae68c9ec33bc60d0ca6c149849c7fb1",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/forge-ex28.webp",
+      "sha256": "49ce886529a79a6874e07b87d5e67c0fe0451beb4f875f4d7c8b2cffaf1db7f0",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "first_repository_commit": "4ae4af78db2302d3a92cc479c51cac8d17864d8b",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/hero-archer-ex21.webp",
+      "sha256": "b4eba4a4d37e0885170da62d020019e3ad2cf9225647d4ed07827d0b281a9330",
+      "dimensions": [
+        192,
+        128
+      ],
+      "first_repository_commit": "0e603156d17ee9069a0f2d90a98d939d2165b49c",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/hero-archer-ui-ex22.webp",
+      "sha256": "1403501a694da5ca3ca21a0789578bc114f63e1e9606abca5c5a78e820567516",
+      "dimensions": [
+        96,
+        64
+      ],
+      "first_repository_commit": "987b042174740446d2100be1bba84a1363483d67",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/hero-mage-ex21.webp",
+      "sha256": "cf077aa3fe61f4d4b9e63634ad6f6b4c858d9b21d3da2b0795aeaef422993e85",
+      "dimensions": [
+        192,
+        128
+      ],
+      "first_repository_commit": "0e603156d17ee9069a0f2d90a98d939d2165b49c",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/hero-mage-ui-ex22.webp",
+      "sha256": "e4122412ecb317e4fbf685064dc3ea50a36da25f267adf51a0cb1bc92206f6e0",
+      "dimensions": [
+        96,
+        64
+      ],
+      "first_repository_commit": "987b042174740446d2100be1bba84a1363483d67",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/hero-paladin-ex21.webp",
+      "sha256": "676d72b608df69d304b98e087a5962b4085d24f1b75e876f58225f31be37b1e3",
+      "dimensions": [
+        192,
+        128
+      ],
+      "first_repository_commit": "0e603156d17ee9069a0f2d90a98d939d2165b49c",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/hero-paladin-ui-ex22.webp",
+      "sha256": "dce06bbd99793578dbba7fe3bdcbd9e95e3b24bc981b014ffb9a97187f86b690",
+      "dimensions": [
+        96,
+        64
+      ],
+      "first_repository_commit": "987b042174740446d2100be1bba84a1363483d67",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/hero-rogue-ex21.webp",
+      "sha256": "26132580e818e800ad582c16cdd05a8e87d9de998600cc5860b2a5a39884c55d",
+      "dimensions": [
+        192,
+        128
+      ],
+      "first_repository_commit": "0e603156d17ee9069a0f2d90a98d939d2165b49c",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/hero-rogue-ui-ex22.webp",
+      "sha256": "596afb7fd9078c9d8595d38294e81319a07d999991b05f0b23b935254e218f38",
+      "dimensions": [
+        96,
+        64
+      ],
+      "first_repository_commit": "987b042174740446d2100be1bba84a1363483d67",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/hero-warrior-ex21.webp",
+      "sha256": "03955b1ff3148c42032e364fe04acf7ef9e8e6f82311f95338c75adb7dbd9598",
+      "dimensions": [
+        192,
+        128
+      ],
+      "first_repository_commit": "0e603156d17ee9069a0f2d90a98d939d2165b49c",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/hero-warrior-ui-ex22.webp",
+      "sha256": "a2c2e75081389652bb0c7d54a67af12f2df244778152b27f616563acd5f1df7c",
+      "dimensions": [
+        96,
+        64
+      ],
+      "first_repository_commit": "987b042174740446d2100be1bba84a1363483d67",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/late-monsters-ex27.webp",
+      "sha256": "f3bef431245c2e8f0963df4d64982577ee2090041987f2d5dd767d1ef1969401",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "first_repository_commit": "2b18a3152061c184dd3044e13787d67dd0463687",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/monster-abyssMoth-ex22.webp",
+      "sha256": "0e343efb4b37add7c370f52fbdc0fe90b375cba6a8efe48ed8d7a01406698159",
+      "dimensions": [
+        96,
+        96
+      ],
+      "first_repository_commit": "987b042174740446d2100be1bba84a1363483d67",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/monster-acornSquirrel-ex22.webp",
+      "sha256": "5b4b4d39dd0563d2ccfcbad9f4db813e9f2e90cf74be4cc34488c8b3de758a0a",
+      "dimensions": [
+        96,
+        96
+      ],
+      "first_repository_commit": "987b042174740446d2100be1bba84a1363483d67",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/monster-ancientGolem-ex22.webp",
+      "sha256": "7427a1d6f95d1ff2518223c7a16892ff607bab6df8f11ef05005f22c4376ccd7",
+      "dimensions": [
+        96,
+        96
+      ],
+      "first_repository_commit": "987b042174740446d2100be1bba84a1363483d67",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/monster-flowerFae-ex22.webp",
+      "sha256": "a3987a481254195b91ff33480d7384910270efb816e5f2c9536b5469800c6508",
+      "dimensions": [
+        96,
+        96
+      ],
+      "first_repository_commit": "987b042174740446d2100be1bba84a1363483d67",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/monster-forestGuardian-ex22.webp",
+      "sha256": "f8b38771cc01bf9ef56d08f0b046790ea813616f5893243368a4e875c03d430f",
+      "dimensions": [
+        144,
+        144
+      ],
+      "first_repository_commit": "987b042174740446d2100be1bba84a1363483d67",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/monster-forestSlime-ex22.webp",
+      "sha256": "6c749fad0d96b2ddda146377f01aab3bf39e91122f91c7b80a69139e3d3837dd",
+      "dimensions": [
+        96,
+        96
+      ],
+      "first_repository_commit": "987b042174740446d2100be1bba84a1363483d67",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/monster-mudSlime-ex22.webp",
+      "sha256": "78839d5dd0974eec81fe9ac8f4097614a8cfa544e72c553300d4e5498140127a",
+      "dimensions": [
+        96,
+        96
+      ],
+      "first_repository_commit": "987b042174740446d2100be1bba84a1363483d67",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/monster-poisonFrog-ex22.webp",
+      "sha256": "76bcee9a010d5fc6b2122ee3d89f10e455dfcf64081528074c6364d1336a1d8a",
+      "dimensions": [
+        96,
+        96
+      ],
+      "first_repository_commit": "987b042174740446d2100be1bba84a1363483d67",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/monster-reedLeech-ex22.webp",
+      "sha256": "989710a7c016f75ae3a8708b392b1b39790d4d2b1d485530a0404b326c7c6b45",
+      "dimensions": [
+        96,
+        96
+      ],
+      "first_repository_commit": "987b042174740446d2100be1bba84a1363483d67",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/monster-rootImp-ex22.webp",
+      "sha256": "36fbaeb6a0b2fbe9d4b2400c7e3e5907efc215b8e4a71675562130e72734b98a",
+      "dimensions": [
+        96,
+        96
+      ],
+      "first_repository_commit": "987b042174740446d2100be1bba84a1363483d67",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/monster-rootTitan-ex22.webp",
+      "sha256": "3e57e1aa7c43c5d45463314569ec1ec01281a7f55fb8948153bfd8f3317432d0",
+      "dimensions": [
+        144,
+        144
+      ],
+      "first_repository_commit": "987b042174740446d2100be1bba84a1363483d67",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/monster-rootWarrior-ex22.webp",
+      "sha256": "be76601f05e2ea4d8fd6f6fcfd9ba71414fed54c47ff64ae3ccf7462dc325313",
+      "dimensions": [
+        96,
+        96
+      ],
+      "first_repository_commit": "987b042174740446d2100be1bba84a1363483d67",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/monster-rotBloom-ex22.webp",
+      "sha256": "dbef1f6e88e3649101ae773844bdf18f217b62cda3c91704d008e2646cd0dc9f",
+      "dimensions": [
+        96,
+        96
+      ],
+      "first_repository_commit": "987b042174740446d2100be1bba84a1363483d67",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/monster-runeConstruct-ex22.webp",
+      "sha256": "76e0c98686a133dd24812414146909ff8c6fea70d190cce37e4010326e7ec1c3",
+      "dimensions": [
+        96,
+        96
+      ],
+      "first_repository_commit": "987b042174740446d2100be1bba84a1363483d67",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/monster-sporeLord-ex22.webp",
+      "sha256": "735be8a4283505a9241ee5b21da861ab8856a26e5de692b61920012bdcaeed94",
+      "dimensions": [
+        144,
+        144
+      ],
+      "first_repository_commit": "987b042174740446d2100be1bba84a1363483d67",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/monster-sunMushroom-ex22.webp",
+      "sha256": "e0720899193542ff508651d3d83c1d5e44451c4b633d08b7428bbbdc718daef2",
+      "dimensions": [
+        96,
+        96
+      ],
+      "first_repository_commit": "987b042174740446d2100be1bba84a1363483d67",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/monster-treeSpirit-ex22.webp",
+      "sha256": "b44ae2aa861839c82947d4bf98ccac1d87006a729a5866ea54082f6b59e04e31",
+      "dimensions": [
+        96,
+        96
+      ],
+      "first_repository_commit": "987b042174740446d2100be1bba84a1363483d67",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/monster-willOWisp-ex22.webp",
+      "sha256": "4fbd28ef45c8d8f0c7e8f6a2f3e6f0944c3951e3724e475b782540eb9f031d7a",
+      "dimensions": [
+        96,
+        96
+      ],
+      "first_repository_commit": "987b042174740446d2100be1bba84a1363483d67",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/roots-ex21.webp",
+      "sha256": "b36b3b8658bc579e00f270b3b98b3b2a6a5f3737acff1116deecb5981394a354",
+      "dimensions": [
+        960,
+        540
+      ],
+      "first_repository_commit": "420c7db6fae68c9ec33bc60d0ca6c149849c7fb1",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/swamp-ex21.webp",
+      "sha256": "bb26abc23a0d0793e0b89666405ae0ac29f4eb25287670e8e88fcc4615193889",
+      "dimensions": [
+        960,
+        540
+      ],
+      "first_repository_commit": "420c7db6fae68c9ec33bc60d0ca6c149849c7fb1",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    },
+    {
+      "path": "assets/worldboss-portraits-ex27.webp",
+      "sha256": "823def4a949d50f9335070370c76318dd9e0531d2ca5eb27a1a780d676a1c0fc",
+      "dimensions": [
+        1956,
+        804
+      ],
+      "first_repository_commit": "2b18a3152061c184dd3044e13787d67dd0463687",
+      "source_evidence": null,
+      "commercial_rights_verified": false
+    }
+  ]
+}

@@ -1,12 +1,13 @@
 (function(){
 'use strict';
 const ART_VERSION='새싹 원정대';
+const LOAD_LEGACY_ART=!window.SPROUT_VERIFIED_ASSETS_ONLY;
 const REGION_IMAGES={};
-for(const name of ['forest','swamp','roots','crystal','astral','forge']){const img=new Image();img.src='assets/'+name+(['forest','swamp','roots'].includes(name)?'-ex21.webp':'-ex28.webp');REGION_IMAGES[name]=img}
+for(const name of ['forest','swamp','roots','crystal','astral','forge']){const img=new Image();if(LOAD_LEGACY_ART)img.src='assets/'+name+(['forest','swamp','roots'].includes(name)?'-ex21.webp':'-ex28.webp');REGION_IMAGES[name]=img}
 const REGION_SCENE_CACHE={};
 function cachedRegionScene(name,img){if(!img.complete||!img.naturalWidth)return null;if(!REGION_SCENE_CACHE[name]){const c=document.createElement('canvas');c.width=960;c.height=540;const g=c.getContext('2d');g.imageSmoothingEnabled=true;g.drawImage(img,0,0,960,540);REGION_SCENE_CACHE[name]=c}return REGION_SCENE_CACHE[name]}
-const HERO_IMAGES={};for(const id of ['warrior','mage','archer','rogue','paladin']){const img=new Image();img.src='assets/hero-'+id+'-ex21.webp';HERO_IMAGES[id]=img}
-const HERO_UI_IMAGES={};for(const id of ['warrior','mage','archer','rogue','paladin']){const img=new Image();img.src='assets/hero-'+id+'-ui-ex22.webp';HERO_UI_IMAGES[id]=img}
+const HERO_IMAGES={};for(const id of ['warrior','mage','archer','rogue','paladin']){const img=new Image();if(LOAD_LEGACY_ART)img.src='assets/hero-'+id+'-ex21.webp';HERO_IMAGES[id]=img}
+const HERO_UI_IMAGES={};for(const id of ['warrior','mage','archer','rogue','paladin']){const img=new Image();if(LOAD_LEGACY_ART)img.src='assets/hero-'+id+'-ui-ex22.webp';HERO_UI_IMAGES[id]=img}
 function readyArt(img){return !!(img&&img.complete&&img.naturalWidth)}
 const REGION_POOLS={
  forest:['새싹 슬라임','햇살 버섯','도토리 다람쥐','어린 나무정령','민들레 꽃요정'],
@@ -19,8 +20,8 @@ const MONSTER_KEYS={
  '뿌리 임프':'rootImp','룬 피조물':'runeConstruct','고대 돌골렘':'ancientGolem','심연 나방':'abyssMoth','뿌리 갑주병':'rootWarrior'
 };
 const MONSTER_IMAGES={},BOSS_IMAGES={};
-for(const key of Object.values(MONSTER_KEYS)){const img=new Image();img.src='assets/monster-'+key+'-ex22.webp';MONSTER_IMAGES[key]=img}
-for(const key of ['forestGuardian','sporeLord','rootTitan']){const img=new Image();img.src='assets/monster-'+key+'-ex22.webp';BOSS_IMAGES[key]=img}
+for(const key of Object.values(MONSTER_KEYS)){const img=new Image();if(LOAD_LEGACY_ART)img.src='assets/monster-'+key+'-ex22.webp';MONSTER_IMAGES[key]=img}
+for(const key of ['forestGuardian','sporeLord','rootTitan']){const img=new Image();if(LOAD_LEGACY_ART)img.src='assets/monster-'+key+'-ex22.webp';BOSS_IMAGES[key]=img}
 function ipx(ctx,x,y,w,h,c){ctx.fillStyle=c;ctx.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h))}
 function frameCanvas(size,frames){const c=sprCanvas(size*frames,size);c.getContext('2d').imageSmoothingEnabled=false;return c}
 function outlineSheet(source,fw,fh,frames,color){
@@ -93,8 +94,8 @@ enemyBaseName=function(stage,boss){
 };
 monsterVisualKey=function(){const n=((enemy&&enemy.name)||'').replace(/^✦ 보물 /,'');for(const label in MONSTER_KEYS)if(n.includes(label))return MONSTER_KEYS[label];return stageTheme()==='swamp'?'mudSlime':stageTheme()==='roots'?'rootImp':'forestSlime'};
 const LATE_MONSTER_NAMES=['수정 갑주 딱정벌레','별빛 해파리','가시 낫 사마귀','태엽 씨앗 기사','월석 늑대','흑요석 바실리스크'];
-const LATE_MONSTERS=new Image();LATE_MONSTERS.src='assets/late-monsters-ex27.webp';
-const LATE_BOSSES=new Image();LATE_BOSSES.src='assets/worldboss-portraits-ex27.webp';
+const LATE_MONSTERS=new Image();if(LOAD_LEGACY_ART)LATE_MONSTERS.src='assets/late-monsters-ex27.webp';
+const LATE_BOSSES=new Image();if(LOAD_LEGACY_ART)LATE_BOSSES.src='assets/worldboss-portraits-ex27.webp';
 function rebuildArt(){
  CHARACTERS.forEach(function(d){SPRITES.heroes[d.id]=buildHeroEX20(d.id)});
  Object.values(MONSTER_KEYS).forEach(function(k){SPRITES.monsters[k]=monsterSheet(k)});
@@ -152,7 +153,7 @@ drawEnemyArt=function(ctx,t){
  if(getC().stage>=200){const source=boss?LATE_BOSSES:LATE_MONSTERS;if(readyArt(source)){const i=boss?Math.floor((getC().stage-200)/20)%3:Math.max(0,LATE_MONSTER_NAMES.findIndex(n=>enemy.name.includes(n))),sx=boss?i*652:(i%3)*512,sy=boss?0:Math.floor(i/3)*512,sw=boss?652:512,sh=boss?804:512,bw=boss?144:116,bh=boss?177:116,bx=boss?303:316,by=boss?73:113;if(sx+sw<=source.naturalWidth&&sy+sh<=source.naturalHeight){ctx.save();ctx.globalAlpha=enemy.hp<=0?.35:1;ctx.imageSmoothingEnabled=true;ctx.drawImage(source,sx,sy,sw,sh,bx+(VFX.hit>0?2:0),by+Math.round(Math.sin(t/240)*3),bw,bh);ctx.restore();return}}}
  drawEnemyAura(ctx,t,x,y,dw,dh);ctx.save();ctx.imageSmoothingEnabled=false;const bob=Math.round(Math.sin(t/(boss?280:210))*2);if(enemy.hp<=0){ctx.translate(x+dw/2,y+dh);ctx.rotate(.45);ctx.globalAlpha=.45;if(readyArt(img))ctx.drawImage(img,-dw/2,-dh,dw,dh);else drawFrame(ctx,sheet,size,size,frame,-dw/2,-dh,dw,dh)}else{const shake=VFX.hit>0?Math.round(Math.sin(t*.35)*3):0;if(readyArt(img))ctx.drawImage(img,x+shake,y+bob,dw,dh);else drawFrame(ctx,sheet,size,size,frame,x+shake,y+bob,dw,dh);if(VFX.hit>0){ctx.globalCompositeOperation='screen';ctx.globalAlpha=.2;ipx(ctx,x+13,y+9,dw-26,dh-18,'#fff')}}ctx.restore();ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;
 };
-const COMPANION_IMAGES={};COMP_NAMES.forEach(function(name){const img=new Image();img.src='assets/companion-'+name+'-ex23.webp';COMPANION_IMAGES[name]=img});
+const COMPANION_IMAGES={};COMP_NAMES.forEach(function(name){const img=new Image();if(LOAD_LEGACY_ART)img.src='assets/companion-'+name+'-ex23.webp';COMPANION_IMAGES[name]=img});
 drawHeroArt=function(ctx,t){
  const d=getDef(),img=HERO_IMAGES[d.id],x=37,y=100;
  if(readyArt(img)){const bob=Math.round(Math.sin(t/220)*2),lunge=VFX.attack>0?7:0;ctx.imageSmoothingEnabled=false;ctx.drawImage(img,x+lunge,y+bob,208,139)}
