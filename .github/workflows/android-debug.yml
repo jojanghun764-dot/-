@@ -16,6 +16,11 @@ on:
       - 'scripts/late-game-smoke.mjs'
       - '.github/workflows/android-debug.yml'
   workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/android-debug.yml'
+      - 'MOBILE_RELEASE.md'
 
 permissions:
   contents: read
