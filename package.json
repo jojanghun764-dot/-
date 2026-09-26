@@ -5,6 +5,7 @@
   "scripts": {
     "build:web": "node scripts/build-mobile.mjs",
     "sync:android": "npm run build:web && npx cap sync android",
+    "sync:android:preview": "SPROUT_PREVIEW_ART=1 npm run build:web && npx cap sync android",
     "sync:android:test-ads": "SPROUT_TEST_ADS=1 npm run build:web && npx cap sync android",
     "check:mobile": "node scripts/mobile-smoke.mjs && node scripts/late-game-smoke.mjs && node scripts/static-check.mjs",
     "check:release-art": "node scripts/check-release-assets.mjs",
