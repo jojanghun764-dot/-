@@ -42,14 +42,28 @@ jobs:
       - name: Test game and package Android assets
         run: |
           npm run check:mobile
+          npm run check:purchase-verifier
           npm run sync:android:test-ads
           npm run check:packaged-art
       - name: Build debug APK
         working-directory: android
         run: ./gradlew --no-daemon assembleDebug
+      - name: Package release web assets without test ads
+        run: |
+          npm run sync:android
+          npm run check:packaged-art
+      - name: Build unsigned release AAB
+        working-directory: android
+        run: ./gradlew --no-daemon bundleRelease
       - uses: actions/upload-artifact@v4
         if: success()
         with:
           name: sprout-android-debug-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: sprout-android-unsigned-release-aab
+          path: android/app/build/outputs/bundle/release/app-release.aab
           retention-days: 14
