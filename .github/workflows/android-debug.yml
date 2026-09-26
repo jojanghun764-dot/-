@@ -2,15 +2,18 @@ name: Android Debug Build
 
 on:
   push:
-    branches: [feature/capacitor-android]
+    branches: [main, feature/capacitor-android]
     paths:
       - 'android/**'
       - 'assets/**'
       - 'index.html'
       - 'art-ex20.*'
+      - 'ui-theme.css'
+      - 'vfx/**'
       - 'mobile/**'
       - 'package*.json'
       - 'scripts/build-mobile.mjs'
+      - 'scripts/late-game-smoke.mjs'
       - '.github/workflows/android-debug.yml'
   workflow_dispatch:
 
@@ -43,8 +46,8 @@ jobs:
         run: |
           npm run check:mobile
           npm run check:purchase-verifier
-          npm run sync:android:test-ads
-          npm run check:packaged-art
+          npm run sync:android:preview
+          test "$(find android/app/src/main/assets/public/assets -type f | wc -l)" -gt 30
       - name: Build debug APK
         working-directory: android
         run: ./gradlew --no-daemon assembleDebug
@@ -58,7 +61,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: sprout-android-debug-apk
+          name: sprout-full-art-test-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 14
       - uses: actions/upload-artifact@v4
