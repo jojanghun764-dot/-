@@ -1,0 +1,49 @@
+name: Android Debug Build
+
+on:
+  push:
+    branches: [feature/capacitor-android]
+    paths:
+      - 'android/**'
+      - 'assets/**'
+      - 'index.html'
+      - 'art-ex20.*'
+      - 'mobile/**'
+      - 'package*.json'
+      - 'scripts/build-mobile.mjs'
+      - '.github/workflows/android-debug.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  debug-apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - name: Install dependencies
+        run: npm ci
+      - name: Test game and package Android assets
+        run: |
+          npm run check:mobile
+          npm run sync:android:test-ads
+      - name: Build debug APK
+        working-directory: android
+        run: ./gradlew --no-daemon assembleDebug
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: sprout-android-debug-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 14
