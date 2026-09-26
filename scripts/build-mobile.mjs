@@ -7,9 +7,10 @@ const root = process.cwd();
 const out = join(root, 'www');
 rmSync(out, { recursive: true, force: true });
 mkdirSync(out);
-for (const file of ['index.html', 'art-ex20.css', 'art-ex20.js']) {
+for (const file of ['index.html', 'art-ex20.css', 'art-ex20.js', 'ui-theme.css']) {
   cpSync(join(root, file), join(out, file));
 }
+cpSync(join(root, 'fonts'), join(out, 'fonts'), { recursive: true });
 // Only ship artwork with recorded creation/usage evidence. The canvas renderer
 // supplies procedural fallback characters, enemies and scenery.
 const ledger = JSON.parse(readFileSync(join(root, 'release/asset-ledger.json'), 'utf8'));
